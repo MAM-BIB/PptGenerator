@@ -1,0 +1,27 @@
+{
+  "name": "pptgenerator",
+  "version": "1.0.0",
+  "description": "This projekt is used to mange ppt files",
+  "main": "./build/main.js",
+  "scripts": {
+    "tsc": "tsc",
+    "build": "tsc && copyfiles -u 1 ./src/**/*.html ./build",
+    "clean": "rimraf ./build",
+    "start": "npm run clean && npm run build && electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://paiqo@dev.azure.com/paiqo/PptGenerator/_git/PptGenerator"
+  },
+  "keywords": [
+    "ppt"
+  ],
+  "author": "Marc Beyer, Marco Kuehn, Alex Rechtin",
+  "license": "ISC",
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "electron": "^17.0.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.5"
+  }
+}
