@@ -4,6 +4,12 @@ using DocumentFormat.OpenXml.Presentation;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 
+/**
+ * Credit: 
+ *          https://stackoverflow.com/questions/49453527/copying-a-slide-from-one-presentation-to-another-using-open-xml-sdk
+ *          https://docs.microsoft.com/en-us/answers/questions/539472/getting-a-repair-error-when-copy-slide-from-one-pr.html
+ */
+
 namespace pptx_test {
     class Program {
 
@@ -25,13 +31,37 @@ namespace pptx_test {
                 }
             }
 
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string srcSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
+            string outSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\empty.pptx");
+
+
+
+            Console.WriteLine(basePath + "\n" + srcSlide + "\n" + outSlide);
+            Console.WriteLine(Path.GetFullPath(srcSlide));
+            Console.WriteLine(Path.GetFullPath(outSlide));
+
+            Copy(
+                    srcSlide,
+                    5,
+                    outSlide
+                );
+
+            Copy(
+                    srcSlide,
+                    1,
+                    outSlide
+                );
+
+            /*
             for (uint i = 1; i < nr + 1; i++) {
                 Copy(
-                    @"C:\Users\bib\Projects\Electron\electron-test\input\All_slides_EN_small.pptx",
+                    srcSlide,
                     i,
-                    @"C:\Users\bib\Projects\Electron\electron-test\input\empty.pptx"
+                    outSlide
                 );
             }
+            */
         }
 
         private static uint CreateId(SlideMasterIdList slideMasterIdList) {
@@ -45,6 +75,8 @@ namespace pptx_test {
         }
 
         private static uint CreateId(SlideIdList slideIdList) {
+            if (slideIdList == null) return 1;
+
             uint currentId = 0;
             foreach (SlideId slideId in slideIdList) {
                 if (slideId.Id > currentId) {
@@ -78,6 +110,9 @@ namespace pptx_test {
                     Id = CreateId(destPresentation.SlideIdList),
                     RelationshipId = destDoc.PresentationPart.GetIdOfPart(addedSlidePart)
                 };
+                if(destPresentation.SlideIdList == null) {
+                    destPresentation.SlideIdList = new SlideIdList();
+                }
                 destPresentation.SlideIdList.Append(slideId);
                 // Create new master slide ID
                 uint masterId = CreateId(destPresentation.SlideMasterIdList);
