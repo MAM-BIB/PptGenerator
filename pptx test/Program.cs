@@ -6,6 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using pptx_test.TemplateInfo;
 
 /**
  * Credit: 
@@ -21,13 +22,18 @@ namespace pptx_test {
         public static uint uniqueId { get => _uniqueId; set => _uniqueId = value; }
 
         static void Main(string[] args) {
-            int nr = 0;
-
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string srcSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
             string outSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\empty.pptx");
             string tempSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\Slide Master paiqo v0.4 - with one slide.pptx");
+
+            TemplateReader tr = new TemplateReader();
+            tr.ReadSlides(srcSlide);
+
+            return;
+            int nr = 0;
+
 
             Console.WriteLine(basePath + "\n" + srcSlide + "\n" + outSlide);
             Console.WriteLine(Path.GetFullPath(srcSlide));
@@ -291,7 +297,7 @@ namespace pptx_test {
             if (copiedSlideIndex < 0 || copiedSlideIndex >= countSlidesInSourcePresentation)
                 throw new ArgumentOutOfRangeException(nameof(copiedSlideIndex));
 
-            SlideId copiedSlideId = sourcePresentation.SlideIdList.ChildElements[copiedSlideIndex] as SlideId;
+            SlideId copiedSlideId = sourcePresentation.SlideIdList.ChildElements[(int)copiedSlideIndex] as SlideId;
             SlidePart copiedSlidePart = sourcePresentationPart.GetPartById(copiedSlideId.RelationshipId) as SlidePart;
             SlidePart addedSlidePart = destPresentationPart.AddPart<SlidePart>(copiedSlidePart);
 
@@ -309,6 +315,9 @@ namespace pptx_test {
                 Id = CreateId(destPresentation.SlideIdList),
                 RelationshipId = destPresentationPart.GetIdOfPart(addedSlidePart)
             };
+
+            Console.WriteLine(addedSlidePart.Slide.InnerText);
+            Console.WriteLine("----------------");
 
             // TODO Adding a SlideIdList dosen't work yet
             if (destPresentation.SlideIdList == null) {
