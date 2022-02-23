@@ -4,6 +4,8 @@ using DocumentFormat.OpenXml.Presentation;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 /**
  * Credit: 
@@ -46,7 +48,7 @@ namespace pptx_test {
                 }
             }
 
-            
+            /*
             
             Copy(
                     srcSlide,
@@ -56,7 +58,13 @@ namespace pptx_test {
 
             Copy(
                     srcSlide,
-                    1,
+                    6,
+                    outSlide
+                );
+
+            Copy(
+                    srcSlide,
+                    32,
                     outSlide
                 );
 
@@ -65,19 +73,32 @@ namespace pptx_test {
             string themePresentation = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
             */
 
-            /*
+            List<uint> positions = new List<uint>();
             for (uint i = 1; i < nr + 1; i++) {
-                Copy(
-                    srcSlide,
-                    i,
-                    outSlide
-                );
+                positions.Add(i);
             }
-            */
+
+            // Start timer
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            Copy(
+                srcSlide,
+                positions,
+                outSlide
+            );
 
             DeleteSlide(outSlide, 0);
 
             ApplyThemeToPresentation(outSlide, srcSlide);
+
+            // Print time
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}.{2:00}",
+            ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+            Console.WriteLine("RunTime: " + elapsedTime);
 
         }
 
@@ -171,16 +192,6 @@ namespace pptx_test {
             }
             // Return the slide count to the previous method.
             return slidesCount;
-        }
-
-        private static uint CreateId(SlideMasterIdList slideMasterIdList) {
-            uint currentId = 0;
-            foreach (SlideMasterId masterId in slideMasterIdList) {
-                if (masterId.Id > currentId) {
-                    currentId = masterId.Id;
-                }
-            }
-            return ++currentId;
         }
 
         private static uint CreateId(SlideIdList slideIdList) {
@@ -279,7 +290,7 @@ namespace pptx_test {
             return slideData.Name;
         }
 
-        public static void Copy(string sourcePresentationStream, uint copiedSlidePosition, string destPresentationStream) {
+        public static void Copy(string sourcePresentationStream, List<uint> copiedSlidePositions, string destPresentationStream) {
             using (var destDoc = PresentationDocument.Open(destPresentationStream, true)) {
                 var sourceDoc = PresentationDocument.Open(sourcePresentationStream, false);
 
@@ -289,109 +300,52 @@ namespace pptx_test {
                 var sourcePresentationPart = sourceDoc.PresentationPart;
                 var sourcePresentation = sourcePresentationPart.Presentation;
 
-                int copiedSlideIndex = (int)--copiedSlidePosition;
-                int countSlidesInSourcePresentation = sourcePresentation.SlideIdList.Count();
-
-                if (copiedSlideIndex < 0 || copiedSlideIndex >= countSlidesInSourcePresentation)
-                    throw new ArgumentOutOfRangeException(nameof(copiedSlidePosition));
-
-                SlideId copiedSlideId = sourcePresentationPart.Presentation.SlideIdList.ChildElements[copiedSlideIndex] as SlideId;
-                SlidePart copiedSlidePart = sourcePresentationPart.GetPartById(copiedSlideId.RelationshipId) as SlidePart;
-                SlidePart addedSlidePart = destPresentationPart.AddPart<SlidePart>(copiedSlidePart);
-
-                NotesSlidePart noticePart = addedSlidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
-
-                Console.WriteLine("InnerText: " + noticePart.NotesSlide.InnerText);
-
-                if (noticePart != null) {
-                    addedSlidePart.DeletePart(noticePart);
-                }
-
-                SlideMasterPart addedSlideMasterPart = destDoc.PresentationPart.SlideMasterParts.ElementAt(0);
-                //SlideMasterPart addedSlideMasterPart = destPresentationPart.AddPart(addedSlidePart.SlideLayoutPart.SlideMasterPart);
-                //destPresentationPart.DeletePart(addedSlidePart);
-
-                Console.WriteLine("---");
-                Console.WriteLine("ID: " + destDoc.PresentationPart.GetIdOfPart(addedSlidePart));
-                Console.WriteLine("ID: " + destDoc.PresentationPart.GetIdOfPart(destDoc.PresentationPart.SlideMasterParts.ElementAt(0)));
-                Console.WriteLine("---");
-
-                // Create new slide ID
-                SlideId slideId = new SlideId {
-                    Id = CreateId(destPresentation.SlideIdList),
-                    RelationshipId = destDoc.PresentationPart.GetIdOfPart(addedSlidePart)
-                };
-                if(destPresentation.SlideIdList == null) {
-                    destPresentation.SlideIdList = new SlideIdList();
-                }
-                destPresentation.SlideIdList.Append(slideId);
-
-                // Create new master slide ID
-                uint masterId = CreateId(destPresentation.SlideMasterIdList);
-                SlideMasterId slideMaterId = new SlideMasterId {
-                    Id = masterId,
-                    RelationshipId = destDoc.PresentationPart.GetIdOfPart(addedSlideMasterPart)
-                };
-
-                //destDoc.PresentationPart.Presentation.SlideMasterIdList.Append(slideMaterId);
-                destDoc.PresentationPart.Presentation.Save();
-                // Make sure that all slide layouts have unique ids.
-                foreach (SlideMasterPart slideMasterPart1 in destDoc.PresentationPart.SlideMasterParts) {
-                    foreach (SlideLayoutId slideLayoutId in slideMasterPart1.SlideMaster.SlideLayoutIdList) {
-                        masterId++;
-                        slideLayoutId.Id = masterId;
-                    }
-                    slideMasterPart1.SlideMaster.Save();
+                foreach (uint copiedSlidePosition in copiedSlidePositions) {
+                    copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation);
                 }
 
                 destDoc.PresentationPart.Presentation.Save();
                 destDoc.Close();
                 sourceDoc.Close();
             }
-            //sourcePresentationStream.Close();
-            // destPresentationStream.Close();
         }
 
-        static uint GetMaxIdFromChild(SlideMasterIdList slideMasterIdList) {
-            // Slide master identifiers have a minimum value of greater than
-            // or equal to 2147483648. 
-            uint max = 2147483648;
-            if (slideMasterIdList != null)
-                // Get the maximum id value from the current set of children.
-                foreach (SlideMasterId child in
-                  slideMasterIdList.Elements<SlideMasterId>()) {
-                    uint id = child.Id;
-                    if (id > max)
-                        max = id;
-                }
-            return max;
-        }
+        private static void copyOneSlide(uint copiedSlidePosition, PresentationPart destPresentationPart, Presentation destPresentation, PresentationPart sourcePresentationPart, Presentation sourcePresentation) {
+            int copiedSlideIndex = (int)--copiedSlidePosition;
+            int countSlidesInSourcePresentation = sourcePresentation.SlideIdList.Count();
 
-        static uint GetMaxIdFromChild(SlideIdList slideMasterIdList) {
-            // Slide master identifiers have a minimum value of greater than
-            // or equal to 2147483648. 
-            uint max = 2147483648;
-            if (slideMasterIdList != null)
-                // Get the maximum id value from the current set of children.
-                foreach (SlideId child in
-                  slideMasterIdList.Elements<SlideId>()) {
-                    uint id = child.Id;
-                    if (id > max)
-                        max = id;
-                }
-            return max;
-        }
+            if (copiedSlideIndex < 0 || copiedSlideIndex >= countSlidesInSourcePresentation)
+                throw new ArgumentOutOfRangeException(nameof(copiedSlidePosition));
 
-        static void FixSlideLayoutIds(PresentationPart presPart) {
-            // Make sure that all slide layouts have unique ids.
-            foreach (SlideMasterPart slideMasterPart in presPart.SlideMasterParts) {
-                foreach (SlideLayoutId slideLayoutId in slideMasterPart.SlideMaster.SlideLayoutIdList) {
-                    uniqueId++;
-                    slideLayoutId.Id = (uint)uniqueId;
-                }
+            SlideId copiedSlideId = sourcePresentation.SlideIdList.ChildElements[copiedSlideIndex] as SlideId;
+            SlidePart copiedSlidePart = sourcePresentationPart.GetPartById(copiedSlideId.RelationshipId) as SlidePart;
+            SlidePart addedSlidePart = destPresentationPart.AddPart<SlidePart>(copiedSlidePart);
 
-                slideMasterPart.SlideMaster.Save();
+            NotesSlidePart noticePart = addedSlidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
+
+            NotesSlide notes = noticePart.NotesSlide;
+
+            if (noticePart != null) {
+                addedSlidePart.DeletePart(noticePart);
             }
+
+            // Create new slide ID
+            SlideId slideId = new SlideId {
+                Id = CreateId(destPresentation.SlideIdList),
+                RelationshipId = destPresentationPart.GetIdOfPart(addedSlidePart)
+            };
+            if (destPresentation.SlideIdList == null) {
+                destPresentation.SlideIdList = new SlideIdList();
+            }
+            destPresentation.SlideIdList.Append(slideId);
+
+            Console.WriteLine("slideId.RelationshipId: " + slideId.RelationshipId);
+            SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
+            Console.WriteLine(slidePart2.NotesSlidePart == null);
+
+            NotesSlidePart notesSlidePart1  = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
+
+            notesSlidePart1.NotesSlide = notes;
         }
     }
 }
