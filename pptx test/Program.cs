@@ -48,33 +48,8 @@ namespace pptx_test {
                 }
             }
 
-            /*
-            
-            Copy(
-                    srcSlide,
-                    5,
-                    outSlide
-                );
-
-            Copy(
-                    srcSlide,
-                    6,
-                    outSlide
-                );
-
-            Copy(
-                    srcSlide,
-                    32,
-                    outSlide
-                );
-
-            /*
-            string presentationFile = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\new.pptx");
-            string themePresentation = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
-            */
-
             List<uint> positions = new List<uint>();
-            for (uint i = 1; i < nr + 1; i++) {
+            for (uint i = 0; i < nr; i++) {
                 positions.Add(i);
             }
 
@@ -310,21 +285,21 @@ namespace pptx_test {
             }
         }
 
-        private static void copyOneSlide(uint copiedSlidePosition, PresentationPart destPresentationPart, Presentation destPresentation, PresentationPart sourcePresentationPart, Presentation sourcePresentation) {
-            int copiedSlideIndex = (int)--copiedSlidePosition;
+        private static void copyOneSlide(uint copiedSlideIndex, PresentationPart destPresentationPart, Presentation destPresentation, PresentationPart sourcePresentationPart, Presentation sourcePresentation) {
             int countSlidesInSourcePresentation = sourcePresentation.SlideIdList.Count();
 
             if (copiedSlideIndex < 0 || copiedSlideIndex >= countSlidesInSourcePresentation)
-                throw new ArgumentOutOfRangeException(nameof(copiedSlidePosition));
+                throw new ArgumentOutOfRangeException(nameof(copiedSlideIndex));
 
             SlideId copiedSlideId = sourcePresentation.SlideIdList.ChildElements[copiedSlideIndex] as SlideId;
             SlidePart copiedSlidePart = sourcePresentationPart.GetPartById(copiedSlideId.RelationshipId) as SlidePart;
             SlidePart addedSlidePart = destPresentationPart.AddPart<SlidePart>(copiedSlidePart);
 
+
+            // removed notes 
+            // TODO why?
             NotesSlidePart noticePart = addedSlidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
-
             NotesSlide notes = noticePart.NotesSlide;
-
             if (noticePart != null) {
                 addedSlidePart.DeletePart(noticePart);
             }
@@ -334,17 +309,16 @@ namespace pptx_test {
                 Id = CreateId(destPresentation.SlideIdList),
                 RelationshipId = destPresentationPart.GetIdOfPart(addedSlidePart)
             };
+
+            // TODO Adding a SlideIdList dosen't work yet
             if (destPresentation.SlideIdList == null) {
                 destPresentation.SlideIdList = new SlideIdList();
             }
             destPresentation.SlideIdList.Append(slideId);
 
-            Console.WriteLine("slideId.RelationshipId: " + slideId.RelationshipId);
+            // Added back notes
             SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
-            Console.WriteLine(slidePart2.NotesSlidePart == null);
-
             NotesSlidePart notesSlidePart1  = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
-
             notesSlidePart1.NotesSlide = notes;
         }
     }
