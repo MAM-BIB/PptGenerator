@@ -1,9 +1,5 @@
-body{
-    background-color: gray;
 
-    h1{
-        color: darkgray;
-        font-size: 20px;
-    }
-
-}
+@import './variables';
+@import './base';
+@import './media';
+@import './components';

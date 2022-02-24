@@ -1,0 +1,43 @@
+.container{
+    display: flex;
+    align-items: stretch;
+    margin: auto;
+    padding: 5px;
+    max-width: 1200px;
+    height: 100%;
+
+    .container-item{
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        margin: 5px;
+        
+        .headline{
+            text-align: center;
+        }
+
+        .nested-container{
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            border: 1px solid black;
+            padding-left: 10px;
+
+            .presentation-slide-container{
+                overflow-y: scroll;
+                overflow-x: hidden;
+                flex: 1;
+            }
+        }
+
+        .nested-container.template{
+            .add-button{
+                align-content: flex-end;
+            }
+        }
+    }
+
+    .container-item.right{
+        flex: 2;
+    }
+} 
