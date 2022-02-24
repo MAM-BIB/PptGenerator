@@ -10,7 +10,16 @@ using System.Threading;
 
 namespace pptx_test.TemplateInfo {
     class TemplateReader {
-        public void ReadSlides(string presentationPath) {
+
+        private List<Section> _sections;
+
+        internal List<Section> Sections { get => _sections; set => _sections = value; }
+
+        public TemplateReader() {
+            //_sections = ReadSlides("");
+        }
+
+        public List<Section> ReadSlides(string presentationPath) {
             using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationPath, true)) {
 
                 List<Section> sections = new List<Section>();
@@ -35,7 +44,8 @@ namespace pptx_test.TemplateInfo {
                                         SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
                                         NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
 
-                                        string uid = notesSlidePart.NotesSlide.InnerText;
+                                        string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                                        string uid = (uidArr.Length > 1) ? uidArr[1] : null;
 
                                         section.Slides.Add(new Slide(slideId.RelationshipId, uid, position));
                                     }
@@ -49,10 +59,9 @@ namespace pptx_test.TemplateInfo {
                 }
 
                 presentationDocument.Close();
+                return sections;
             }
         }
-
-
 
         private OpenXmlElement selectElementByTag(OpenXmlElement element, string tag) {
             return element.Where((el) => {

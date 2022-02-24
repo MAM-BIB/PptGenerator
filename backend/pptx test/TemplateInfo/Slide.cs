@@ -22,8 +22,14 @@ namespace pptx_test.TemplateInfo {
         }
 
         public override bool Equals(object obj) {
-            return obj is Slide slide &&
-                   Uid == slide.Uid;
+            if (Uid == null) {
+                return obj is Slide slide && 
+                    slide.Uid == null && 
+                    slide.RelationshipId == RelationshipId;
+            } else {
+                return obj is Slide slide &&
+                       Uid == slide.Uid;
+            }
         }
 
         public override int GetHashCode() {
