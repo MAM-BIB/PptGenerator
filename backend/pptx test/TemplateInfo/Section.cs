@@ -8,7 +8,7 @@ namespace pptx_test.TemplateInfo {
         private List<Slide> _slides;
 
         public string Name { get => _name; set => _name = value; }
-        internal List<Slide> Slides { get => _slides; set => _slides = value; }
+        public List<Slide> Slides { get => _slides; set => _slides = value; }
 
         public Section(string name, List<Slide> slides = null) {
             Name = name;

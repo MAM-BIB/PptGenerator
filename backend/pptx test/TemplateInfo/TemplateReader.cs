@@ -5,20 +5,41 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
 using System.IO;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
+using System.Text.Json;
 
 namespace pptx_test.TemplateInfo {
     class TemplateReader {
 
         private List<Section> _sections;
 
-        internal List<Section> Sections { get => _sections; set => _sections = value; }
+        public List<Section> Sections { get => _sections; set => _sections = value; }
 
-        public TemplateReader() {
-            //_sections = ReadSlides("");
+        /// <summary>
+        /// A class to read the sections and slides of presentation-templates and export them as json
+        /// </summary>
+        /// <param name="presentationPaths">A list of paths to presentation-templates</param>
+        public TemplateReader(List<string> presentationPaths) {
+            Sections = new List<Section>();
+            foreach (string presentationPath in presentationPaths) {
+                Sections.AddRange(ReadSlides(presentationPath));
+            }
         }
 
+        /// <summary>
+        /// Export the Sections as json
+        /// </summary>
+        /// <param name="path">The path to export</param>
+        public void ExportAsJson(string path) {
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(Sections, options);
+            File.WriteAllText(path, jsonString);
+        }
+
+        /// <summary>
+        /// Get all Section from a presentation
+        /// </summary>
+        /// <param name="presentationPath">The path to the presentation</param>
+        /// <returns>A list of Sections</returns>
         public List<Section> ReadSlides(string presentationPath) {
             using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationPath, true)) {
 
@@ -52,8 +73,6 @@ namespace pptx_test.TemplateInfo {
                                     position++;
                                 }
                             }
-
-                            Console.WriteLine(section);
                         }
                     }
                 }
@@ -63,12 +82,25 @@ namespace pptx_test.TemplateInfo {
             }
         }
 
+        /// <summary>
+        /// Find an xmlElement by tag-name.
+        /// If more then one are found returns the first on
+        /// </summary>
+        /// <param name="element">The parent element of the searched element</param>
+        /// <param name="tag">The tag-name</param>
+        /// <returns>The first childElement with given tag-name or null</returns>
         private OpenXmlElement selectElementByTag(OpenXmlElement element, string tag) {
             return element.Where((el) => {
                 return el.LocalName == tag;
             }).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Find xmlElements by tag-name.
+        /// </summary>
+        /// <param name="element">The parent element of the searched element</param>
+        /// <param name="tag">The tag-name</param>
+        /// <returns>The childElements with given tag-name or null</returns>
         private IEnumerable<OpenXmlElement> selectElementsByTag(OpenXmlElement element, string tag) {
             return element.Where((el) => {
                 return el.LocalName == tag;

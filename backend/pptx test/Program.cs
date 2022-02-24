@@ -24,25 +24,28 @@ namespace pptx_test {
         static void Main(string[] args) {
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string srcSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
-            string outSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\empty.pptx");
-            string tempSlide = System.IO.Path.Combine(basePath, @"..\..\..\..\slides\Slide Master paiqo v0.4 - with one slide.pptx");
+            string srcSlidePath = Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
+            string outSlidePath = Path.Combine(basePath, @"..\..\..\..\slides\empty.pptx");
+            string tempSlidePath = Path.Combine(basePath, @"..\..\..\..\slides\Slide Master paiqo v0.4 - with one slide.pptx");
 
-            TemplateReader tr = new TemplateReader();
-            tr.ReadSlides(srcSlide);
+
+            string sectionPath = Path.Combine(basePath, @"..\..\..\..\slides\.pptGen\sections.json");
+
+            TemplateReader templateReader = new TemplateReader(new List<string> { srcSlidePath });
+            templateReader.ExportAsJson(sectionPath);
 
             return;
             int nr = 0;
 
 
-            Console.WriteLine(basePath + "\n" + srcSlide + "\n" + outSlide);
-            Console.WriteLine(Path.GetFullPath(srcSlide));
-            Console.WriteLine(Path.GetFullPath(outSlide));
+            Console.WriteLine(basePath + "\n" + srcSlidePath + "\n" + outSlidePath);
+            Console.WriteLine(Path.GetFullPath(srcSlidePath));
+            Console.WriteLine(Path.GetFullPath(outSlidePath));
 
 
-            File.Copy(tempSlide, outSlide, true);
+            File.Copy(tempSlidePath, outSlidePath, true);
 
-            using (PresentationDocument presentationDocument = PresentationDocument.Open(srcSlide, false)) {
+            using (PresentationDocument presentationDocument = PresentationDocument.Open(srcSlidePath, false)) {
                 PresentationPart presentationPart = presentationDocument.PresentationPart;
 
                 Presentation presentation = presentationPart.Presentation;
@@ -64,14 +67,14 @@ namespace pptx_test {
             stopWatch.Start();
 
             Copy(
-                srcSlide,
+                srcSlidePath,
                 positions,
-                outSlide
+                outSlidePath
             );
 
-            DeleteSlide(outSlide, 0);
+            DeleteSlide(outSlidePath, 0);
 
-            ApplyThemeToPresentation(outSlide, srcSlide);
+            ApplyThemeToPresentation(outSlidePath, srcSlidePath);
 
             // Print time
             stopWatch.Stop();
