@@ -18,4 +18,5 @@ PptGenerator.exe
     -inPath <path>
     -outPath <path>
     -slidePos <slidePos,slidePos,...>
+    -ignoreTheme
 ```
