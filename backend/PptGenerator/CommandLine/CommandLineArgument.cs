@@ -24,7 +24,7 @@ namespace PptGenerator.CommandLine {
         public List<uint> SlidePos { get => _slidePos; }
         public bool IgnoreTheme { get => _ignoreTheme; }
 
-        public CommandLineArgument(Mode mode, string outPath, string[] inPaths, uint[] slidePos = null, bool ignoreTheme = false) {
+        public CommandLineArgument(Mode mode, string outPath, List<String> inPaths, List<uint> slidePos = null, bool ignoreTheme = false) {
             _mode = mode;
             _outPath = outPath;
             _inPaths = inPaths;
