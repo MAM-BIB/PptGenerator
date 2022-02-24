@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace pptx_test.TemplateInfo {
+namespace PptGenerator.TemplateInfo {
     class Slide {
         private string _relationshipId;
         private string _uid;

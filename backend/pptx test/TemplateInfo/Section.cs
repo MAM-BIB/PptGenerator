@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace pptx_test.TemplateInfo {
+namespace PptGenerator.TemplateInfo {
     class Section {
         private string _name;
         private List<Slide> _slides;

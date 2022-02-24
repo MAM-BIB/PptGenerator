@@ -6,7 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using pptx_test.TemplateInfo;
+using PptGenerator.TemplateInfo;
 
 /**
  * Credit: 
@@ -14,7 +14,7 @@ using pptx_test.TemplateInfo;
  *          https://docs.microsoft.com/en-us/answers/questions/539472/getting-a-repair-error-when-copy-slide-from-one-pr.html
  */
 
-namespace pptx_test {
+namespace PptGenerator {
     class Program {
 
         static uint _uniqueId;

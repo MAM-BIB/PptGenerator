@@ -7,21 +7,21 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace pptx_test.TemplateInfo {
+namespace PptGenerator.TemplateInfo {
     class TemplateReader {
 
-        private List<Section> _sections;
+        private List<Template> _templates;
 
-        public List<Section> Sections { get => _sections; set => _sections = value; }
+        public List<Template> Templates { get => _templates; set => _templates = value; }
 
         /// <summary>
         /// A class to read the sections and slides of presentation-templates and export them as json
         /// </summary>
         /// <param name="presentationPaths">A list of paths to presentation-templates</param>
         public TemplateReader(List<string> presentationPaths) {
-            Sections = new List<Section>();
+            Templates = new List<Template>();
             foreach (string presentationPath in presentationPaths) {
-                Sections.AddRange(ReadSlides(presentationPath));
+                Templates.Add(new Template(presentationPath, ReadSlides(presentationPath)));
             }
         }
 
@@ -31,7 +31,7 @@ namespace pptx_test.TemplateInfo {
         /// <param name="path">The path to export</param>
         public void ExportAsJson(string path) {
             JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(Sections, options);
+            string jsonString = JsonSerializer.Serialize(Templates, options);
             File.WriteAllText(path, jsonString);
         }
 
