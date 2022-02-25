@@ -18,12 +18,8 @@ namespace PptGenerator.CommandLine {
                 return null;
             }
 
-            Mode mode = Mode.scan;
-            string outPath;
-            List<string> inPaths = new List<string>();
-            List<uint> slidePositions = new List<uint>();
-
             // Parse the -mode <scan|create> argument
+            Mode mode = Mode.scan;
             int modeIndex = argList.IndexOf("-mode");
             if (modeIndex < 0 || modeIndex >= argList.Count - 1) {
                 Console.WriteLine("the mode is not defined so mode is set to 'scan'");
@@ -36,6 +32,7 @@ namespace PptGenerator.CommandLine {
             }
 
             // Parse the -outPath <path> argument
+            string outPath;
             int outIndex = argList.IndexOf("-outPath");
             if (outIndex < 0 || outIndex >= argList.Count - 1) {
                 throw new Exception("'-outPath' is not given. Invoke the program with the argument '-outPath <path>'");
@@ -47,6 +44,7 @@ namespace PptGenerator.CommandLine {
             }
 
             // Parse -inPath <path> (<path>? ...)
+            List<string> inPaths = new List<string>();
             int inIndex = argList.IndexOf("-inPath");
             if (inIndex < 0 || inIndex >= argList.Count - 1) {
                 throw new Exception("'-inIndex' is not given. Invoke the program with the argument '-inIndex <path> (<path>? ...)'");
@@ -65,8 +63,11 @@ namespace PptGenerator.CommandLine {
                 }
             }
 
+            return new CommandLineArgument(mode, outPath, inPaths);
+
             if (mode == Mode.create) {
                 // Parse -slidePos <slidePos,slidePos,...>
+                List<uint> slidePositions = new List<uint>();
                 int slidePosIndex = argList.IndexOf("-slidePos");
                 if (slidePosIndex < 0 || slidePosIndex >= argList.Count - 1) {
                     throw new Exception("'-slidePos' is not given. Invoke the program with the argument '-slidePos <slidePos,slidePos,...>'");
@@ -83,12 +84,28 @@ namespace PptGenerator.CommandLine {
                         throw new Exception("'-slidePos' is not given. Invoke the program with the argument '-slidePos <slidePos,slidePos,...>'");
                     }
                 }
+
+                // Parse -basePath <path>
+                string basePath;
+                int basePathIndex = argList.IndexOf("-basePath");
+                if (basePathIndex < 0 || basePathIndex >= argList.Count - 1) {
+                    throw new Exception("'-basePath' is not given. Invoke the program with the argument '-basePath <path>'");
+                } else {
+                    basePath = argList[basePathIndex + 1];
+                    if (basePath.StartsWith("-")) {
+                        throw new Exception("'-basePath' is not given. Invoke the program with the argument '-basePath <path>'");
+                    }
+                }
+
+                // Parse -ignoreTheme
+                bool ignoreTheme = argList.Contains("-ignoreTheme");
+
+                // Parse -deleteFirstSlide
+                bool deleteFirstSlide = argList.Contains("-deleteFirstSlide");
+
+                return new CommandLineArgument(mode, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath);
             }
 
-            // Parse -ignoreTheme
-            bool ignoreTheme = argList.Contains("-ignoreTheme");
-
-            return new CommandLineArgument(mode, outPath, inPaths, slidePositions, ignoreTheme);
         }
     }
 }
