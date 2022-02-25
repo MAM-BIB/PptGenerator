@@ -1,16 +1,19 @@
+@import '../variables';
+
 .container{
     display: flex;
     align-items: stretch;
     margin: auto;
-    padding: 5px;
-    max-width: 1200px;
-    height: 100%;
+    padding: #{$padding--small};
+    max-width: #{$window-width};
+    height: $window-height;
 
     .container-item{
         display: flex;
         flex-direction: column;
         flex: 1;
-        margin: 5px;
+        margin: #{$margin--small};
+        min-height: $min--height--small;
         
         .headline{
             text-align: center;
@@ -20,19 +23,43 @@
             display: flex;
             flex-direction: column;
             flex: 1;
-            border: 1px solid black;
-            padding-left: 10px;
+            border: var(--border--color);
+            min-height: $min--height--small;
+            
 
             .presentation-slide-container{
+                flex: 1;
                 overflow-y: scroll;
                 overflow-x: hidden;
-                flex: 1;
+                padding: $padding--medium;
+            }
+
+            .location-specification{  
+                display: flex; 
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: space-between;
+
+                .location-lbl{
+                    display: flex;
+                    align-items: center;
+                }
+
+                .presentation-name{
+                    flex: 1;
+                    margin: 0 $margin--medium;
+                }
+            }
+
+            .btn-container{
+                display: flex;
+                justify-content: flex-end;
+                padding: $padding--medium;
             }
         }
-
-        .nested-container.template{
-            .add-button{
-                align-content: flex-end;
+        .nested-container.presentation{
+            .browse-btn{
+                justify-content: flex-end;
             }
         }
     }

@@ -6,6 +6,9 @@ $light--primary: #bdbdbd;
 $light--light: #efefef;
 $light--dark: #8d8d8d;
 
+$accent--color: #1c6b2b;
+$accent--color--highlight: #258036;
+
 $padding--small: 4px;
 $padding--medium: 8px;
 $padding--large: 16px;
@@ -15,6 +18,18 @@ $margin--medium: 8px;
 $margin--large: 16px;
 
 $border-normal: 1px solid #{$dark--light};
+$border-dark: 1px solid #{$light--dark};
+
+$window-width: 1200px;
+$window-height: 100%;
+
+$body-height: 100vh;
+
+$min--height--small: 0;
+
+$btn--font--color: #{$light--light};
+$btn--background--color: #{$accent--color};
+$btn--hover--background: #{$accent--color--highlight};
 
 :root{
     --font--primary: #{$dark--primary};
@@ -24,6 +39,12 @@ $border-normal: 1px solid #{$dark--light};
     --background--primary: #{$light--primary};
     --background--light: #{$light--light};
     --background--dark: #{$light--dark};
+
+    --border--color: #{$border-normal};
+
+    --btn--font: #{$btn--font--color};
+    --btn--background: #{$btn--background--color};
+    --btn--hover--background: #{$btn--hover--background};
 }
 
 
@@ -38,5 +59,8 @@ $border-normal: 1px solid #{$dark--light};
         --background--primary: #{$dark--primary};
         --background--light: #{$dark--light};
         --background--dark: #{$dark--dark};
+
+        --border--color:#{$border-dark};
+        
     }
 }

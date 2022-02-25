@@ -1,3 +1,4 @@
+@import './variables';
 *{
     padding: 0;
     margin: 0;
@@ -7,6 +8,26 @@
 body{
     background-color: var(--background--primary);
     color: var(--font--primary);
-    
-    height: 100vh;
+    height: $body-height;
+    overflow:hidden;
 }
+
+button{
+    padding: $padding--small $padding--large;
+    background-color: var(--btn--background);
+    color: var(--btn--font);
+    border: none;
+    cursor: pointer;
+    border-radius: .5em;
+
+    &:hover{
+        background-color: var(--btn--hover--background);
+    }
+
+}
+
+input[type=text]{
+    background-color: var(--background--primary);
+}
+
+
