@@ -9,6 +9,8 @@ $light--dark: #8d8d8d;
 $accent--color: #1c6b2b;
 $accent--color--highlight: #258036;
 
+$secondary--dark--light: #363636;
+
 $padding--small: 4px;
 $padding--medium: 8px;
 $padding--large: 16px;
@@ -27,10 +29,6 @@ $body-height: 100vh;
 
 $min--height--small: 0;
 
-$btn--font--color: #{$light--light};
-$btn--background--color: #{$accent--color};
-$btn--hover--background: #{$accent--color--highlight};
-
 :root{
     --font--primary: #{$dark--primary};
     --font--light: #{$dark--light};
@@ -42,9 +40,9 @@ $btn--hover--background: #{$accent--color--highlight};
 
     --border--color: #{$border-normal};
 
-    --btn--font: #{$btn--font--color};
-    --btn--background: #{$btn--background--color};
-    --btn--hover--background: #{$btn--hover--background};
+    --btn--font: #{$light--light};
+    --btn--background: #{$accent--color};
+    --btn--hover--background: #{$accent--color--highlight};
 }
 
 
@@ -57,7 +55,7 @@ $btn--hover--background: #{$accent--color--highlight};
         --font--dark: #{$light--dark};
         
         --background--primary: #{$dark--primary};
-        --background--light: #{$dark--light};
+        --background--light: #{$secondary--dark--light};
         --background--dark: #{$dark--dark};
 
         --border--color:#{$border-dark};
