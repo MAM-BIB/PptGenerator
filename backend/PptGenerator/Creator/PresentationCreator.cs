@@ -18,9 +18,7 @@ namespace PptGenerator.Creator {
             bool deleteFirstSlide = clArg.DeleteFirstSlide;
             string basePath = clArg.BasePath;
 
-            if(basePath == null) {
-                basePath = outPath;
-            } else {
+            if(basePath != null) {
                 try {
                     File.Copy(basePath, outPath, true);
                 } catch (IOException e) {
@@ -28,16 +26,15 @@ namespace PptGenerator.Creator {
                 }
             }
 
-            PptFileManager.Copy(inPath, slidePos, basePath);
+            PptFileManager.Copy(inPath, slidePos, outPath);
 
             if (deleteFirstSlide) {
-                PptFileManager.DeleteOneSlide(basePath, 0);
+                PptFileManager.DeleteOneSlide(outPath, 0);
             }
 
             if (!ignoreTheme) {
-                PptFileManager.ApplyThemeToPresentation(basePath, inPath);
+                PptFileManager.ApplyThemeToPresentation(outPath, inPath);
             }
-
         }
     }
 }

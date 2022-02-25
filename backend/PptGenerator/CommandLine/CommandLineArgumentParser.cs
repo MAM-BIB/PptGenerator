@@ -63,8 +63,6 @@ namespace PptGenerator.CommandLine {
                 }
             }
 
-            return new CommandLineArgument(mode, outPath, inPaths);
-
             if (mode == Mode.create) {
                 // Parse -slidePos <slidePos,slidePos,...>
                 List<uint> slidePositions = new List<uint>();
@@ -106,6 +104,7 @@ namespace PptGenerator.CommandLine {
                 return new CommandLineArgument(mode, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath);
             }
 
+            return new CommandLineArgument(mode, outPath, inPaths);
         }
     }
 }
