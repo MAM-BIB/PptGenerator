@@ -19,17 +19,15 @@ namespace PptGenerator {
 
         static void Main(string[] args) {
 
-            CommandLineArgument clArgument = CommandLineArgumentParser.Parse(args);
+            CommandLineArgument clArg = CommandLineArgumentParser.Parse(args);
 
-            switch (clArgument.Mode) {
+            switch (clArg.Mode) {
                 case Mode.scan:
-                    TemplateReader templateReader = new TemplateReader(clArgument.InPaths);
-                    templateReader.ExportAsJson(clArgument.OutPath);
+                    TemplateReader templateReader = new TemplateReader(clArg.InPaths);
+                    templateReader.ExportAsJson(clArg.OutPath);
                     break;
                 case Mode.create:
-                    string emptyPresentationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\slides\Slide Master paiqo v0.4 - with one slide.pptx");
-                    File.Copy(emptyPresentationPath, clArgument.OutPath, true);
-                    PresentationCreator.Create(clArgument);
+                    PresentationCreator.Create(clArg);
                     break;
                 case Mode.undefined:
                     Console.WriteLine("mode is undefined");
