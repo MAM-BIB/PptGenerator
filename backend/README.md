@@ -15,8 +15,10 @@ PptGenerator.exe -mode scan
 ## Create-mode
 ```
 PptGenerator.exe 
+    -basePath <path>
     -inPath <path>
     -outPath <path>
     -slidePos <slidePos,slidePos,...>
     -ignoreTheme
+    -deleteFirstSlide
 ```

@@ -3,8 +3,14 @@ using DocumentFormat.OpenXml.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+    
 namespace pptx_test.PptFileManager {
+    /**
+    * Credit: 
+    *          https://stackoverflow.com/questions/49453527/copying-a-slide-from-one-presentation-to-another-using-open-xml-sdk
+    *          https://docs.microsoft.com/en-us/answers/questions/539472/getting-a-repair-error-when-copy-slide-from-one-pr.html
+    *          https://docs.microsoft.com/en-us/office/open-xml/open-xml-sdk
+    */
     class PptFileManager {
 
         public static void Copy(string sourcePresentationStream, List<uint> copiedSlidePositions, string destPresentationStream) {
