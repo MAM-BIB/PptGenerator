@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using PptGenerator.TemplateInfo;
+using PptGenerator.CommandLine;
 
 /**
  * Credit: 
@@ -23,6 +24,21 @@ namespace PptGenerator {
 
         static void Main(string[] args) {
 
+            CommandLineArgument cla = CommandLineArgumentParser.Parse(args);
+
+            switch (cla.Mode) {
+                case Mode.scan:
+                    TemplateReader templateReader = new TemplateReader(cla.InPaths);
+                    templateReader.ExportAsJson(cla.OutPath);
+                    break;
+                case Mode.create:
+                    break;
+                case Mode.undefined:
+                    break;
+            }
+
+            return;
+
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string srcSlidePath = Path.Combine(basePath, @"..\..\..\..\slides\All_slides_EN_small.pptx");
             string outSlidePath = Path.Combine(basePath, @"..\..\..\..\slides\empty.pptx");
@@ -31,12 +47,7 @@ namespace PptGenerator {
 
             string sectionPath = Path.Combine(basePath, @"..\..\..\..\slides\.pptGen\sections.json");
 
-            TemplateReader templateReader = new TemplateReader(new List<string> { srcSlidePath });
-            templateReader.ExportAsJson(sectionPath);
-
-            return;
             int nr = 0;
-
 
             Console.WriteLine(basePath + "\n" + srcSlidePath + "\n" + outSlidePath);
             Console.WriteLine(Path.GetFullPath(srcSlidePath));
@@ -330,7 +341,7 @@ namespace PptGenerator {
 
             // Added back notes
             SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
-            NotesSlidePart notesSlidePart1  = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
+            NotesSlidePart notesSlidePart1 = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
             notesSlidePart1.NotesSlide = notes;
         }
     }

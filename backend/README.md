@@ -9,7 +9,7 @@ PptGenerator.exe
 ```
 PptGenerator.exe -mode scan
     -outPath <path>
-    -inPaths <path> <path> ... <path>
+    -inPath <path> (<path>? ...)
 ```
 
 ## Create-mode
