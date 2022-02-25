@@ -1,0 +1,71 @@
+@import '../variables';
+
+.container{
+    display: flex;
+    align-items: stretch;
+    margin: auto;
+    padding: #{$padding--small};
+    max-width: #{$window-width};
+    height: $window-height;
+
+    .container-item{
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        margin: #{$margin--small};
+        min-height: $min--height--small;
+        
+        .headline{
+            text-align: center;
+        }
+
+        .nested-container{
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            border: var(--border--color);
+            min-height: $min--height--small;
+            background-color: var(--background--light);
+            
+
+            .presentation-slide-container{
+                flex: 1;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                padding: $padding--medium;
+            }
+
+            .location-specification{  
+                display: flex; 
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: space-between;
+
+                .location-lbl{
+                    display: flex;
+                    align-items: center;
+                }
+
+                .presentation-name{
+                    flex: 1;
+                    margin: 0 $margin--medium;
+                }
+            }
+
+            .btn-container{
+                display: flex;
+                justify-content: flex-end;
+                padding: $padding--medium;
+            }
+        }
+        .nested-container.presentation{
+            .browse-btn{
+                justify-content: flex-end;
+            }
+        }
+    }
+
+    .container-item.right{
+        flex: 2;
+    }
+} 

@@ -1,0 +1,64 @@
+$dark--primary: #212121;
+$dark--light: #484848;
+$dark--dark: #000000;
+
+$light--primary: #bdbdbd;
+$light--light: #efefef;
+$light--dark: #8d8d8d;
+
+$accent--color: #1c6b2b;
+$accent--color--highlight: #258036;
+
+$secondary--dark--light: #363636;
+
+$padding--small: 4px;
+$padding--medium: 8px;
+$padding--large: 16px;
+
+$margin--small: 4px;
+$margin--medium: 8px;
+$margin--large: 16px;
+
+$border-normal: 1px solid #{$dark--light};
+$border-dark: 1px solid #{$light--dark};
+
+$window-width: 1200px;
+$window-height: 100%;
+
+$body-height: 100vh;
+
+$min--height--small: 0;
+
+:root{
+    --font--primary: #{$dark--primary};
+    --font--light: #{$dark--light};
+    --font--dark: #{$dark--dark};
+
+    --background--primary: #{$light--primary};
+    --background--light: #{$light--light};
+    --background--dark: #{$light--dark};
+
+    --border--color: #{$border-normal};
+
+    --btn--font: #{$light--light};
+    --btn--background: #{$accent--color};
+    --btn--hover--background: #{$accent--color--highlight};
+}
+
+
+//nimmt an die Systemanpassung heraus ob sie einen Darkmode haben 
+//und setzt ihn in der App um
+@media (prefers-color-scheme: dark) {
+    :root{
+        --font--primary: #{$light--primary};
+        --font--light: #{$light--light};
+        --font--dark: #{$light--dark};
+        
+        --background--primary: #{$dark--primary};
+        --background--light: #{$secondary--dark--light};
+        --background--dark: #{$dark--dark};
+
+        --border--color:#{$border-dark};
+        
+    }
+}
