@@ -1,0 +1,26 @@
+.section {
+    margin: $size-2 0;
+    cursor: pointer;
+
+    h2 {
+        font-size: 1.1rem;
+        background-color: var(--background--primary);
+        padding: $size-1 $size-2;
+    }
+
+    .slide {
+        padding: $size-1 $size-1 $size-1 $size-4;
+        display: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+            background: $accent--color;
+            box-shadow: $shadow-1;
+        }
+    }
+
+    &.open .slide {
+        display: block;
+    }
+}
