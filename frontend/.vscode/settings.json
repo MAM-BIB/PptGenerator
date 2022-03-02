@@ -15,5 +15,6 @@
         "**/node_modules/**",
         ".vscode/**"
     ],
-    "liveSassCompile.settings.generateMap": false
+    "liveSassCompile.settings.generateMap": false,
+    "prettier.trailingComma": "all"
 }
