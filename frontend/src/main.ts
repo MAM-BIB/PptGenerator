@@ -1,6 +1,8 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 
+import initMenu from "./menu";
+
 app.on("ready", () => {
     console.log("App is ready");
 
@@ -14,6 +16,8 @@ app.on("ready", () => {
             contextIsolation: false,
         },
     });
+
+    initMenu(win);
 
     const indexHTML = path.join(__dirname, "views/index.html");
     win.loadFile(indexHTML)
