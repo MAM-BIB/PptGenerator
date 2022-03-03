@@ -1,33 +1,27 @@
-import fs from "fs";
+import fsBase from "fs";
+import Path from "path";
+import { Presentation, Section, Slide } from "./interfaces";
+
+const fs = fsBase.promises;
+const metaFilePath = Path.join(__dirname, "../../../meta/test.json");
+const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
+const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
+
+let presentations: Presentation[];
 
 async function read() {
-    const a = await fs.promises.readFile(
-        "../backend/PptGenerator/bin/Release/netcoreapp3.1/test.json",
-        { encoding: "utf-8" },
-    );
-    console.log(JSON.parse(a));
-}
+    try {
+        const presentationsJson = await fs.readFile(metaFilePath, { encoding: "utf-8" });
+        presentations = JSON.parse(presentationsJson) as Presentation[];
+    } catch (error) {
+        console.log("Fehler beim Einlesen");
+    }
 
-read();
-
-const sectionContainer = document.querySelector(
-    ".presentation-slide-container.left",
-) as HTMLElement;
-
-const selectedSectionContainer = document.querySelector(
-    ".presentation-slide-container.right",
-) as HTMLElement;
-
-interface Slide {
-    rlid: string;
-    uid: string;
-    pos: number;
-    isHidden: boolean;
-}
-
-interface Section {
-    title: string;
-    slides: Slide[];
+    for (const presentation of presentations) {
+        for (const section of presentation.Sections) {
+            sectionContainer.append(createSection(section));
+        }
+    }
 }
 
 function createSection(section: Section): HTMLElement {
@@ -36,13 +30,13 @@ function createSection(section: Section): HTMLElement {
 
     const header = document.createElement("h2");
     sectionElement.append(header);
-    header.textContent = section.title;
-    header.title = `show/hide slides of ${section.title}`;
+    header.textContent = `${section.Name} (${section.Slides.length})`;
+    header.title = `show/hide slides of ${section.Name}`;
     header.addEventListener("click", () => {
         sectionElement.classList.toggle("open");
     });
 
-    for (const slide of section.slides) {
+    for (const slide of section.Slides) {
         sectionElement.append(createSlide(slide));
     }
 
@@ -52,48 +46,13 @@ function createSection(section: Section): HTMLElement {
 function createSlide(slide: Slide): HTMLElement {
     const slideElement = document.createElement("div");
     slideElement.classList.add("slide");
-    slideElement.textContent = `UID:${slide.uid}`;
+    slideElement.textContent = `UID:${slide.Uid}`;
     slideElement.title = `slide:
-        UID:${slide.uid},
-        pos:${slide.pos},
-        rlid:${slide.rlid},
-        isHidden:${slide.isHidden}`;
+        UID:${slide.Uid},
+        pos:${slide.Position},
+        rlid:${slide.RelationshipId},
+        isHidden:${slide.IsHidden}`;
     return slideElement;
 }
 
-const section: Section = {
-    title: "Title 1",
-    slides: [
-        {
-            rlid: "RLSDJN",
-            uid: "DFLH8KH5DFSBS4FIA3HBGHJHGJGF",
-            pos: 42,
-            isHidden: false,
-        },
-        {
-            rlid: "RLSDJN",
-            uid: "DFLG7KJ3SDFIASDFSD7GFDSHBKDF",
-            pos: 53,
-            isHidden: false,
-        },
-        {
-            rlid: "RLSDJN",
-            uid: "DFLFDSDJHFO43ZB7DFIASHBGJJGD",
-            pos: 2,
-            isHidden: false,
-        },
-    ],
-};
-
-sectionContainer.append(createSection(section));
-sectionContainer.append(createSection(section));
-sectionContainer.append(createSection(section));
-sectionContainer.append(createSection(section));
-sectionContainer.append(createSection(section));
-
-selectedSectionContainer.append(createSection(section));
-selectedSectionContainer.append(createSection(section));
-selectedSectionContainer.append(createSection(section));
-selectedSectionContainer.append(createSection(section));
-
-console.log("Hello world!");
+read();
