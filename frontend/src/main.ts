@@ -7,14 +7,18 @@ app.on("ready", () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
+        minWidth: 500,
+        minHeight: 400,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: true,
+            contextIsolation: false,
         },
     });
 
     const indexHTML = path.join(__dirname, "views/index.html");
-    win.loadFile(indexHTML).then(() => {
-        // IMPLEMENT FANCY STUFF HERE
-    }).catch((e) => console.error(e));
+    win.loadFile(indexHTML)
+        .then(() => {
+            // IMPLEMENT FANCY STUFF HERE
+        })
+        .catch((e) => console.error(e));
 });

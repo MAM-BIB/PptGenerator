@@ -1,3 +1,15 @@
+import fs from "fs";
+
+async function read() {
+    const a = await fs.promises.readFile(
+        "../backend/PptGenerator/bin/Release/netcoreapp3.1/test.json",
+        { encoding: "utf-8" },
+    );
+    console.log(JSON.parse(a));
+}
+
+read();
+
 const sectionContainer = document.querySelector(
     ".presentation-slide-container.left",
 ) as HTMLElement;
