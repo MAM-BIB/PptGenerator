@@ -1,9 +1,21 @@
+import fs from "fs";
+
+async function read() {
+    const a = await fs.promises.readFile(
+        "../backend/PptGenerator/bin/Release/netcoreapp3.1/test.json",
+        { encoding: "utf-8" },
+    );
+    console.log(JSON.parse(a));
+}
+
+read();
+
 const sectionContainer = document.querySelector(
-    ".presentation-slide-container.left"
+    ".presentation-slide-container.left",
 ) as HTMLElement;
 
 const selectedSectionContainer = document.querySelector(
-    ".presentation-slide-container.right"
+    ".presentation-slide-container.right",
 ) as HTMLElement;
 
 interface Slide {
@@ -19,10 +31,10 @@ interface Section {
 }
 
 function createSection(section: Section): HTMLElement {
-    let sectionElement = document.createElement("div");
+    const sectionElement = document.createElement("div");
     sectionElement.classList.add("section");
 
-    let header = document.createElement("h2");
+    const header = document.createElement("h2");
     sectionElement.append(header);
     header.textContent = section.title;
     header.title = `show/hide slides of ${section.title}`;
@@ -38,7 +50,7 @@ function createSection(section: Section): HTMLElement {
 }
 
 function createSlide(slide: Slide): HTMLElement {
-    let slideElement = document.createElement("div");
+    const slideElement = document.createElement("div");
     slideElement.classList.add("slide");
     slideElement.textContent = `UID:${slide.uid}`;
     slideElement.title = `slide:
@@ -83,3 +95,5 @@ selectedSectionContainer.append(createSection(section));
 selectedSectionContainer.append(createSection(section));
 selectedSectionContainer.append(createSection(section));
 selectedSectionContainer.append(createSection(section));
+
+console.log("Hello world!");

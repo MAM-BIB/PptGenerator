@@ -4,3 +4,4 @@ build
 !.vscode/settings.json
 src/views/css/*.css
 !src/views/css/*.min.css
+*.map
