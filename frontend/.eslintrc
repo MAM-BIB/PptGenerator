@@ -15,6 +15,7 @@
     "rules": {
         "no-console": "warn",
         "linebreak-style": "off",
+        "no-plusplus":"off",
         "@typescript-eslint/quotes": ["error", "double"],
         "@typescript-eslint/indent": ["error", 4],
         "no-restricted-syntax": [
@@ -29,6 +30,7 @@
             }
         ],
         "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
         "import/extensions": [
             "error",
             "ignorePackages",

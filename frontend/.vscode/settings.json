@@ -16,5 +16,6 @@
         ".vscode/**"
     ],
     "liveSassCompile.settings.generateMap": false,
-    "prettier.trailingComma": "all"
+    "prettier.trailingComma": "all",
+    "prettier.printWidth": 120
 }
