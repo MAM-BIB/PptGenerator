@@ -18,6 +18,21 @@ async function read() {
     }
 
     for (const presentation of presentations) {
+        const presNameContainer = document.createElement("div");
+        presNameContainer.classList.add("presNameContainer");
+
+        const presName = getPresentationName(presentation);
+        const nameText = document.createElement("h2");
+        nameText.classList.add("presentationName");
+        nameText.textContent = presName;
+        presNameContainer.append(nameText);
+
+        const hr = document.createElement("hr");
+        hr.classList.add("nameUnderline");
+        presNameContainer.append(hr);
+
+        sectionContainer.append(presNameContainer);
+
         for (const section of presentation.Sections) {
             sectionContainer.append(createSection(section));
         }
@@ -74,6 +89,12 @@ function createSlide(slide: Slide): HTMLElement {
         rlid:${slide.RelationshipId},
         isHidden:${slide.IsHidden}`;
     return slideElement;
+}
+
+function getPresentationName(presentation: Presentation): string {
+    const path = presentation.Path;
+    const values: string[] = path.split("\\");
+    return values[values.length - 1];
 }
 
 read();
