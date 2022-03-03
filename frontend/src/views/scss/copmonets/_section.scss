@@ -35,6 +35,7 @@
         display: none;
         overflow: hidden;
         text-overflow: ellipsis;
+        cursor: pointer;
 
         &:hover {
             background: var(--btn--hover--background);
