@@ -7,8 +7,8 @@ app.on("ready", () => {
     console.log("App is ready");
 
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         minWidth: 500,
         minHeight: 400,
         webPreferences: {
