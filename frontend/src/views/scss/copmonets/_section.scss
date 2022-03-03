@@ -15,7 +15,8 @@
         text-overflow: ellipsis;
 
         &:hover {
-            background: $accent--color;
+            background: var(--btn--hover--background);
+            color: $btn--font--slide;
             box-shadow: $shadow-1;
         }
     }

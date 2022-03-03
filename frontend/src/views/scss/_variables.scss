@@ -14,6 +14,8 @@ $secondary--dark--light: #363636;
 $border-normal: 1px solid #{$dark--light};
 $border-dark: 1px solid #{$light--dark};
 
+$btn--font--slide: #{$light--light};
+
 $window-width: 1200px;
 $window-height: 100%;
 
@@ -71,6 +73,7 @@ $shadow-6: 0 -1px 2px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
     0 41px 33px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 6%)),
     0 100px 80px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 7%));
 
+    //normal color 
 :root {
     --font--primary: #{$dark--primary};
     --font--light: #{$dark--light};
@@ -87,8 +90,8 @@ $shadow-6: 0 -1px 2px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
     --btn--hover--background: #{$accent--color--highlight};
 }
 
-//nimmt an die Systemanpassung heraus ob sie einen Darkmode haben
-//und setzt ihn in der App um
+
+//take the Systemsettings color, if its dark the programm doing that else the normal :root
 @media (prefers-color-scheme: dark) {
     :root {
         --font--primary: #{$light--primary};
