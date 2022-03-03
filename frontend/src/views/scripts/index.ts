@@ -5,7 +5,7 @@ import { Presentation, Section, Slide } from "./interfaces";
 const fs = fsBase.promises;
 const metaFilePath = Path.join(__dirname, "../../../meta/test.json");
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
-const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
+// const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 
 let presentations: Presentation[];
 
@@ -14,7 +14,7 @@ async function read() {
         const presentationsJson = await fs.readFile(metaFilePath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
-        console.log("Fehler beim Einlesen");
+        alert(`Fehler beim einlesen der Meta File \n ${error}`);
     }
 
     for (const presentation of presentations) {
