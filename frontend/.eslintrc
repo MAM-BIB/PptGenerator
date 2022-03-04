@@ -16,6 +16,7 @@
         "no-console": "warn",
         "linebreak-style": "off",
         "no-plusplus":"off",
+        "max-len": ["error", { "code": 120 }],
         "@typescript-eslint/quotes": ["error", "double"],
         "@typescript-eslint/indent": ["error", 4],
         "no-restricted-syntax": [

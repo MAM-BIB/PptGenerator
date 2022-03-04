@@ -55,6 +55,24 @@
                 }
             }
 
+            .presentation-slide-container.left {
+                .presNameContainer {
+                    padding: $size-3 0 $size-1 0;
+
+                    .nameUnderline {
+                        border-color: var(--font--primary);
+                    }
+
+                    .presentationName {
+                        font-size: 1.1rem;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        min-width: 0;
+                    }
+                }
+            }
+
             .location-specification {
                 display: flex;
                 flex-direction: row;
@@ -62,7 +80,6 @@
                 //justify-content: space-between;
                 min-height: 0;
                 min-width: 0;
-               
 
                 .location-lbl {
                     display: flex;
@@ -70,8 +87,8 @@
                     min-height: 0;
                     min-width: 0;
                 }
-                
-                .browse-btn-and-presentation-path{
+
+                .browse-btn-and-presentation-path {
                     flex: 1;
                     display: flex;
                     flex-direction: row;
@@ -85,7 +102,7 @@
                         min-height: 0;
                         min-width: 0;
                     }
-    
+
                     .browse-btn {
                         justify-content: flex-end;
                         min-height: 0;
@@ -97,14 +114,13 @@
                 @media only screen and (max-width: 640px) {
                     flex-direction: column;
 
-                    .browse-btn-and-presentation-path{
-                        margin: $size-1 0 ;
-                        .presentation-name{
+                    .browse-btn-and-presentation-path {
+                        margin: $size-1 0;
+                        .presentation-name {
                             margin: 0 $size-1 0 0;
                         }
                     }
                 }
-
             }
 
             .btn-container {
@@ -113,6 +129,5 @@
                 padding: $size-7;
             }
         }
-
     }
 }

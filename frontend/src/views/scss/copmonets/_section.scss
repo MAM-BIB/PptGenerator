@@ -1,11 +1,33 @@
 .section {
     margin: $size-2 0;
-    cursor: pointer;
 
-    h2 {
-        font-size: 1.1rem;
+    .sectionHeader {
         background-color: var(--background--primary);
-        padding: $size-1 $size-2;
+        padding: $size-2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .headerText {
+            font-size: 1.1rem;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .sectionButtons {
+            flex-shrink: 0;
+            button {
+                background: none;
+                box-shadow: none;
+                color: var(--font--primary);
+                padding: $size-2 $size-3;
+                align-self: flex-end;
+                font-size: 1.1rem;
+                cursor: pointer;
+            }
+        }
     }
 
     .slide {
@@ -13,6 +35,7 @@
         display: none;
         overflow: hidden;
         text-overflow: ellipsis;
+        cursor: pointer;
 
         &:hover {
             background: var(--btn--hover--background);
