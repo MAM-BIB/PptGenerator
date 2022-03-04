@@ -47,7 +47,7 @@ namespace PptGenerator.CommandLine {
             List<string> inPaths = new List<string>();
             int inIndex = argList.IndexOf("-inPath");
             if (inIndex < 0 || inIndex >= argList.Count - 1) {
-                throw new Exception("'-inIndex' is not given. Invoke the program with the argument '-inIndex <path> (<path>? ...)'");
+                throw new Exception("'-inIndex' is not given. Invoke the program wwith the argument '-inIndex <path> (<path>? ...)'");
             } else {
                 string firstInPath = argList[inIndex + 1];
                 if (firstInPath.StartsWith("-")) {
@@ -55,7 +55,7 @@ namespace PptGenerator.CommandLine {
                 }
                 inPaths.Add(firstInPath);
                 for (int i = inIndex + 2; i < argList.Count; i++) {
-                    string inPath = argList[inIndex + 1];
+                    string inPath = argList[i];
                     if (inPath.StartsWith("-")) {
                         break;
                     }
