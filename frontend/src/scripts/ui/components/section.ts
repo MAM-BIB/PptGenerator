@@ -1,5 +1,5 @@
 import { Section } from "../../interfaces/interfaces";
-import createSlide from "./slide";
+import HTMLSlideElement from "./slide";
 
 export default function createSection(section: Section): HTMLElement {
     const sectionElement = document.createElement("div");
@@ -35,7 +35,7 @@ export default function createSection(section: Section): HTMLElement {
     sectionElement.append(header);
 
     for (const slide of section.Slides) {
-        sectionElement.append(createSlide(slide));
+        sectionElement.append(new HTMLSlideElement(slide).element);
     }
 
     return sectionElement;

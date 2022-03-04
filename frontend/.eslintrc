@@ -19,6 +19,9 @@
         "max-len": ["error", { "code": 120 }],
         "@typescript-eslint/quotes": ["error", "double"],
         "@typescript-eslint/indent": ["error", 4],
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/lines-between-class-members": ["off"],
         "no-restricted-syntax": [
             "error",
             {
@@ -33,8 +36,6 @@
         "object-curly-newline": ["error", {
             "ExportDeclaration": { "multiline": true, "minProperties": 5 }
         }],
-        "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/no-unused-vars": "warn",
         "import/extensions": [
             "error",
             "ignorePackages",

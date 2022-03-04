@@ -37,6 +37,11 @@
         text-overflow: ellipsis;
         cursor: pointer;
 
+        &.selected {
+            background: var(--btn--background);
+            color: var(--btn--font);
+        }
+
         &:hover {
             background: var(--btn--hover--background);
             color: $btn--font--slide;
