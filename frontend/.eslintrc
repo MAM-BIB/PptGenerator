@@ -30,6 +30,9 @@
                 "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
             }
         ],
+        "object-curly-newline": ["error", {
+            "ExportDeclaration": { "multiline": true, "minProperties": 5 }
+        }],
         "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-unused-vars": "warn",
         "import/extensions": [
