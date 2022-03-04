@@ -19,21 +19,7 @@ async function read() {
     }
 
     for (const presentation of presentations) {
-        const presNameContainer = document.createElement("div");
-        presNameContainer.classList.add("presNameContainer");
-
-        const presName = getPresentationName(presentation);
-        const nameText = document.createElement("h2");
-        nameText.classList.add("presentationName");
-        nameText.textContent = presName;
-        presNameContainer.append(nameText);
-
-        const hr = document.createElement("hr");
-        hr.classList.add("nameUnderline");
-        presNameContainer.append(hr);
-
-        sectionContainer.append(presNameContainer);
-
+        sectionContainer.append(createPresentationName(presentation));
         for (const section of presentation.Sections) {
             sectionContainer.append(createSection(section));
         }
@@ -92,10 +78,21 @@ function createSlide(slide: Slide): HTMLElement {
     return slideElement;
 }
 
-function getPresentationName(presentation: Presentation): string {
-    const path = presentation.Path;
-    const values: string[] = path.split("\\");
-    return values[values.length - 1];
+function createPresentationName(presentation: Presentation): HTMLElement {
+    const presNameContainer = document.createElement("div");
+    presNameContainer.classList.add("presNameContainer");
+
+    const presName = Path.basename(presentation.Path);
+    const nameText = document.createElement("h2");
+    nameText.classList.add("presentationName");
+    nameText.textContent = presName;
+    presNameContainer.append(nameText);
+
+    const hr = document.createElement("hr");
+    hr.classList.add("nameUnderline");
+    presNameContainer.append(hr);
+
+    return presNameContainer;
 }
 
 read();
