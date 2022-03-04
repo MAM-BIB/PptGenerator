@@ -4,6 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
+/**
+* Credit: 
+*          https://stackoverflow.com/questions/49453527/copying-a-slide-from-one-presentation-to-another-using-open-xml-sdk
+*          https://docs.microsoft.com/en-us/answers/questions/539472/getting-a-repair-error-when-copy-slide-from-one-pr.html
+*          https://docs.microsoft.com/en-us/office/open-xml/open-xml-sdk
+*/
+
 namespace PptGenerator.Manager {
     class PptFileManager {
 

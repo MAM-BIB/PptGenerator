@@ -1,6 +1,8 @@
 node_modules
 build
+config
 .vscode/*
 !.vscode/settings.json
 src/views/css/*.css
 !src/views/css/*.min.css
+*.map

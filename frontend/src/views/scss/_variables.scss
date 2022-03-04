@@ -11,16 +11,10 @@ $accent--color--highlight: #258036;
 
 $secondary--dark--light: #363636;
 
-$padding--small: 4px;
-$padding--medium: 8px;
-$padding--large: 16px;
-
-$margin--small: 4px;
-$margin--medium: 8px;
-$margin--large: 16px;
-
 $border-normal: 1px solid #{$dark--light};
 $border-dark: 1px solid #{$light--dark};
+
+$btn--font--slide: #{$light--light};
 
 $window-width: 1200px;
 $window-height: 100%;
@@ -29,7 +23,58 @@ $body-height: 100vh;
 
 $min--height--small: 0;
 
-:root{
+// sizes
+$size-000: -0.5rem;
+$size-00: -0.25rem;
+$size-1: 0.25rem;
+$size-2: 0.5rem;
+$size-3: 1rem;
+$size-4: 1.25rem;
+$size-5: 1.5rem;
+$size-6: 1.75rem;
+$size-7: 2rem;
+$size-8: 3rem;
+$size-9: 4rem;
+$size-10: 5rem;
+$size-11: 7.5rem;
+$size-12: 10rem;
+$size-13: 15rem;
+$size-14: 20rem;
+$size-15: 30rem;
+
+// shadows
+$shadow-strength: 5;
+
+$shadow-1: 0 1px 2px -1px hsl(225, 40%, calc(2% / #{$shadow-strength} + 9%));
+$shadow-2: 0 3px 5px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 7px 14px -5px hsl(225, 40%, calc(2% / #{$shadow-strength} + 5%));
+$shadow-3: 0 -1px 3px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
+    0 1px 2px -5px hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
+    0 2px 5px -5px hsl(225, 40%, calc(2% / #{$shadow-strength} + 4%)),
+    0 4px 12px -5px hsl(225, 40%, calc(2% / #{$shadow-strength} + 5%)),
+    0 12px 15px -5px hsl(225, 40%, calc(2% / #{$shadow-strength} + 7%));
+$shadow-4: 0 -2px 5px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
+    0 1px 1px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 2px 2px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 5px 5px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 4%)),
+    0 9px 9px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 5%)),
+    0 16px 16px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 6%));
+$shadow-5: 0 -1px 2px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
+    0 2px 1px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 5px 5px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 10px 10px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 4%)),
+    0 20px 20px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 5%)),
+    0 40px 40px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 7%));
+$shadow-6: 0 -1px 2px 0 hsl(225, 40%, calc(2% / #{$shadow-strength} + 2%)),
+    0 3px 2px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 7px 5px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 3%)),
+    0 12px 10px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 4%)),
+    0 22px 18px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 5%)),
+    0 41px 33px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 6%)),
+    0 100px 80px -2px hsl(225, 40%, calc(2% / #{$shadow-strength} + 7%));
+
+    //normal color 
+:root {
     --font--primary: #{$dark--primary};
     --font--light: #{$dark--light};
     --font--dark: #{$dark--dark};
@@ -46,19 +91,17 @@ $min--height--small: 0;
 }
 
 
-//nimmt an die Systemanpassung heraus ob sie einen Darkmode haben 
-//und setzt ihn in der App um
+//take the Systemsettings color, if its dark the programm doing that else the normal :root
 @media (prefers-color-scheme: dark) {
-    :root{
+    :root {
         --font--primary: #{$light--primary};
         --font--light: #{$light--light};
         --font--dark: #{$light--dark};
-        
+
         --background--primary: #{$dark--primary};
         --background--light: #{$secondary--dark--light};
         --background--dark: #{$dark--dark};
 
-        --border--color:#{$border-dark};
-        
+        --border--color: #{$border-dark};
     }
 }
