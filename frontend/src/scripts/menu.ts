@@ -1,7 +1,8 @@
 import { app, BrowserWindow, Menu, MenuItem } from "electron";
 import { spawn } from "child_process";
 import path from "path";
-import { getConfig, Config, PresentationMaster } from "./config";
+
+import getConfig from "./config";
 
 export default function initMenu(browserWindow: BrowserWindow) {
     const menu = Menu.buildFromTemplate([
@@ -60,40 +61,41 @@ export default function initMenu(browserWindow: BrowserWindow) {
                 },
                 {
                     label: "Option",
-                    accelerator: "1",
+                    accelerator: "CmdOrCtrl+O",
                     click() {
                         openOption();
                     },
                 },
-
             ],
         },
     ]);
 
-    let optionOpen: boolean;
-
-    function openOption() {
-        if (!optionOpen) {
-            const optionWindow = new BrowserWindow({
-                width: 500,
-                height: 500,
-                minWidth: 500,
-                minHeight: 500,
-                resizable: false,
-                useContentSize: true,
-            });
-            const indexHTML = path.join(__dirname, "views/option.html");
-            optionWindow.loadFile(indexHTML).catch((error) => {
-                console.log(error);
-            });
-            optionOpen = true;
-            optionWindow.on("close", () => {
-                optionOpen = false;
-            });
-        }
-    }
     Menu.setApplicationMenu(menu);
 }
+
+let optionOpen: boolean;
+
+function openOption() {
+    if (!optionOpen) {
+        const optionWindow = new BrowserWindow({
+            width: 500,
+            height: 500,
+            minWidth: 500,
+            minHeight: 500,
+            resizable: false,
+            useContentSize: true,
+        });
+        const indexHTML = path.join(__dirname, "views/option.html");
+        optionWindow.loadFile(indexHTML).catch((error) => {
+            console.log(error);
+        });
+        optionOpen = true;
+        optionWindow.on("close", () => {
+            optionOpen = false;
+        });
+    }
+}
+
 function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
     if (focusedWindow) {
         // After overloading, refresh and close all secondary forms
