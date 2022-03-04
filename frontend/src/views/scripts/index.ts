@@ -1,9 +1,10 @@
 import fsBase from "fs";
 import Path from "path";
 import { Presentation, Section, Slide } from "./interfaces";
+import { getConfig, Config, PresentationMaster } from "../../config";
 
 const fs = fsBase.promises;
-const metaFilePath = Path.join(__dirname, "../../../meta/test.json");
+const metaFilePath = getConfig().metaJsonPath;
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 // const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 

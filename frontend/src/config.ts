@@ -16,7 +16,7 @@ export interface Config {
     presentationMasters: PresentationMaster[];
 }
 
-export default function getConfig(): Config {
+export function getConfig(): Config {
     if (config) return config;
 
     const configJson = fs.readFileSync(configPath, { encoding: "utf-8" });
