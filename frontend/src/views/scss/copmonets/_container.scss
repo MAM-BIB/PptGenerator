@@ -53,7 +53,9 @@
                 &::-webkit-scrollbar-track {
                     background-color: rgba(0, 0, 0, 0);
                 }
+            }
 
+            .presentation-slide-container.left {
                 .presNameContainer {
                     padding: $size-3 0 $size-1 0;
 
