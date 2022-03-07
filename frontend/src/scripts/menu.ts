@@ -12,8 +12,11 @@ export default function initMenu(browserWindow: BrowserWindow) {
                 {
                     label: "Open Dev tools",
                     accelerator: "F12",
-                    click() {
-                        browserWindow.webContents.openDevTools();
+                    click(item, focusedWindow) {
+                        focusedWindow?.webContents.openDevTools();
+                        if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
+                            focusedWindow.setSize(800, focusedWindow.getSize()[1]);
+                        }
                     },
                 },
                 {
