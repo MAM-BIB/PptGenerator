@@ -6,7 +6,7 @@ import HTMLSectionElement from "../components/section";
 import createPresentationName from "../components/presentationName";
 
 const fs = fsBase.promises;
-const { metaFilePath } = getConfig();
+const { metaJsonPath } = getConfig();
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 // const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 
@@ -14,7 +14,7 @@ let presentations: Presentation[];
 
 async function read() {
     try {
-        const presentationsJson = await fs.readFile(metaFilePath, { encoding: "utf-8" });
+        const presentationsJson = await fs.readFile(metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
         alert(`Fehler beim einlesen der Meta File \n ${error}`);
