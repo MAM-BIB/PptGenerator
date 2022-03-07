@@ -2,7 +2,7 @@ import fsBase from "fs";
 
 import { Presentation } from "../../interfaces/interfaces";
 import getConfig from "../../config";
-import createSection from "../components/section";
+import HTMLSectionElement from "../components/section";
 import createPresentationName from "../components/presentationName";
 
 const fs = fsBase.promises;
@@ -23,7 +23,7 @@ async function read() {
     for (const presentation of presentations) {
         sectionContainer.append(createPresentationName(presentation));
         for (const section of presentation.Sections) {
-            sectionContainer.append(createSection(section));
+            sectionContainer.append(new HTMLSectionElement(section).element);
         }
     }
 }
