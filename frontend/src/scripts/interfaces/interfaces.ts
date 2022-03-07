@@ -12,6 +12,7 @@ export interface Slide {
     RelationshipId: string;
     Uid: string;
     Position: number;
+    Title: string;
     IsHidden: boolean;
 }
 

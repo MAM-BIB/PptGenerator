@@ -5,7 +5,7 @@
   "main": "./build/main.js",
   "scripts": {
     "tsc": "tsc",
-    "build": "npm run lint && tsc && copyfiles -u 1 ./src/**/*.html ./build && copyfiles -u 1 ./src/**/*.min.css ./build",
+    "build": "npm run lint && tsc && copyfiles -u 1 ./src/**/*.html ./build && copyfiles -u 1 ./src/**/*.min.css ./build && copyfiles -u 1 ./src/**/*.svg ./build",
     "clean": "rimraf ./build",
     "start": "npm run clean && npm run build && electron .",
     "lint": "eslint . --ext .ts",
@@ -33,6 +33,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.5",
     "electron": "^17.1.0"
   }
 }

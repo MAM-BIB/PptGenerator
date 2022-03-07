@@ -42,6 +42,23 @@
             color: var(--btn--font);
         }
 
+        &.hidden-slide {
+            position: relative;
+            &:before {
+                content: "";
+                display: block;
+                width: $size-3;
+                height: $size-3;
+                position: absolute;
+                top: 50%;
+                transform: translate(-100%, -50%);
+
+                background-color: var(--btn--font);
+                mask-image: url("../icons/hidden.svg");
+                mask-size: contain;
+            }
+        }
+
         &:hover {
             background: var(--btn--hover--background);
             color: $btn--font--slide;

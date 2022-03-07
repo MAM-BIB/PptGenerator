@@ -14,12 +14,14 @@ export default class HTMLSlideElement {
 
     private createSlide() {
         this.element.classList.add("slide");
-        this.element.textContent = `UID:${this.slide.Uid}`;
+        if (this.slide.IsHidden) this.element.classList.add("hidden-slide");
+        this.element.textContent = `${this.slide.Title === "" ? "No Title" : this.slide.Title}`;
         this.element.title = `slide:
-            UID:${this.slide.Uid},
-            pos:${this.slide.Position},
-            rlid:${this.slide.RelationshipId},
-            isHidden:${this.slide.IsHidden}`;
+            title: ${this.slide.Title},
+            UID: ${this.slide.Uid},
+            pos: ${this.slide.Position},
+            rlid: ${this.slide.RelationshipId},
+            isHidden: ${this.slide.IsHidden}`;
 
         this.element.addEventListener("click", () => {
             this.selected = !this.selected;
