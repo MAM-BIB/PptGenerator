@@ -6,6 +6,8 @@ using DocumentFormat.OpenXml;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text;
+using D = DocumentFormat.OpenXml.Drawing;
 
 namespace PptGenerator.TemplateInfo {
     class TemplateReader {
@@ -63,12 +65,26 @@ namespace PptGenerator.TemplateInfo {
                                 foreach (SlideId slideId in presentation.SlideIdList) {
                                     if (slideId.Id == item.Id) {
                                         SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
+
+                                        string title = "";
+                                        try {
+                                            title = GetSlideTitle(slidePart);
+                                        } catch (Exception) { }
+
                                         NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
+                                        string uid = "";
+                                        if (notesSlidePart != null) {
+                                            string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                                            uid = (uidArr.Length > 1) ? uidArr[1] : "";
+                                        }
+                                        
 
-                                        string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                                        string uid = (uidArr.Length > 1) ? uidArr[1] : null;
+                                        bool isHidden = false;
+                                        if(slidePart.Slide.Show != null && !slidePart.Slide.Show.Value) {
+                                            isHidden = true;
+                                        }
 
-                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position));
+                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden));
                                     }
                                     position++;
                                 }
@@ -105,6 +121,62 @@ namespace PptGenerator.TemplateInfo {
             return element.Where((el) => {
                 return el.LocalName == tag;
             });
+        }
+
+        // Get the title string of the slide.
+        public static string GetSlideTitle(SlidePart slidePart) {
+            if (slidePart == null) {
+                throw new ArgumentNullException("presentationDocument");
+            }
+
+            // Declare a paragraph separator.
+            string paragraphSeparator = null;
+
+            if (slidePart.Slide != null) {
+                // Find all the title shapes.
+                var shapes = from shape in slidePart.Slide.Descendants<Shape>()
+                             where IsTitleShape(shape)
+                             select shape;
+
+                StringBuilder paragraphText = new StringBuilder();
+
+                foreach (var shape in shapes) {
+                    // Get the text in each paragraph in this shape.
+                    foreach (var paragraph in shape.TextBody.Descendants<D.Paragraph>()) {
+                        // Add a line break.
+                        paragraphText.Append(paragraphSeparator);
+
+                        foreach (var text in paragraph.Descendants<D.Text>()) {
+                            paragraphText.Append(text.Text);
+                        }
+
+                        paragraphSeparator = "\n";
+                    }
+                }
+
+                return paragraphText.ToString();
+            }
+
+            return string.Empty;
+        }
+
+        // Determines whether the shape is a title shape.
+        private static bool IsTitleShape(Shape shape) {
+            var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
+            if (placeholderShape != null && placeholderShape.Type != null && placeholderShape.Type.HasValue) {
+                switch ((PlaceholderValues)placeholderShape.Type) {
+                    // Any title shape.
+                    case PlaceholderValues.Title:
+
+                    // A centered title.
+                    case PlaceholderValues.CenteredTitle:
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+            return false;
         }
     }
 }

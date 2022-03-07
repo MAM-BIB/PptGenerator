@@ -106,5 +106,26 @@ namespace PptGenerator.CommandLine {
 
             return new CommandLineArgument(mode, outPath, inPaths);
         }
+
+        public static List<string> getArgument(string argument, string[] args) {
+            List<string> argList = new List<string>(args);
+
+            int argIndex = argList.IndexOf(argument);
+            if (argIndex < 0) {
+                return null;
+            }
+
+            List<string> argParam = new List<string>();
+            for (int i = argIndex + 1; i < argList.Count; i++) {
+                string param = argList[i];
+                if (param.StartsWith("-")) {
+                    break;
+                }
+                argParam.Add(param);
+            }
+
+
+            return argParam;
+        }
     }
 }

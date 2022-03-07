@@ -93,8 +93,9 @@ namespace PptGenerator.Manager {
             // removed notes 
             // TODO: why?
             NotesSlidePart noticePart = addedSlidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
-            NotesSlide notes = noticePart.NotesSlide;
+            NotesSlide notes = null;
             if (noticePart != null) {
+                notes = noticePart.NotesSlide;
                 addedSlidePart.DeletePart(noticePart);
             }
 
@@ -114,9 +115,11 @@ namespace PptGenerator.Manager {
             destPresentation.SlideIdList.Append(slideId);
 
             // Added back notes
-            SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
-            NotesSlidePart notesSlidePart1 = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
-            notesSlidePart1.NotesSlide = notes;
+            if (notes != null) {
+                SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
+                NotesSlidePart notesSlidePart1 = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
+                notesSlidePart1.NotesSlide = notes;
+            }
         }
 
         private static void DeleteOneSlide(PresentationDocument presentationDocument, int slideIndex) {
