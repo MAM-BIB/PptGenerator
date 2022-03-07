@@ -1,10 +1,8 @@
 import { ipcRenderer } from "electron";
 
 const cancelBtn = document.querySelector(".cancel-btn") as HTMLButtonElement;
-console.log(cancelBtn);
 
-// If the Cancel Button is clicked then he give a message to the menu.ts ipcMain
-cancelBtn.addEventListener("click", (e) => {
-    console.log("Click");
+// Send a message to the main-process if the cancel-button is clicked.
+cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });

@@ -1,10 +1,10 @@
-import { app, BrowserWindow, Menu, MenuItem, ipcMain } from "electron";
+import { app, BrowserWindow, Menu, MenuItem } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 
 import getConfig from "./config";
 
-export default function initMenu(browserWindow: BrowserWindow) {
+export default function initMenu() {
     const menu = Menu.buildFromTemplate([
         {
             label: "File",
@@ -114,8 +114,3 @@ function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
         focusedWindow.reload();
     }
 }
-
-// closed the Window on the option Window if the Button Cancel is clicked
-ipcMain.handle("closeFocusedWindow", (event) => {
-    BrowserWindow.fromWebContents(event.sender)?.close();
-});

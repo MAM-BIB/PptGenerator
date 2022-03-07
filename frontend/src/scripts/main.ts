@@ -4,8 +4,6 @@ import * as path from "path";
 import initMenu from "./menu";
 
 app.on("ready", () => {
-    console.log("App is ready");
-
     const win = new BrowserWindow({
         width: 1280,
         height: 720,
@@ -17,12 +15,8 @@ app.on("ready", () => {
         },
     });
 
-    initMenu(win);
+    initMenu();
 
     const indexHTML = path.join(__dirname, "views/index.html");
-    win.loadFile(indexHTML)
-        .then(() => {
-            // IMPLEMENT FANCY STUFF HERE
-        })
-        .catch((e) => console.error(e));
+    win.loadFile(indexHTML);
 });
