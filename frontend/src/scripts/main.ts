@@ -1,7 +1,10 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 
+import initIpcHandlers from "./ipcHandler";
 import initMenu from "./menu";
+
+initIpcHandlers();
 
 app.on("ready", () => {
     const win = new BrowserWindow({
