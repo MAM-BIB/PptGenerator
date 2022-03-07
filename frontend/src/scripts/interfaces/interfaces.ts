@@ -28,4 +28,5 @@ export interface Config {
     coreApplication: string;
     presetPath: string;
     presentationMasters: PresentationMaster[];
+    ignoreHiddenSlides: boolean;
 }

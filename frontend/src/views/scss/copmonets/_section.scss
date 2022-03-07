@@ -40,6 +40,10 @@
         &.selected {
             background: var(--btn--background);
             color: var(--btn--font);
+
+            &:hover {
+                background: var(--btn--hover--background);
+            }
         }
 
         &.hidden-slide {
@@ -60,7 +64,7 @@
         }
 
         &:hover {
-            background: var(--btn--hover--background);
+            background: #{$accent--color--highlight}50;
             color: $btn--font--slide;
             box-shadow: $shadow-1;
         }

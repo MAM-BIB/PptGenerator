@@ -6,7 +6,7 @@ import HTMLSectionElement from "../components/section";
 import createPresentationName from "../components/presentationName";
 
 const fs = fsBase.promises;
-const metaFilePath = getConfig().metaJsonPath;
+const { metaFilePath } = getConfig();
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 // const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 

@@ -1,16 +1,16 @@
 import { Section } from "../../interfaces/interfaces";
+
 import HTMLSlideElement from "./slide";
+import getConfig from "../../config";
 
 export default class HTMLSectionElement {
     public element: HTMLDivElement;
     public section: Section;
-    public selectedAll: boolean;
     public slides: HTMLSlideElement[];
 
     constructor(section: Section) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.section = section;
-        this.selectedAll = false;
         this.slides = [];
         this.createSection();
     }
@@ -42,11 +42,14 @@ export default class HTMLSectionElement {
         buttonSelect.title = `select all slides of ${this.section.Name}`;
         buttonSelect.classList.add("selectSection");
         buttonSelect.addEventListener("click", () => {
-            this.selectedAll = !this.selectedAll;
-            if (this.selectedAll) {
+            const { ignoreHiddenSlides } = getConfig();
+            const slidesAreSelected = this.slides.some((elem) => elem.selected);
+            if (!slidesAreSelected) {
                 for (const slide of this.slides) {
-                    slide.selected = true;
-                    slide.element.classList.add("selected");
+                    if (!ignoreHiddenSlides || (ignoreHiddenSlides && !slide.slide.IsHidden)) {
+                        slide.selected = true;
+                        slide.element.classList.add("selected");
+                    }
                 }
             } else {
                 for (const slide of this.slides) {
