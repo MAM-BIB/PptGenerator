@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem } from "electron";
+import { app, BrowserWindow, Menu, MenuItem, ipcMain } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 
@@ -83,10 +83,12 @@ function openOption() {
         const optionWindow = new BrowserWindow({
             width: 500,
             height: 500,
-            minWidth: 500,
-            minHeight: 500,
             resizable: false,
             useContentSize: true,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
         });
         const indexHTML = path.join(__dirname, "views/option.html");
         optionWindow.loadFile(indexHTML).catch((error) => {
@@ -112,3 +114,8 @@ function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
         focusedWindow.reload();
     }
 }
+
+// closed the Window on the option Window if the Button Cancel is clicked
+ipcMain.handle("closeFocusedWindow", (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
+});
