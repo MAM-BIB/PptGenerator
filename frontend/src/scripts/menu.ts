@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem, IpcMain, ipcMain } from "electron";
+import { app, BrowserWindow, Menu, MenuItem, ipcMain } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 
