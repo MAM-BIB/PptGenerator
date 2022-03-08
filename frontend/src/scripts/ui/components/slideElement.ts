@@ -65,8 +65,6 @@ export default class SlideElement {
             this.toggleSelection();
         });
         this.element.addEventListener("keydown", (e) => {
-            console.log("onkeydown", (e as KeyboardEvent).key);
-
             if ((e as KeyboardEvent).key === "Enter") {
                 this.toggleSelection();
             }
