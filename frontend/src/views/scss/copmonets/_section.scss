@@ -26,6 +26,10 @@
                 align-self: flex-end;
                 font-size: 1.1rem;
                 cursor: pointer;
+
+                .secondary {
+                    display: none;
+                }
             }
         }
     }
@@ -72,5 +76,35 @@
 
     &.open .slide {
         display: block;
+    }
+
+    &.open {
+        .sectionHeader {
+            .sectionButtons {
+                button.collapseSection {
+                    .primary {
+                        display: none;
+                    }
+                    .secondary {
+                        display: initial;
+                    }
+                }
+            }
+        }
+    }
+
+    &.selected {
+        .sectionHeader {
+            .sectionButtons {
+                button.selectSection {
+                    .primary {
+                        display: none;
+                    }
+                    .secondary {
+                        display: initial;
+                    }
+                }
+            }
+        }
     }
 }
