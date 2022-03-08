@@ -81,8 +81,8 @@ let optionOpen: boolean;
 function openOption() {
     if (!optionOpen) {
         const optionWindow = new BrowserWindow({
-            width: 500,
-            height: 500,
+            width: 600,
+            height: 600,
             resizable: false,
             useContentSize: true,
             webPreferences: {

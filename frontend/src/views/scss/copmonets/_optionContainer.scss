@@ -1,0 +1,94 @@
+.option-container{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: var(--background--light);
+    height: $window-height;
+
+    .main-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        // justify-content: space-between;
+        //margin: 0 auto;
+        padding: $size-1;
+        height: $window-height;
+    
+        .headline {
+            text-align: center;
+        }
+    
+        .container-section {
+            display: flex;
+            flex-direction: column;
+    
+            .section {
+                display: flex;
+    
+                .lbl {
+                    flex: 1;
+                    justify-content: left;
+                }
+
+                .browse-input{
+                    flex: 1.2;
+                    display: flex;
+                    min-width: 0;
+
+                    .input-path {
+                        color: var(--font--primary);
+                        flex: 1;
+                        margin: 0 $size-1;
+                        min-height: 0;
+                        min-width: 0;
+                    }
+        
+                    .browse-btn {
+                        margin-left: $size-2;
+                        padding: 0 $size-2;
+                    }
+                }
+            }
+        }
+    }
+    
+    .master-container{
+        display: flex;
+        flex-direction: column;
+        
+        .section {
+            display: flex;
+
+            .lbl {
+                flex: 1;
+                justify-content: left;
+            }
+
+            .input-path {
+                color: var(--font--primary);
+                flex: 1;
+                margin: 0 $size-1;
+                min-height: 0;
+                min-width: 0;
+            }
+
+            .browse-btn {
+                margin-left: $size-2;
+                padding: 0 $size-2;
+            }
+        }
+
+    }
+
+
+    .buttons {
+        display: flex;
+        justify-content: flex-end;
+        padding: $size-7;
+
+        .cancel-btn {
+            margin-right: $size-2;
+        }
+    }
+}
+
