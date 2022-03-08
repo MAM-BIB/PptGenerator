@@ -80,6 +80,7 @@
                 //justify-content: space-between;
                 min-height: 0;
                 min-width: 0;
+                margin: $size-4 $size-4 0 $size-4;
 
                 .location-lbl {
                     display: flex;
@@ -127,7 +128,7 @@
             .btn-container {
                 display: flex;
                 justify-content: flex-end;
-                padding: $size-7;
+                padding: $size-4;
             }
         }
     }
