@@ -29,4 +29,6 @@ export interface Config {
     presetPath: string;
     presentationMasters: PresentationMaster[];
     ignoreHiddenSlides: boolean;
+    basePath: string;
+    defaultExportPath: string;
 }
