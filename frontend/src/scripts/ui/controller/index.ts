@@ -41,15 +41,6 @@ async function read() {
 read();
 
 exportBtn.addEventListener("click", async () => {
-    const positions: number[] = [];
-    for (const sectionElement of sectionElements) {
-        for (const slideElement of sectionElement.selectedSlides) {
-            if (slideElement.element.style.display !== "none") {
-                positions.push(slideElement.slide.Position);
-            }
-        }
-    }
-
     await ipcRenderer.invoke(
         "openWindow",
         "export.html",
@@ -63,19 +54,7 @@ exportBtn.addEventListener("click", async () => {
                 contextIsolation: false,
             },
         },
-        [
-            "-mode",
-            "create",
-            "-inPath",
-            getConfig().presentationMasters[0].paths[0],
-            "-outPath",
-            path.join(getConfig().defaultExportPath, "test.pptx"),
-            "-slidePos",
-            positions.join(","),
-            "-basePath",
-            getConfig().basePath,
-            "-deleteFirstSlide",
-        ],
+        presentations,
     );
 });
 

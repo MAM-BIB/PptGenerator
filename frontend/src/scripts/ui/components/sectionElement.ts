@@ -76,7 +76,7 @@ export default class SectionElement {
     }
 
     private handleSelectionChange() {
-        const nr = this.slides.filter((elem) => elem.selected).length;
+        const nr = this.slides.filter((elem) => elem.slide.IsSelected).length;
 
         if (nr > 0) {
             this.element.classList.add("selected");
@@ -126,7 +126,7 @@ export default class SectionElement {
         buttonSelect.classList.add("selectSection");
         buttonSelect.addEventListener("click", () => {
             const { ignoreHiddenSlides } = getConfig();
-            const slidesAreSelected = this.slides.some((elem) => elem.selected);
+            const slidesAreSelected = this.slides.some((elem) => elem.slide.IsSelected);
 
             for (const slide of this.slides) {
                 if (slidesAreSelected) {

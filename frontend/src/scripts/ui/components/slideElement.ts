@@ -1,42 +1,41 @@
 import { Slide } from "../../interfaces/interfaces";
 
 export default class SlideElement {
-    public selected: boolean;
     public slide: Slide;
     public element: HTMLDivElement;
 
     constructor(slide: Slide) {
         this.element = document.createElement("div") as HTMLDivElement;
-        this.selected = false;
         this.slide = slide;
+        this.slide.IsSelected = false;
         this.createSlide();
     }
 
     public select(): boolean {
-        if (this.selected) {
+        if (this.slide.IsSelected) {
             return false;
         }
 
-        this.selected = true;
+        this.slide.IsSelected = true;
         this.element.classList.add("selected");
         this.element.dispatchEvent(new Event("selected"));
         return true;
     }
 
     public deselect(): boolean {
-        if (!this.selected) {
+        if (!this.slide.IsSelected) {
             return false;
         }
 
-        this.selected = false;
+        this.slide.IsSelected = false;
         this.element.classList.remove("selected");
         this.element.dispatchEvent(new Event("deselected"));
         return true;
     }
 
     public toggleSelection() {
-        this.selected = !this.selected;
-        if (this.selected) {
+        this.slide.IsSelected = !this.slide.IsSelected;
+        if (this.slide.IsSelected) {
             this.element.classList.add("selected");
             this.element.dispatchEvent(new Event("selected"));
         } else {
