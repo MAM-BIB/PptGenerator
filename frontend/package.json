@@ -5,7 +5,11 @@
   "main": "./build/main.js",
   "scripts": {
     "tsc": "tsc",
-    "build": "npm run lint && tsc && copyfiles -u 1 ./src/**/*.html ./build && copyfiles -u 1 ./src/**/*.min.css ./build && copyfiles -u 1 ./src/**/*.svg ./build",
+    "build-css": "copyfiles -u 1 ./src/**/*.min.css ./build",
+    "build-imgs": "copyfiles -u 1 ./src/**/*.svg ./build",
+    "build-html": "copyfiles -u 1 ./src/**/*.html ./build",
+    "build-web": "npm run build-html && npm run build-css && npm run build-imgs",
+    "build": "npm run lint && tsc && npm run build-web",
     "clean": "rimraf ./build",
     "start": "npm run clean && npm run build && electron .",
     "lint": "eslint . --ext .ts",

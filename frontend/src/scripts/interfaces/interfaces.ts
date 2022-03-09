@@ -32,3 +32,14 @@ export interface Config {
     basePath: string;
     defaultExportPath: string;
 }
+
+export interface Preset{
+    path: string;
+    sections: PresetSection[];
+}
+
+export interface PresetSection{
+    name: string;
+    includedSlides: string[];
+    ignoredSlides: string[];
+}
