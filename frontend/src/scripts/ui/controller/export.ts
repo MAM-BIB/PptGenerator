@@ -4,7 +4,9 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
-import { Presentation } from "../../interfaces/interfaces";
+import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+
+const fs = fsBase.promises;
 
 const fs = fsBase.promises;
 
@@ -104,4 +106,32 @@ function exportToPptx(outPath: string) {
     bat.on("exit", (code) => {
         console.log(`Child exited with code ${code}`);
     });
+}
+
+async function createPreset(savePath: string) {
+    const preset: Preset = {
+        path: savePath,
+        sections: [],
+    };
+
+    for (const presentation of presentations) {
+        for (const section of presentation.Sections) {
+            const presetSection: PresetSection = {
+                name: section.Name,
+                includedSlides: [],
+                ignoredSlides: [],
+            };
+            for (const slide of section.Slides) {
+                if (slide.IsSelected) {
+                    presetSection.includedSlides.push(slide.Uid);
+                } else {
+                    presetSection.ignoredSlides.push(slide.Uid);
+                }
+            }
+            preset.sections.push(presetSection);
+        }
+    }
+
+    const presetJson = JSON.stringify(preset, null, "\t");
+    fs.writeFile(savePath, presetJson);
 }
