@@ -44,3 +44,7 @@ export interface PresetSection {
     includedSlides: string[];
     ignoredSlides: string[];
 }
+
+export interface PresetSlide {
+    uid: string;
+}
