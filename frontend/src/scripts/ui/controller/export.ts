@@ -128,7 +128,9 @@ async function createPreset(savePath: string) {
                     presetSection.ignoredSlides.push(slide.Uid);
                 }
             }
-            preset.sections.push(presetSection);
+            if (presetSection.includedSlides.length > 0) {
+                preset.sections.push(presetSection);
+            }
         }
     }
 
