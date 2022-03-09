@@ -1,10 +1,9 @@
 import fsBase from "fs";
 import { spawn } from "child_process";
 import path from "path";
-import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
 import { Presentation } from "../../interfaces/interfaces";
-import getConfig from "../../config";
+import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 
@@ -75,17 +74,3 @@ exportBtn.addEventListener("click", () => {
         console.log(`Child exited with code ${code}`);
     });
 });
-
-for (const button of document.getElementsByClassName("browse-btn")) {
-    button.addEventListener("click", async () => {
-        try {
-            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDirectoryDialog");
-            if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
-                const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = directoryPath.filePaths;
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });
-}
