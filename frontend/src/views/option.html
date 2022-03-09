@@ -1,12 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./css/main.min.css" />
-        <title>Option</title>
-    </head>
 
 <head>
     <meta charset="UTF-8" />
@@ -28,14 +21,11 @@
                         <button class="browse-btn directory">...</button>
                     </div>
                 </div>
-                <div class="master-container">
-                    <h2><u> presentationMasters </u></h2>
-                    <div>
-                        <label>Language:</label>
-                        <select>
-                            <option value="de">de</option>
-                            <option value="en">en</option>
-                        </select>
+                <div class="section meta-json">
+                    <label for="meta-json" class="lbl meta">Meta-Json Location</label>
+                    <div class="browse-input">
+                        <input type="text" class="input-path" id="meta-json">
+                        <button class="browse-btn file">...</button>
                     </div>
                 </div>
                 <div class="section meta-pics">
@@ -79,9 +69,15 @@
                 </div>
             </div>
         </div>
-    </body>
+        <div class="buttons">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-btn" disabled>Save</button>
+        </div>
+    </div>
+</body>
 
-    <script>
-        require("../ui/controller/option.js");
-    </script>
+<script>
+    require("../ui/controller/option.js");
+</script>
+
 </html>
