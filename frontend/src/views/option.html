@@ -18,21 +18,21 @@
                     <label for="default-export" class="lbl default">Default export Location</label>
                     <div class="browse-input">
                         <input type="text" class="input-path" id="default-export">
-                        <button class="browse-btn">...</button>
+                        <button class="browse-btn directory">...</button>
                     </div>
                 </div>
                 <div class="section meta-json">
                     <label for="meta-json" class="lbl meta">Meta-Json Location</label>
                     <div class="browse-input">
                         <input type="text" class="input-path" id="meta-json">
-                        <button class="browse-btn">...</button>
+                        <button class="browse-btn file">...</button>
                     </div>
                 </div>
                 <div class="section meta-pics">
                     <label for="meta-pics" class="lbl meta">Meta-Pics Location</label>
                     <div class="browse-input">
                         <input type="text" class="input-path" id="meta-pics">
-                        <button class="browse-btn">...</button>
+                        <button class="browse-btn directory">...</button>
                     </div>
                 </div>
                 <div class="section toggle-button">
@@ -47,6 +47,13 @@
             </div>
             <div class="master-container">
                 <h2><u> presentationMasters </u></h2>
+                <div>
+                    <label>Language:</label>
+                    <select>
+                        <option value="de">de</option>
+                        <option value="en">en</option>
+                    </select>
+                </div>
                 <div class="section Master">
                     <label class="lbl meta">Meta-Pics Location</label>
                     <input type="text" class="input-path">
@@ -56,7 +63,7 @@
         </div>
         <div class="buttons">
             <button class="cancel-btn">Cancel</button>
-            <button class="save-btn">Save</button>
+            <button class="save-btn" disabled>Save</button>
         </div>
     </div>
 </body>

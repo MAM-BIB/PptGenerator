@@ -73,58 +73,6 @@
                 }
             }
 
-            .location-specification {
-                display: flex;
-                flex-direction: row;
-                align-items: stretch;
-                //justify-content: space-between;
-                min-height: 0;
-                min-width: 0;
-                margin: $size-4 $size-4 0 $size-4;
-
-                .location-lbl {
-                    display: flex;
-                    align-items: center;
-                    min-height: 0;
-                    min-width: 0;
-                }
-
-                .browse-btn-and-presentation-path {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: stretch;
-                    min-height: 0;
-                    min-width: 0;
-
-                    .presentation-name {
-                        flex: 1;
-                        color: var(--font--primary);
-                        margin: 0 $size-1;
-                        min-height: 0;
-                        min-width: 0;
-                    }
-
-                    .browse-btn {
-                        justify-content: flex-end;
-                        min-height: 0;
-                        min-width: 0;
-                        padding: $size-1 $size-2;
-                    }
-                }
-
-                @media only screen and (max-width: 640px) {
-                    flex-direction: column;
-
-                    .browse-btn-and-presentation-path {
-                        margin: $size-1 0;
-                        .presentation-name {
-                            margin: 0 $size-1 0 0;
-                        }
-                    }
-                }
-            }
-
             .btn-container {
                 display: flex;
                 justify-content: flex-end;

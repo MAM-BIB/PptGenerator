@@ -1,4 +1,4 @@
-.option-container{
+.option-container {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -13,24 +13,24 @@
         //margin: 0 auto;
         padding: $size-1;
         height: $window-height;
-    
+
         .headline {
             text-align: center;
         }
-    
+
         .container-section {
             display: flex;
             flex-direction: column;
-    
+
             .section {
                 display: flex;
-    
+
                 .lbl {
                     flex: 1;
                     justify-content: left;
                 }
 
-                .browse-input{
+                .browse-input {
                     flex: 1.2;
                     display: flex;
                     min-width: 0;
@@ -42,7 +42,7 @@
                         min-height: 0;
                         min-width: 0;
                     }
-        
+
                     .browse-btn {
                         margin-left: $size-2;
                         padding: 0 $size-2;
@@ -51,11 +51,11 @@
             }
         }
     }
-    
-    .master-container{
+
+    .master-container {
         display: flex;
         flex-direction: column;
-        
+
         .section {
             display: flex;
 
@@ -77,9 +77,7 @@
                 padding: 0 $size-2;
             }
         }
-
     }
-
 
     .buttons {
         display: flex;
@@ -91,4 +89,3 @@
         }
     }
 }
-

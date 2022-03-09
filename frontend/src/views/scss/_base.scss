@@ -27,6 +27,11 @@ button {
         background-color: var(--btn--hover--background);
         box-shadow: $shadow-2;
     }
+
+    &.save-btn:disabled {
+        background-color: #{$accent--color}50;
+        box-shadow: none;
+    }
 }
 
 input[type="text"] {
