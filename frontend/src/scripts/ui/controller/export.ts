@@ -8,8 +8,6 @@ import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces
 
 const fs = fsBase.promises;
 
-const fs = fsBase.promises;
-
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const nameInput = document.getElementById("name-input") as HTMLInputElement;
@@ -60,6 +58,8 @@ exportBtn.addEventListener("click", () => {
             alert("The selected directory for the preset does not exist!");
             return;
         }
+
+        createPreset(path.join(presetPath, `${name}.json`));
     }
 
     exportToPptx(path.join(outPath, `${name}.pptx`));
