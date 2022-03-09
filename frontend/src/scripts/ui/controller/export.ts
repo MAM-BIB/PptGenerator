@@ -1,9 +1,12 @@
 import { ipcRenderer } from "electron";
 import { spawn } from "child_process";
 import path from "path";
+import fsBase from "fs";
 
 import { getConfig } from "../../config";
 import { Presentation } from "../../interfaces/interfaces";
+
+const fs = fsBase.promises;
 
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -20,19 +23,51 @@ ipcRenderer.on("data", (event, data) => {
     console.log("presentations", presentations);
 });
 
+pathInput.value = getConfig().defaultExportPath;
+presetPathInput.value = getConfig().presetPath;
+
 savePresetToggleBtn.addEventListener("change", () => {
     presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
 });
 
 exportBtn.addEventListener("click", () => {
-    exportToPptx();
+    let name = nameInput.value;
+    const outPath = pathInput.value;
+
+    // Validate input
+    if (name.length === 0) {
+        alert("Please enter a name!");
+        return;
+    }
+    if (outPath.length === 0) {
+        alert("Please enter a name!");
+        return;
+    }
+    if (!fsBase.existsSync(outPath)) {
+        alert("The selected directory does not exist!");
+        return;
+    }
+
+    if (name.endsWith(".pptx")) {
+        name = name.substring(0, name.length - 5);
+    }
+
+    if (savePresetToggleBtn.checked) {
+        const presetPath = presetPathInput.value;
+        if (!fsBase.existsSync(presetPath)) {
+            alert("The selected directory for the preset does not exist!");
+            return;
+        }
+    }
+
+    exportToPptx(path.join(outPath, `${name}.pptx`));
 });
 
 cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
-function exportToPptx() {
+function exportToPptx(outPath: string) {
     const positions: number[] = [];
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
@@ -50,7 +85,7 @@ function exportToPptx() {
         "-inPath",
         getConfig().presentationMasters[0].paths[0],
         "-outPath",
-        path.join(getConfig().defaultExportPath, "test.pptx"),
+        outPath,
         "-slidePos",
         positions.join(","),
         "-basePath",
