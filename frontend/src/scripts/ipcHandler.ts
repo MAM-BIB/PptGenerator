@@ -8,12 +8,10 @@ export default function initIpcHandlers() {
         BrowserWindow.fromWebContents(event.sender)?.close();
     });
 
-    ipcMain.handle("openDialog", async (event, ...args) => {
+    ipcMain.handle("openDialog", async (event, options: Electron.OpenDialogOptions) => {
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
         if (browserWindow) {
-            return dialog.showOpenDialog(browserWindow, {
-                properties: args,
-            });
+            return dialog.showOpenDialog(browserWindow, options);
         }
         return Promise.reject(new Error("Could not open dialog"));
     });
