@@ -1,6 +1,7 @@
 import fsBase from "fs";
 import { spawn } from "child_process";
 import path from "path";
+import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
 import { Presentation } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
@@ -13,8 +14,10 @@ const { metaJsonPath } = getConfig();
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
+const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
+let preset;
 const sectionElements: SectionElement[] = [];
 
 async function read() {
@@ -73,4 +76,16 @@ exportBtn.addEventListener("click", () => {
     bat.on("exit", (code) => {
         console.log(`Child exited with code ${code}`);
     });
+});
+
+loadPresetBtn.addEventListener("click", async () => {
+    try {
+        const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
+        if (!filePath.canceled && filePath.filePaths.length > 0) {
+            const presetJson = await fs.readFile(filePath.filePaths[0], { encoding: "utf-8" });
+            preset = JSON.parse(presetJson);
+        }
+    } catch (error) {
+        console.log(error);
+    }
 });
