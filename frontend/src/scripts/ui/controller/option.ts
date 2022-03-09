@@ -9,13 +9,12 @@ const metaJson = document.getElementById("meta-json") as HTMLInputElement;
 const metaPics = document.getElementById("meta-pics") as HTMLInputElement;
 const hiddenSlide = document.getElementById("ignore-hidden-slides-toggle-btn") as HTMLInputElement;
 const addBtn = document.getElementById("add-btn") as HTMLButtonElement;
+const newPresentationSection = document.getElementById("presentation-section") as HTMLDivElement;
 
 fillInput();
 
 addBtn.addEventListener("click", (e) => {
-    if (!saveBtn.disabled) {
-        setConfig(config);
-    }
+    newPresentation();
 });
 
 saveBtn.addEventListener("click", (e) => {
@@ -94,4 +93,27 @@ for (const button of document.getElementsByClassName("browse-btn file")) {
             console.log(error);
         }
     });
+}
+
+function newPresentation() {
+    const newInput = document.createElement("input");
+    newInput.className = "input-path";
+    newInput.type = "text";
+
+    const newDeleteBtn = document.createElement("button");
+    newDeleteBtn.textContent = "X";
+    newDeleteBtn.className = "delete-btn";
+
+    const newBrowseBtn = document.createElement("button");
+    newBrowseBtn.textContent = "...";
+    newBrowseBtn.className = "browse-btn";
+
+    const newdiv = document.createElement("div");
+    newdiv.className = "section presentation";
+
+    newdiv.appendChild(newDeleteBtn);
+    newdiv.appendChild(newInput);
+    newdiv.appendChild(newBrowseBtn);
+
+    newPresentationSection.appendChild(newdiv);
 }
