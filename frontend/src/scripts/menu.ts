@@ -2,7 +2,7 @@ import { app, BrowserWindow, Menu, MenuItem } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 
-import getConfig from "./config";
+import { getConfig } from "./config";
 
 export default function initMenu() {
     const menu = Menu.buildFromTemplate([
@@ -81,8 +81,8 @@ let optionOpen: boolean;
 function openOption() {
     if (!optionOpen) {
         const optionWindow = new BrowserWindow({
-            width: 500,
-            height: 500,
+            width: 600,
+            height: 600,
             resizable: false,
             useContentSize: true,
             webPreferences: {

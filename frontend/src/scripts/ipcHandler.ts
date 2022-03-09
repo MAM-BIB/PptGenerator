@@ -8,11 +8,11 @@ export default function initIpcHandlers() {
         BrowserWindow.fromWebContents(event.sender)?.close();
     });
 
-    ipcMain.handle("openDirectoryDialog", async (event) => {
+    ipcMain.handle("openDialog", async (event, ...args) => {
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
         if (browserWindow) {
             return dialog.showOpenDialog(browserWindow, {
-                properties: ["openDirectory"],
+                properties: args,
             });
         }
         return Promise.reject(new Error("Could not open dialog"));

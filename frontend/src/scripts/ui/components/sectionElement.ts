@@ -2,7 +2,7 @@ import { Section } from "../../interfaces/interfaces";
 
 import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
-import getConfig from "../../config";
+import { getConfig } from "../../config";
 
 enum SectionType {
     "normal",
