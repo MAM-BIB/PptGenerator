@@ -1,5 +1,4 @@
 import fsBase from "fs";
-import { spawn } from "child_process";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
@@ -39,7 +38,7 @@ async function read() {
 
 read();
 
-exportBtn.addEventListener("click", () => {
+exportBtn.addEventListener("click", async () => {
     const positions: number[] = [];
     for (const sectionElement of sectionElements) {
         for (const slideElement of sectionElement.selectedSlides) {
@@ -49,31 +48,33 @@ exportBtn.addEventListener("click", () => {
         }
     }
 
-    const bat = spawn(getConfig().coreApplication, [
-        "-mode",
-        "create",
-        "-inPath",
-        getConfig().presentationMasters[0].paths[0],
-        "-outPath",
-        path.join(getConfig().defaultExportPath, "test.pptx"),
-        "-slidePos",
-        positions.join(","),
-        "-basePath",
-        getConfig().basePath,
-        "-deleteFirstSlide",
-    ]);
-
-    bat.stdout.on("data", (data) => {
-        console.log(data.toString());
-    });
-
-    bat.stderr.on("data", (data) => {
-        console.error(data.toString());
-    });
-
-    bat.on("exit", (code) => {
-        console.log(`Child exited with code ${code}`);
-    });
+    await ipcRenderer.invoke(
+        "openWindow",
+        "export.html",
+        {
+            width: 1000,
+            height: 600,
+            minWidth: 500,
+            minHeight: 400,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+        },
+        [
+            "-mode",
+            "create",
+            "-inPath",
+            getConfig().presentationMasters[0].paths[0],
+            "-outPath",
+            path.join(getConfig().defaultExportPath, "test.pptx"),
+            "-slidePos",
+            positions.join(","),
+            "-basePath",
+            getConfig().basePath,
+            "-deleteFirstSlide",
+        ],
+    );
 });
 
 for (const button of document.getElementsByClassName("browse-btn")) {
