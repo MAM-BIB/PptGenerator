@@ -9,32 +9,46 @@
     </head>
 
     <body>
-      <div class="main-section">
-         <h1 class="headline">Export</h1>
-
-         <div class="container-section">
-             <div class="section default-export">
-                 <label class="lbl default">Default export Location</label>
-                 <input type="text" class="input-path">
-                 <button class="browse-btn">...</button>
-             </div>
-             <div class="section meta-json">
-                 <label class="lbl meta"></labelclass>Meta-Json Location</label>
-                 <input type="text" class="input-path">
-                 <button class="browse-btn">...</button>
-             </div>
-             <div class="section meta-pics">
-                 <label class="lbl meta"></labelclass>Meta-Pics Location</label>
-                 <input type="text" class="input-path">
-                 <button class="browse-btn">...</button>
-             </div>
-         </div>
-
-         <div class="buttons">
-             <button class="cancel-btn">Cancel</button>
-             <button class="save-btn">Export</button>
-         </div>
-     </div>
+        <div class="option-container">
+            <div class="main-section">
+                <h1 class="headline">Export</h1>
+                <div class="container-section">
+                    <div class="section">
+                        <label for="name-input" class="lbl">Name:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="name-input" />
+                        </div>
+                    </div>
+                    <div class="section">
+                        <label for="path-input" class="lbl">Location:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="path-input" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                    <div class="section toggle-button">
+                        <label for="savePresetToggleBtn" class="ignore-lbl">Save as preset:</label>
+                        <div class="checkbox-toggle-btn">
+                            <label class="switch">
+                                <input type="checkbox" id="save-preset-toggle-btn" />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="section" id="preset-path" style="display: none">
+                        <label for="preset-path-input" class="lbl">Preset location:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="preset-path-input" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="cancel-btn">Cancel</button>
+                <button id="export-btn">Export</button>
+            </div>
+        </div>
     </body>
 
     <script>

@@ -54,8 +54,8 @@ exportBtn.addEventListener("click", async () => {
         "openWindow",
         "export.html",
         {
-            width: 1000,
-            height: 600,
+            width: 500,
+            height: 400,
             minWidth: 500,
             minHeight: 400,
             webPreferences: {
