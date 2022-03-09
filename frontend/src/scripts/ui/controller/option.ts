@@ -7,9 +7,16 @@ const saveBtn = document.querySelector(".save-btn") as HTMLButtonElement;
 const defaultExport = document.getElementById("default-export") as HTMLInputElement;
 const metaJson = document.getElementById("meta-json") as HTMLInputElement;
 const metaPics = document.getElementById("meta-pics") as HTMLInputElement;
-const hiddenSlide = document.getElementById("ignoreHiddenSlidesToggleBtn") as HTMLInputElement;
+const hiddenSlide = document.getElementById("ignore-hidden-slides-toggle-btn") as HTMLInputElement;
+const addBtn = document.getElementById("add-btn") as HTMLButtonElement;
 
 fillInput();
+
+addBtn.addEventListener("click", (e) => {
+    if (!saveBtn.disabled) {
+        setConfig(config);
+    }
+});
 
 saveBtn.addEventListener("click", (e) => {
     if (!saveBtn.disabled) {
@@ -19,6 +26,9 @@ saveBtn.addEventListener("click", (e) => {
 
 // Send a message to the main-process if the cancel-button is clicked.
 cancelBtn.addEventListener("click", () => {
+    if (!saveBtn.disabled) {
+        // Alert willst du wirklich diese Einstellungen löschen
+    }
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
@@ -49,10 +59,17 @@ hiddenSlide.addEventListener("change", () => {
     saveBtn.disabled = false;
 });
 
+hiddenSlide.addEventListener("change", () => {
+    config.ignoreHiddenSlides = hiddenSlide.checked;
+    saveBtn.disabled = false;
+});
+
 for (const button of document.getElementsByClassName("browse-btn directory")) {
     button.addEventListener("click", async () => {
         try {
-            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openDirectory");
+            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", {
+                properties: ["openDirectory"],
+            });
             if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
                 const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
                 [input.value] = directoryPath.filePaths;
@@ -66,10 +83,12 @@ for (const button of document.getElementsByClassName("browse-btn directory")) {
 for (const button of document.getElementsByClassName("browse-btn file")) {
     button.addEventListener("click", async () => {
         try {
-            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
-            if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
+            const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", {
+                properties: ["openFile"],
+            });
+            if (!filePath.canceled && filePath.filePaths.length > 0) {
                 const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = directoryPath.filePaths;
+                [input.value] = filePath.filePaths;
             }
         } catch (error) {
             console.log(error);

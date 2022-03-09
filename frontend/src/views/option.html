@@ -14,7 +14,7 @@
         <div class="main-section">
             <h1 class="headline">Option</h1>
             <div class="container-section">
-                <div class=" section default-export">
+                <div class="section default-export">
                     <label for="default-export" class="lbl default">Default export Location</label>
                     <div class="browse-input">
                         <input type="text" class="input-path" id="default-export">
@@ -36,10 +36,10 @@
                     </div>
                 </div>
                 <div class="section toggle-button">
-                    <label for="ignoreHiddenSlidesToggleBtn" class="ignore-lbl">IgnoreHiddenSlides:</label>
+                    <label for="ignore-hidden-slides-toggle-btn" class="ignore-lbl">IgnoreHiddenSlides:</label>
                     <div class="checkbox-toggle-btn">
                         <label class="switch">
-                            <input type="checkbox" id="ignoreHiddenSlidesToggleBtn">
+                            <input type="checkbox" id="ignore-hidden-slides-toggle-btn">
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -47,17 +47,25 @@
             </div>
             <div class="master-container">
                 <h2><u> presentationMasters </u></h2>
-                <div>
-                    <label>Language:</label>
-                    <select>
-                        <option value="de">de</option>
-                        <option value="en">en</option>
-                    </select>
+                <div class="section select">
+                    <label class="lbl">Language:</label>
+                    <div class="select-language">
+                        <select>
+                            <option value="de">de</option>
+                            <option value="en">en</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="section Master">
-                    <label class="lbl meta">Meta-Pics Location</label>
-                    <input type="text" class="input-path">
-                    <button class="browse-btn">...</button>
+                <h3>Presentation:</h3>
+                <div class="section master">
+                    <div class="section presentation">
+                        <button class="delete-btn">X</button>
+                        <input type="text" class="input-path">
+                        <button class="browse-btn">...</button>
+                    </div>
+                </div>
+                <div class="option-add-btn">
+                    <button class="add-btn" id="add-btn" >Add</button>
                 </div>
             </div>
         </div>
