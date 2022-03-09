@@ -1,9 +1,9 @@
 import fsBase from "fs";
 import { spawn } from "child_process";
-import path from "path";
+import path, { format } from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation } from "../../interfaces/interfaces";
+import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
@@ -17,7 +17,7 @@ const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
-let preset;
+let loadedPreset: Preset;
 const sectionElements: SectionElement[] = [];
 
 async function read() {
@@ -83,9 +83,33 @@ loadPresetBtn.addEventListener("click", async () => {
         const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
         if (!filePath.canceled && filePath.filePaths.length > 0) {
             const presetJson = await fs.readFile(filePath.filePaths[0], { encoding: "utf-8" });
-            preset = JSON.parse(presetJson);
+            loadedPreset = JSON.parse(presetJson) as Preset;
+            loadPreset();
         }
     } catch (error) {
         console.log(error);
     }
 });
+
+function loadPreset() {
+    // deselect all selected slides
+    for (const sectionElement of sectionElements) {
+        for (const slideElement of sectionElement.slides) {
+            slideElement.deselect();
+        }
+    }
+
+    // go through every section
+    for (const section of loadedPreset.sections) {
+        // go through every included slide
+        for (const slideUID of section.includedSlides) {
+            for (const sectionElement of sectionElements) {
+                for (const slideElement of sectionElement.slides) {
+                    if (slideUID === slideElement.slide.Uid) {
+                        slideElement.select();
+                    }
+                }
+            }
+        }
+    }
+}
