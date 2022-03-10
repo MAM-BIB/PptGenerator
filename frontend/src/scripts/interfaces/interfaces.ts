@@ -44,3 +44,9 @@ export interface PresetSection {
     includedSlides: string[];
     ignoredSlides: string[];
 }
+
+export interface PopupOptions {
+    title: string;
+    heading: string;
+    text: string;
+}
