@@ -3,6 +3,7 @@ import fs from "fs";
 
 import { getConfig, setConfig } from "../../config";
 import openPopup from "../../helper";
+import { addAllBrowseHandler, addBrowseHandler } from "../components/browseButton";
 
 const config = getConfig();
 const cancelBtn = document.querySelector(".cancel-btn") as HTMLButtonElement;
@@ -16,6 +17,7 @@ const newPresentationSection = document.getElementById("presentation-section") a
 const selectLanguage = document.getElementById("language-select") as HTMLSelectElement;
 
 fillInput();
+addAllBrowseHandler();
 
 for (const master of config.presentationMasters) {
     const newoption = document.createElement("option");
@@ -104,40 +106,6 @@ hiddenSlide.addEventListener("change", () => {
     saveBtn.disabled = false;
 });
 
-for (const button of document.getElementsByClassName("browse-btn directory")) {
-    button.addEventListener("click", async () => {
-        try {
-            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", {
-                properties: ["openDirectory"],
-            });
-            if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
-                const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = directoryPath.filePaths;
-                input.dispatchEvent(new Event("change"));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });
-}
-
-for (const button of document.getElementsByClassName("browse-btn file")) {
-    button.addEventListener("click", async () => {
-        try {
-            const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", {
-                properties: ["openFile"],
-            });
-            if (!filePath.canceled && filePath.filePaths.length > 0) {
-                const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = filePath.filePaths;
-                input.dispatchEvent(new Event("change"));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });
-}
-
 function newPresentation(masterIndex: number, pathIndex: number) {
     const newdiv = document.createElement("div");
     newdiv.className = "section presentation";
@@ -164,20 +132,7 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newBrowseBtn.textContent = "...";
     newBrowseBtn.className = "browse-btn";
 
-    newBrowseBtn.addEventListener("click", async () => {
-        try {
-            const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", {
-                properties: ["openFile"],
-            });
-            if (!filePath.canceled && filePath.filePaths.length > 0) {
-                const input = newBrowseBtn.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = filePath.filePaths;
-                input.dispatchEvent(new Event("change"));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });
+    addBrowseHandler(newBrowseBtn);
 
     newdiv.appendChild(newDeleteBtn);
     newdiv.appendChild(newInput);
