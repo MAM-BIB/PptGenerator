@@ -15,7 +15,7 @@ const addBtn = document.getElementById("add-btn") as HTMLButtonElement;
 const newPresentationSection = document.getElementById("presentation-section") as HTMLDivElement;
 const selectLanguage = document.getElementById("language-select") as HTMLSelectElement;
 
-const inputPresentation = fillInput();
+fillInput();
 
 for (const master of config.presentationMasters) {
     const newoption = document.createElement("option");
@@ -33,7 +33,7 @@ selectLanguage.addEventListener("change", () => {
     addBtn.disabled = false;
 });
 
-addBtn.addEventListener("click", (e) => {
+addBtn.addEventListener("click", () => {
     if (selectLanguage.selectedIndex - 1 < 0 || selectLanguage.selectedIndex - 1 >= config.presentationMasters.length) {
         return;
     }
@@ -43,7 +43,7 @@ addBtn.addEventListener("click", (e) => {
     newPresentation(masterIndex, pathIndex);
 });
 
-saveBtn.addEventListener("click", (e) => {
+saveBtn.addEventListener("click", () => {
     if (!saveBtn.disabled) {
         for (let masterIndex = 0; masterIndex < config.presentationMasters.length; masterIndex++) {
             const pahts = config.presentationMasters[masterIndex].paths;
@@ -155,12 +155,7 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newDeleteBtn.textContent = "X";
     newDeleteBtn.className = "delete-btn";
     newDeleteBtn.addEventListener("click", () => {
-        console.log(config.presentationMasters);
-        console.log(pathIndex);
-        console.log(masterIndex);
-
         config.presentationMasters[masterIndex].paths[pathIndex] = "";
-        console.log(config.presentationMasters[masterIndex].paths[pathIndex]);
         newdiv.remove();
         saveBtn.disabled = false;
     });

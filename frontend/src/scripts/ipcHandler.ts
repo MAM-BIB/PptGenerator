@@ -1,5 +1,4 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import { electron } from "process";
 import path from "path";
 
 export default function initIpcHandlers() {

@@ -23,7 +23,6 @@ let presentations: Presentation[];
 
 ipcRenderer.on("data", (event, data) => {
     presentations = data;
-    console.log("presentations", presentations);
 });
 
 pathInput.value = getConfig().defaultExportPath;
@@ -106,7 +105,7 @@ function exportToPptx(outPath: string) {
     ]);
 
     bat.stderr.on("data", (d) => {
-        openPopup({ text: `An error occurred during the export:\n${d.toString()}`, heading: "Error" });
+        openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
     });
 
     bat.on("exit", (code) => {

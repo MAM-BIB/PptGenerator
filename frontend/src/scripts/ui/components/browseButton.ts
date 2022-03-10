@@ -28,7 +28,7 @@ export function addBrowseHandler(button: HTMLButtonElement) {
                 input.dispatchEvent(new Event("change"));
             }
         } catch (error) {
-            console.log(error);
+            // Error
         }
     });
 }
