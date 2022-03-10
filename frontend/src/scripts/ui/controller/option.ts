@@ -1,4 +1,4 @@
-import { ipcRenderer, OpenDialogReturnValue } from "electron";
+import { ipcRenderer } from "electron";
 import fs from "fs";
 
 import { getConfig, setConfig } from "../../config";
