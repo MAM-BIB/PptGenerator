@@ -1,21 +1,4 @@
 {
-    "liveSassCompile.settings.formats": [
-        {
-            "format": "expanded",
-            "extensionName": ".css",
-            "savePath": "/src/views/css"
-        },
-        {
-            "extensionName": ".min.css",
-            "format": "compressed",
-            "savePath": "/src/views/css"
-        }
-    ],
-    "liveSassCompile.settings.excludeList": [
-        "**/node_modules/**",
-        ".vscode/**"
-    ],
-    "liveSassCompile.settings.generateMap": false,
     "prettier.trailingComma": "all",
     "prettier.printWidth": 120
 }

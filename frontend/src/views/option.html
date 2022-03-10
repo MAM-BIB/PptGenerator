@@ -1,82 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>Option</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/main.min.css">
-    <title>Option</title>
-</head>
-
-<body>
-    <div class="option-container">
-        <div class="main-section">
-            <h1 class="headline">Option</h1>
-            <div class="container-section">
-                <div class="section default-export">
-                    <label for="default-export" class="lbl default">Default export Location</label>
-                    <div class="browse-input">
-                        <input type="text" class="input-path" id="default-export">
-                        <button class="browse-btn directory">...</button>
+    <body>
+        <div class="option-container">
+            <div class="main-section">
+                <h1 class="headline">Option</h1>
+                <div class="container-section">
+                    <div class="section default-export">
+                        <label for="default-export" class="lbl default">Default export Location</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="default-export" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                    <div class="section meta-json">
+                        <label for="meta-json" class="lbl meta">Meta-Json Location</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="meta-json" />
+                            <button class="browse-btn file">...</button>
+                        </div>
+                    </div>
+                    <div class="section meta-pics">
+                        <label for="meta-pics" class="lbl meta">Meta-Pics Location</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="meta-pics" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                    <div class="section toggle-button">
+                        <label for="ignore-hidden-slides-toggle-btn" class="ignore-lbl">IgnoreHiddenSlides:</label>
+                        <div class="checkbox-toggle-btn">
+                            <label class="switch">
+                                <input type="checkbox" id="ignore-hidden-slides-toggle-btn" />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="section meta-json">
-                    <label for="meta-json" class="lbl meta">Meta-Json Location</label>
-                    <div class="browse-input">
-                        <input type="text" class="input-path" id="meta-json">
-                        <button class="browse-btn file">...</button>
+                <div class="master-container">
+                    <h2><u> presentationMasters </u></h2>
+                    <div class="section select">
+                        <label class="lbl">Language:</label>
+                        <div class="select-language">
+                            <select id="language-select">
+                                <option value=""></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="section meta-pics">
-                    <label for="meta-pics" class="lbl meta">Meta-Pics Location</label>
-                    <div class="browse-input">
-                        <input type="text" class="input-path" id="meta-pics">
-                        <button class="browse-btn directory">...</button>
-                    </div>
-                </div>
-                <div class="section toggle-button">
-                    <label for="ignore-hidden-slides-toggle-btn" class="ignore-lbl">IgnoreHiddenSlides:</label>
-                    <div class="checkbox-toggle-btn">
-                        <label class="switch">
-                            <input type="checkbox" id="ignore-hidden-slides-toggle-btn">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="master-container">
-                <h2><u> presentationMasters </u></h2>
-                <div class="section select">
-                    <label class="lbl">Language:</label>
-                    <div class="select-language">
-                        <select id="language-select">
-                            <option value=""></option>
-                        </select>
-                    </div>
-                </div>
-                <h3>Presentation:</h3>
-                <div class="section master" id="presentation-section">
-                    <!-- <div class="section presentation">
+                    <h3>Presentation:</h3>
+                    <div class="section master" id="presentation-section">
+                        <!-- <div class="section presentation">
                         <button class="delete-btn">X</button>
                         <input type="text" class="input-path">
                         <button class="browse-btn">...</button>
-                    </div> --> 
-                </div>
-                <div class="option-add-btn">
-                    <button class="add-btn" id="add-btn" disabled>Add</button>
+                    </div> -->
+                    </div>
+                    <div class="option-add-btn">
+                        <button class="add-btn" id="add-btn" disabled>Add</button>
+                    </div>
                 </div>
             </div>
+            <div class="buttons">
+                <button class="cancel-btn">Cancel</button>
+                <button class="save-btn" disabled>Save</button>
+            </div>
         </div>
-        <div class="buttons">
-            <button class="cancel-btn">Cancel</button>
-            <button class="save-btn" disabled>Save</button>
-        </div>
-    </div>
-</body>
+    </body>
 
-<script>
-    require("../ui/controller/option.js");
-</script>
-
+    <script>
+        require("../ui/controller/option.js");
+    </script>
 </html>

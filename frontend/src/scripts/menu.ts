@@ -4,7 +4,7 @@ import path from "path";
 
 import { getConfig } from "./config";
 
-export default function initMenu() {
+export default function initMenu(mainWindow: BrowserWindow) {
     const menu = Menu.buildFromTemplate([
         {
             label: "File",
@@ -66,7 +66,7 @@ export default function initMenu() {
                     label: "Option",
                     accelerator: "CmdOrCtrl+O",
                     click() {
-                        openOption();
+                        openOption(mainWindow);
                     },
                 },
             ],
@@ -76,29 +76,25 @@ export default function initMenu() {
     Menu.setApplicationMenu(menu);
 }
 
-let optionOpen: boolean;
-
-function openOption() {
-    if (!optionOpen) {
-        const optionWindow = new BrowserWindow({
-            width: 600,
-            height: 600,
-            resizable: false,
-            useContentSize: true,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
-            },
-        });
-        const indexHTML = path.join(__dirname, "views/option.html");
-        optionWindow.loadFile(indexHTML).catch((error) => {
-            console.log(error);
-        });
-        optionOpen = true;
-        optionWindow.on("close", () => {
-            optionOpen = false;
-        });
-    }
+function openOption(parent: BrowserWindow) {
+    const optionWindow = new BrowserWindow({
+        width: 600,
+        height: 600,
+        resizable: false,
+        useContentSize: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        alwaysOnTop: true,
+        autoHideMenuBar: true,
+        modal: true,
+        parent,
+    });
+    const indexHTML = path.join(__dirname, "views/option.html");
+    optionWindow.loadFile(indexHTML).catch((error) => {
+        console.log(error);
+    });
 }
 
 function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
