@@ -28,7 +28,7 @@ button {
         box-shadow: $shadow-2;
     }
 
-    &.save-btn:disabled {
+    &:disabled {
         background-color: #{$accent--color}50;
         box-shadow: none;
     }
@@ -40,6 +40,7 @@ input[type="text"] {
 
 select {
     background: var(--background--primary);
+    color: var(--font--primary);
 }
 
 *::-webkit-scrollbar {
