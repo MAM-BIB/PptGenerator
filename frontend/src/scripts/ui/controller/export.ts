@@ -1,10 +1,12 @@
-import { ipcRenderer, OpenDialogReturnValue } from "electron";
+import { ipcRenderer } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
 import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+import { addAllBrowseHandler } from "../components/browseButton";
+import { startLoading, stopLoading } from "../components/loading";
 
 const fs = fsBase.promises;
 
@@ -25,6 +27,7 @@ ipcRenderer.on("data", (event, data) => {
 
 pathInput.value = getConfig().defaultExportPath;
 presetPathInput.value = getConfig().presetPath;
+addAllBrowseHandler();
 
 savePresetToggleBtn.addEventListener("change", () => {
     presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
@@ -140,58 +143,4 @@ async function createPreset(savePath: string) {
 
     const presetJson = JSON.stringify(preset, null, "\t");
     fs.writeFile(savePath, presetJson);
-}
-
-for (const button of document.getElementsByClassName("browse-btn")) {
-    button.addEventListener("click", async () => {
-        const options = {
-            properties: [] as string[],
-        };
-
-        if (button.classList.contains("directory")) {
-            options.properties.push("openDirectory");
-        } else if (button.classList.contains("file")) {
-            options.properties.push("openFile");
-        }
-
-        try {
-            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", options);
-
-            if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
-                const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
-                [input.value] = directoryPath.filePaths;
-                input.dispatchEvent(new Event("change"));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    });
-}
-
-function startLoading() {
-    const loading = document.createElement("div");
-    loading.id = "loading-container";
-
-    const circle = document.createElement("div");
-    circle.id = "loading-circle";
-
-    loading.append(circle);
-    document.body.append(loading);
-
-    circle.animate(
-        [
-            // keyframes
-            { transform: "translate(-50%, -50%) rotate(0deg)" },
-            { transform: "translate(-50%, -50%) rotate(360deg)" },
-        ],
-        {
-            // timing options
-            duration: 1000,
-            iterations: Infinity,
-        },
-    );
-}
-
-function stopLoading() {
-    document.getElementById("loading-container")?.remove();
 }
