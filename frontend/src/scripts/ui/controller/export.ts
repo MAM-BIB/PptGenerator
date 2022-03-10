@@ -41,7 +41,24 @@ exportBtn.addEventListener("click", () => {
 
     // Validate input
     if (name.length === 0) {
-        alert("Please enter a name!");
+        ipcRenderer.invoke(
+            "openWindow",
+            "popup.html",
+            {
+                width: 400,
+                height: 200,
+                resizable: false,
+                useContentSize: true,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                alwaysOnTop: true,
+                autoHideMenuBar: true,
+                modal: true,
+            },
+            { text: "Please enter a name!", heading: "Error" },
+        );
         stopLoading();
         return;
     }

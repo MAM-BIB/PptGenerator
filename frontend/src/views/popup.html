@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>ppt Generator</title>
+    </head>
+
+    <body>
+        <div class="option-container">
+            <div class="main-section">
+                <h1 class="headline" id="popup-heading">Title</h1>
+                <div class="container-section">
+                    <div class="section">
+                        <p id="popup-text"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="cancel-btn">Cancel</button>
+                <button id="ok-btn">Ok</button>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require("../ui/controller/popup.js");
+    </script>
+</html>
