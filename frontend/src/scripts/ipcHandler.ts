@@ -19,7 +19,13 @@ export default function initIpcHandlers() {
     ipcMain.handle(
         "openWindow",
         async (event, htmlPath: string, options: Electron.BrowserWindowConstructorOptions | undefined, data) => {
-            const window = new BrowserWindow(options);
+            const browserWindow = BrowserWindow.fromWebContents(event.sender);
+            const windowOptions = options;
+            if (browserWindow && windowOptions?.modal) {
+                windowOptions.parent = browserWindow;
+            }
+
+            const window = new BrowserWindow(windowOptions);
 
             const indexHTML = path.join(__dirname, "views", htmlPath);
 

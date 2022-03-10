@@ -53,6 +53,9 @@ exportBtn.addEventListener("click", async () => {
                 nodeIntegration: true,
                 contextIsolation: false,
             },
+            alwaysOnTop: true,
+            autoHideMenuBar: true,
+            modal: true,
         },
         presentations,
     );

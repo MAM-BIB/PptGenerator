@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer, OpenDialogReturnValue } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 import fsBase from "fs";
@@ -31,20 +31,25 @@ savePresetToggleBtn.addEventListener("change", () => {
 });
 
 exportBtn.addEventListener("click", () => {
+    startLoading();
+
     let name = nameInput.value;
     const outPath = pathInput.value;
 
     // Validate input
     if (name.length === 0) {
         alert("Please enter a name!");
+        stopLoading();
         return;
     }
     if (outPath.length === 0) {
         alert("Please enter a name!");
+        stopLoading();
         return;
     }
     if (!fsBase.existsSync(outPath)) {
         alert("The selected directory does not exist!");
+        stopLoading();
         return;
     }
 
@@ -56,6 +61,7 @@ exportBtn.addEventListener("click", () => {
         const presetPath = presetPathInput.value;
         if (!fsBase.existsSync(presetPath)) {
             alert("The selected directory for the preset does not exist!");
+            stopLoading();
             return;
         }
 
@@ -95,16 +101,16 @@ function exportToPptx(outPath: string) {
         "-deleteFirstSlide",
     ]);
 
-    bat.stdout.on("data", (d) => {
-        console.log(d.toString());
-    });
-
     bat.stderr.on("data", (d) => {
-        console.error(d.toString());
+        alert(d.toString());
     });
 
     bat.on("exit", (code) => {
         console.log(`Child exited with code ${code}`);
+        if (code !== 0) {
+            alert("The process exited with unkown errors!");
+        }
+        ipcRenderer.invoke("closeFocusedWindow");
     });
 }
 
@@ -134,4 +140,58 @@ async function createPreset(savePath: string) {
 
     const presetJson = JSON.stringify(preset, null, "\t");
     fs.writeFile(savePath, presetJson);
+}
+
+for (const button of document.getElementsByClassName("browse-btn")) {
+    button.addEventListener("click", async () => {
+        const options = {
+            properties: [] as string[],
+        };
+
+        if (button.classList.contains("directory")) {
+            options.properties.push("openDirectory");
+        } else if (button.classList.contains("file")) {
+            options.properties.push("openFile");
+        }
+
+        try {
+            const directoryPath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", options);
+
+            if (!directoryPath.canceled && directoryPath.filePaths.length > 0) {
+                const input = button.parentElement?.getElementsByTagName("input")[0] as HTMLInputElement;
+                [input.value] = directoryPath.filePaths;
+                input.dispatchEvent(new Event("change"));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    });
+}
+
+function startLoading() {
+    const loading = document.createElement("div");
+    loading.id = "loading-container";
+
+    const circle = document.createElement("div");
+    circle.id = "loading-circle";
+
+    loading.append(circle);
+    document.body.append(loading);
+
+    circle.animate(
+        [
+            // keyframes
+            { transform: "translate(-50%, -50%) rotate(0deg)" },
+            { transform: "translate(-50%, -50%) rotate(360deg)" },
+        ],
+        {
+            // timing options
+            duration: 1000,
+            iterations: Infinity,
+        },
+    );
+}
+
+function stopLoading() {
+    document.getElementById("loading-container")?.remove();
 }

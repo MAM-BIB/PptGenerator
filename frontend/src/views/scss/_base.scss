@@ -61,3 +61,26 @@ select {
 *::-webkit-scrollbar-track {
     background-color: rgba(0, 0, 0, 0);
 }
+
+#loading-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    width: 100vw;
+    height: 100vh;
+
+    #loading-circle {
+        background-color: rgba(0, 0, 0, 0);
+        background-image: url("../icons/rotate_right.svg");
+        background-size: contain;
+
+        width: $size-11;
+        height: $size-11;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}

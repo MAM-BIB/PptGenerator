@@ -7,7 +7,7 @@ import initMenu from "./menu";
 initIpcHandlers();
 
 app.on("ready", () => {
-    const win = new BrowserWindow({
+    const window = new BrowserWindow({
         width: 1280,
         height: 720,
         minWidth: 500,
@@ -18,8 +18,8 @@ app.on("ready", () => {
         },
     });
 
-    initMenu();
+    initMenu(window);
 
     const indexHTML = path.join(__dirname, "views/index.html");
-    win.loadFile(indexHTML);
+    window.loadFile(indexHTML);
 });
