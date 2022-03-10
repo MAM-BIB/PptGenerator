@@ -61,7 +61,9 @@
                 top: 50%;
                 transform: translate(-100%, -50%);
 
-                background-color: var(--btn--font);
+                background-color: var(--font--primary);
+                -webkit-mask-image: url("../icons/hidden.svg");
+                -webkit-mask-size: contain;
                 mask-image: url("../icons/hidden.svg");
                 mask-size: contain;
             }
