@@ -121,17 +121,13 @@
             justify-content: flex-end;
             min-width: 0;
             min-height: 0;
-
-            .add-btn {
-                margin-right: $size-2;
-            }
         }
     }
 
     .buttons {
         display: flex;
         justify-content: flex-end;
-        padding: $size-2;
+        padding: 0 $size-2 $size-2 $size-2;
         min-width: 0;
 
         button {
