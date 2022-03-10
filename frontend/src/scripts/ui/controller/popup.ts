@@ -12,8 +12,8 @@ let options: PopupOptions;
 ipcRenderer.on("data", (event, data) => {
     options = data;
 
-    textElement.textContent = options.text;
-    headingElement.textContent = options.heading;
+    textElement.textContent = `${options.text}`;
+    headingElement.textContent = `${options.heading}`;
 });
 
 cancelBtn.addEventListener("click", () => {

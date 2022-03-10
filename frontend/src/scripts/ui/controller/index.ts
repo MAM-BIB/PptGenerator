@@ -6,6 +6,7 @@ import { Presentation, Preset } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
+import openPopup from "../../helper";
 
 const fs = fsBase.promises;
 const { metaJsonPath } = getConfig();
@@ -24,7 +25,7 @@ async function read() {
         const presentationsJson = await fs.readFile(metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
-        alert(`Fehler beim einlesen der Meta File \n ${error}`);
+        openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
     }
 
     for (const presentation of presentations) {
@@ -53,7 +54,6 @@ exportBtn.addEventListener("click", async () => {
                 nodeIntegration: true,
                 contextIsolation: false,
             },
-            alwaysOnTop: true,
             autoHideMenuBar: true,
             modal: true,
         },

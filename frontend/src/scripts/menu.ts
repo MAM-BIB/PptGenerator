@@ -86,7 +86,6 @@ function openOption(parent: BrowserWindow) {
             nodeIntegration: true,
             contextIsolation: false,
         },
-        alwaysOnTop: true,
         autoHideMenuBar: true,
         modal: true,
         parent,

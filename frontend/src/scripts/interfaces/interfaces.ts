@@ -46,7 +46,7 @@ export interface PresetSection {
 }
 
 export interface PopupOptions {
-    title: string;
-    heading: string;
-    text: string;
+    title?: string;
+    heading?: string;
+    text?: string;
 }

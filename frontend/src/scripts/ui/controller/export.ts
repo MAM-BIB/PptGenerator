@@ -7,6 +7,7 @@ import { getConfig } from "../../config";
 import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
+import openPopup from "../../helper";
 
 const fs = fsBase.promises;
 
@@ -41,34 +42,17 @@ exportBtn.addEventListener("click", () => {
 
     // Validate input
     if (name.length === 0) {
-        ipcRenderer.invoke(
-            "openWindow",
-            "popup.html",
-            {
-                width: 400,
-                height: 200,
-                resizable: false,
-                useContentSize: true,
-                webPreferences: {
-                    nodeIntegration: true,
-                    contextIsolation: false,
-                },
-                alwaysOnTop: true,
-                autoHideMenuBar: true,
-                modal: true,
-            },
-            { text: "Please enter a name!", heading: "Error" },
-        );
+        openPopup({ text: "Please enter a name!", heading: "Error" });
         stopLoading();
         return;
     }
     if (outPath.length === 0) {
-        alert("Please enter a name!");
+        openPopup({ text: "Please choose a location!", heading: "Error" });
         stopLoading();
         return;
     }
     if (!fsBase.existsSync(outPath)) {
-        alert("The selected directory does not exist!");
+        openPopup({ text: "The selected location directory does not exist!", heading: "Error" });
         stopLoading();
         return;
     }
@@ -80,7 +64,7 @@ exportBtn.addEventListener("click", () => {
     if (savePresetToggleBtn.checked) {
         const presetPath = presetPathInput.value;
         if (!fsBase.existsSync(presetPath)) {
-            alert("The selected directory for the preset does not exist!");
+            openPopup({ text: "The selected preset directory does not exist!", heading: "Error" });
             stopLoading();
             return;
         }
@@ -122,13 +106,12 @@ function exportToPptx(outPath: string) {
     ]);
 
     bat.stderr.on("data", (d) => {
-        alert(d.toString());
+        openPopup({ text: `An error occurred during the export:\n${d.toString()}`, heading: "Error" });
     });
 
     bat.on("exit", (code) => {
-        console.log(`Child exited with code ${code}`);
         if (code !== 0) {
-            alert("The process exited with unkown errors!");
+            openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
         }
         ipcRenderer.invoke("closeFocusedWindow");
     });

@@ -2,6 +2,7 @@ import { ipcRenderer, OpenDialogReturnValue } from "electron";
 import fs from "fs";
 
 import { getConfig, setConfig } from "../../config";
+import openPopup from "../../helper";
 
 const config = getConfig();
 const cancelBtn = document.querySelector(".cancel-btn") as HTMLButtonElement;
@@ -52,7 +53,7 @@ saveBtn.addEventListener("click", (e) => {
                     config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
                     pathIndex--;
                 } else if (!fs.existsSync(pathString)) {
-                    alert(`"${pathString}" does not exist!`);
+                    openPopup({ text: `"${pathString}" does not exist!`, heading: "Error" });
                     selectLanguage.dispatchEvent(new Event("change"));
                     return;
                 }
