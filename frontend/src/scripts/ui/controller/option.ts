@@ -50,8 +50,10 @@ saveBtn.addEventListener("click", (e) => {
                 const pathString = pahts[pathIndex];
                 if (pathString.trim() === "") {
                     config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
+                    pathIndex--;
                 } else if (!fs.existsSync(pathString)) {
                     alert(`"${pathString}" does not exist!`);
+                    selectLanguage.dispatchEvent(new Event("change"));
                     return;
                 }
             }
@@ -152,9 +154,14 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newDeleteBtn.textContent = "X";
     newDeleteBtn.className = "delete-btn";
     newDeleteBtn.addEventListener("click", () => {
-        config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
+        console.log(config.presentationMasters);
+        console.log(pathIndex);
+        console.log(masterIndex);
+
+        config.presentationMasters[masterIndex].paths[pathIndex] = "";
+        console.log(config.presentationMasters[masterIndex].paths[pathIndex]);
         newdiv.remove();
-        saveBtn.disabled = true;
+        saveBtn.disabled = false;
     });
 
     const newBrowseBtn = document.createElement("button");
