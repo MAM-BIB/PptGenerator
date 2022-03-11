@@ -92,6 +92,19 @@
             align-items: center;
             min-width: 0;
 
+            .input-path {
+                flex: 0;
+                flex-basis: 0;
+                display: none;
+
+                &.show {
+                    display: block;
+                    flex-basis: $size-6;
+                    transition: flex-basis ss;
+                    margin-left: $size-2;
+                }
+            }
+
             .add-language-btn {
                 background-color: var(--font--primary);
                 -webkit-mask-image: url("../icons/add_circle_plus.svg");
@@ -121,6 +134,7 @@
                 display: flex;
 
                 .delete-btn {
+                    color: var(--font--primary);
                     background: none;
                     box-shadow: none;
                     margin-left: $size-2;
