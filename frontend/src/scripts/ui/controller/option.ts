@@ -15,14 +15,50 @@ const hiddenSlide = document.getElementById("ignore-hidden-slides-toggle-btn") a
 const addBtn = document.getElementById("add-btn") as HTMLButtonElement;
 const newPresentationSection = document.getElementById("presentation-section") as HTMLDivElement;
 const selectLanguage = document.getElementById("language-select") as HTMLSelectElement;
+const addLanguageBtn = document.getElementById("add-language-btn") as HTMLButtonElement;
+const languageInput = document.getElementById("language-input") as HTMLInputElement;
 
 fillInput();
 addAllBrowseHandler();
+fillSelect();
 
-for (const master of config.presentationMasters) {
-    const newoption = document.createElement("option");
-    newoption.textContent = master.lang;
-    selectLanguage.appendChild(newoption);
+addLanguageBtn.addEventListener("click", () => {
+    if (!languageInput.classList.contains("show")) {
+        languageInput.classList.add("show");
+        return;
+    }
+    if (languageInput.value.trim() === "" || languageInput.value.length < 2) {
+        openPopup({
+            text: "Es muss eine Länge von mindestens 2 Buchstaben enthalten! ",
+            heading: "Error",
+        });
+        return;
+    }
+    if (languageInput.value.length > 5) {
+        openPopup({
+            text: "Es darf nur eine Länge von maximal 5 Buchstaben enthalten! ",
+            heading: "Error",
+        });
+        return;
+    }
+    config.presentationMasters.push({
+        lang: languageInput.value,
+        paths: [],
+    });
+    fillSelect();
+    languageInput.classList.remove("show");
+    languageInput.value = "";
+});
+
+function fillSelect() {
+    selectLanguage.innerHTML = "";
+    selectLanguage.append(document.createElement("option"));
+
+    for (const master of config.presentationMasters) {
+        const newoption = document.createElement("option");
+        newoption.textContent = master.lang;
+        selectLanguage.appendChild(newoption);
+    }
 }
 
 selectLanguage.addEventListener("change", () => {
