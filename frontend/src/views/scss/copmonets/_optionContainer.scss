@@ -89,7 +89,20 @@
         .select-language {
             flex: 1.2;
             display: flex;
+            align-items: center;
             min-width: 0;
+
+            .add-language-btn {
+                background-color: var(--font--primary);
+                -webkit-mask-image: url("../icons/add_circle_plus.svg");
+                mask-image: url("../icons/add_circle_plus.svg");
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                width: $size-3;
+                height: $size-3;
+                padding: 0;
+                margin: $size-2;
+            }
         }
 
         .section.master {
