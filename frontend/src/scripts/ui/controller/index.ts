@@ -1,5 +1,4 @@
 import fsBase from "fs";
-import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
 import { Presentation, Preset } from "../../interfaces/interfaces";
@@ -70,7 +69,7 @@ loadPresetBtn.addEventListener("click", async () => {
             loadPreset();
         }
     } catch (error) {
-        console.log(error);
+        openPopup({ text: `Could not load template:\n${error}`, heading: "Error" });
     }
 });
 
