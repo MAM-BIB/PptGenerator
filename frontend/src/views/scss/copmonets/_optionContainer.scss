@@ -5,6 +5,18 @@
     background-color: var(--background--light);
     height: $window-height;
 
+    .info-img {
+        display: inline-block;
+        width: $size-4;
+        height: $size-4;
+        vertical-align: middle;
+        background-color: var(--font--primary);
+        -webkit-mask-image: url("../icons/questionmark.svg");
+        -webkit-mask-size: contain;
+        mask-image: url("../icons/questionmark.svg");
+        mask-size: contain;
+    }
+
     .main-section {
         flex: 1;
         display: flex;
