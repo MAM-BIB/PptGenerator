@@ -36,89 +36,20 @@
                 overflow-x: hidden;
                 padding: $size-2 0 $size-2 $size-4;
 
-                &::-webkit-scrollbar {
-                    width: $size-4;
-                }
-                &::-webkit-scrollbar-corner {
-                    background: rgba(0, 0, 0, 0);
-                }
-                &::-webkit-scrollbar-thumb {
-                    background-color: var(--background--primary);
-                    border-radius: 6px;
-                    border: 4px solid rgba(0, 0, 0, 0);
-                    background-clip: content-box;
-                    min-width: 0;
-                    min-height: 0;
-                }
-                &::-webkit-scrollbar-track {
-                    background-color: rgba(0, 0, 0, 0);
-                }
-            }
+                &.left {
+                    .presNameContainer {
+                        padding: $size-3 0 $size-1 0;
 
-            .presentation-slide-container.left {
-                .presNameContainer {
-                    padding: $size-3 0 $size-1 0;
+                        .nameUnderline {
+                            border-color: var(--font--primary);
+                        }
 
-                    .nameUnderline {
-                        border-color: var(--font--primary);
-                    }
-
-                    .presentationName {
-                        font-size: 1.1rem;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        min-width: 0;
-                    }
-                }
-            }
-
-            .location-specification {
-                display: flex;
-                flex-direction: row;
-                align-items: stretch;
-                //justify-content: space-between;
-                min-height: 0;
-                min-width: 0;
-
-                .location-lbl {
-                    display: flex;
-                    align-items: center;
-                    min-height: 0;
-                    min-width: 0;
-                }
-
-                .browse-btn-and-presentation-path {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: stretch;
-                    min-height: 0;
-                    min-width: 0;
-
-                    .presentation-name {
-                        flex: 1;
-                        color: var(--font--primary);
-                        margin: 0 $size-1;
-                        min-height: 0;
-                        min-width: 0;
-                    }
-
-                    .browse-btn {
-                        justify-content: flex-end;
-                        min-height: 0;
-                        min-width: 0;
-                        padding: $size-1 $size-2;
-                    }
-                }
-
-                @media only screen and (max-width: 640px) {
-                    flex-direction: column;
-
-                    .browse-btn-and-presentation-path {
-                        margin: $size-1 0;
-                        .presentation-name {
-                            margin: 0 $size-1 0 0;
+                        .presentationName {
+                            font-size: 1.1rem;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            min-width: 0;
                         }
                     }
                 }
@@ -126,8 +57,8 @@
 
             .btn-container {
                 display: flex;
-                justify-content: flex-end;
-                padding: $size-7;
+                justify-content: space-between;
+                padding: $size-4;
             }
         }
     }

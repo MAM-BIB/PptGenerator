@@ -1,0 +1,176 @@
+.option-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background-color: var(--background--light);
+    height: $window-height;
+
+    .info-img {
+        display: inline-block;
+        width: $size-4;
+        height: $size-4;
+        vertical-align: middle;
+        background-color: var(--font--primary);
+        -webkit-mask-image: url("../icons/questionmark.svg");
+        -webkit-mask-size: contain;
+        mask-image: url("../icons/questionmark.svg");
+        mask-size: contain;
+    }
+
+    .main-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: $size-4;
+        height: $window-height;
+        min-height: 0;
+        min-width: 0;
+
+        .headline {
+            text-align: center;
+        }
+
+        .container-section {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            min-width: 0;
+
+            .section {
+                display: flex;
+                min-height: 0;
+                min-width: 0;
+
+                .lbl {
+                    flex: 1;
+                    justify-content: left;
+                }
+
+                .browse-input {
+                    flex: 1.2;
+                    display: flex;
+                    min-height: 0;
+                    min-width: 0;
+
+                    .input-path {
+                        color: var(--font--primary);
+                        flex: 1;
+                        margin: 0 $size-1;
+                        min-height: 0;
+                        min-width: 0;
+                    }
+
+                    .browse-btn {
+                        margin-left: $size-2;
+                        padding: 0 $size-2;
+                    }
+                }
+            }
+        }
+    }
+
+    .master-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        min-width: 0;
+
+        .section {
+            display: flex;
+            min-width: 0;
+
+            .lbl {
+                flex: 1;
+                justify-content: left;
+            }
+
+            .input-path {
+                flex: 1;
+                color: var(--font--primary);
+                margin: 0 $size-1;
+                min-width: 0;
+            }
+
+            .browse-btn {
+                margin-left: $size-2;
+                padding: 0 $size-2;
+            }
+        }
+
+        .select-language {
+            flex: 1.2;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+
+            .input-path {
+                flex: 0;
+                flex-basis: 0;
+                display: none;
+
+                &.show {
+                    display: block;
+                    flex-basis: $size-6;
+                    transition: flex-basis ss;
+                    margin-left: $size-2;
+                }
+            }
+
+            .add-language-btn {
+                background-color: var(--font--primary);
+                -webkit-mask-image: url("../icons/add_circle_plus.svg");
+                mask-image: url("../icons/add_circle_plus.svg");
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                width: $size-3;
+                height: $size-3;
+                padding: 0;
+                margin: $size-2;
+            }
+        }
+
+        .section.master {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border: $size-2 solid var(--background--primary);
+            padding: $size-4;
+            min-width: 0;
+            min-height: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: $size-2 $size-4;
+
+            .section.presentation {
+                display: flex;
+
+                .delete-btn {
+                    color: var(--font--primary);
+                    background: none;
+                    box-shadow: none;
+                    margin-left: $size-2;
+                    padding: 0 $size-2;
+                }
+            }
+        }
+
+        .option-add-btn {
+            display: flex;
+            justify-content: flex-end;
+            min-width: 0;
+            min-height: 0;
+        }
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 $size-2 $size-2 $size-2;
+        min-width: 0;
+
+        button {
+            margin: $size-2;
+        }
+    }
+}

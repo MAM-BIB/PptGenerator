@@ -12,7 +12,9 @@ export interface Slide {
     RelationshipId: string;
     Uid: string;
     Position: number;
+    Title: string;
     IsHidden: boolean;
+    IsSelected: boolean;
 }
 
 // Config interfaces
@@ -27,4 +29,24 @@ export interface Config {
     coreApplication: string;
     presetPath: string;
     presentationMasters: PresentationMaster[];
+    ignoreHiddenSlides: boolean;
+    basePath: string;
+    defaultExportPath: string;
+}
+
+export interface Preset {
+    path: string;
+    sections: PresetSection[];
+}
+
+export interface PresetSection {
+    name: string;
+    includedSlides: string[];
+    ignoredSlides: string[];
+}
+
+export interface PopupOptions {
+    title?: string;
+    heading?: string;
+    text?: string;
 }

@@ -5,15 +5,14 @@
    <meta charset="UTF-8" />
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <link rel="stylesheet" href="./css/main.min.css">
+   <link rel="stylesheet" href="./css/main.css">
    <title>ppt Generator</title>
-
 </head>
 
 <body>
    <div class="container">
       <div class="container-item left">
-         <h2 class="headline left">Templates</h2>
+         <h1 class="headline left">Presentations</h1>
          <div class="nested-container template">
             <div class="presentation-slide-container left">
 
@@ -25,20 +24,14 @@
       </div>
 
       <div class="container-item right">
-         <h2 class="headline right">New Presentation</h2>
+         <h1 class="headline right">New Presentation</h1>
          <div class="nested-container presentation">
             <div class="presentation-slide-container right">
-               <div class="location-specification">
-                  <label class="location-lbl">Location:</label>
-                  <div class="browse-btn-and-presentation-path">
-                     <input type="text" name="presentation-path" class="presentation-name" value="">
-                     <button class="browse-btn">...</button>
-                  </div>
-               </div>
-
+               <!-- Load content dynamicly  -->
             </div>
-            <div class="btn-container export">
-               <button class="export-btn">Export</button>
+            <div class="btn-container">
+               <button id="load-preset-btn">Load preset</button>
+               <button id="export-btn">Export</button>
             </div>
          </div>
       </div>

@@ -2,9 +2,10 @@ import { app, BrowserWindow, Menu, MenuItem } from "electron";
 import { spawn } from "child_process";
 import path from "path";
 
-import getConfig from "./config";
+import { getConfig } from "./config";
+import openPopup from "./helper";
 
-export default function initMenu(browserWindow: BrowserWindow) {
+export default function initMenu(mainWindow: BrowserWindow) {
     const menu = Menu.buildFromTemplate([
         {
             label: "File",
@@ -12,8 +13,11 @@ export default function initMenu(browserWindow: BrowserWindow) {
                 {
                     label: "Open Dev tools",
                     accelerator: "F12",
-                    click() {
-                        browserWindow.webContents.openDevTools();
+                    click(item, focusedWindow) {
+                        focusedWindow?.webContents.openDevTools();
+                        if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
+                            focusedWindow.setSize(800, focusedWindow.getSize()[1]);
+                        }
                     },
                 },
                 {
@@ -39,16 +43,13 @@ export default function initMenu(browserWindow: BrowserWindow) {
                             "-outPath",
                             getConfig().metaJsonPath,
                         ]);
-                        bat.stdout.on("data", (data) => {
-                            console.log(data.toString());
+                        bat.stderr.on("data", (d) => {
+                            openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
                         });
-
-                        bat.stderr.on("data", (data) => {
-                            console.error(data.toString());
-                        });
-
                         bat.on("exit", (code) => {
-                            console.log(`Child exited with code ${code}`);
+                            if (code !== 0) {
+                                openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
+                            }
                             reload(item, focusedWindow);
                         });
                     },
@@ -63,7 +64,7 @@ export default function initMenu(browserWindow: BrowserWindow) {
                     label: "Option",
                     accelerator: "CmdOrCtrl+O",
                     click() {
-                        openOption();
+                        openOption(mainWindow);
                     },
                 },
             ],
@@ -73,27 +74,22 @@ export default function initMenu(browserWindow: BrowserWindow) {
     Menu.setApplicationMenu(menu);
 }
 
-let optionOpen: boolean;
-
-function openOption() {
-    if (!optionOpen) {
-        const optionWindow = new BrowserWindow({
-            width: 500,
-            height: 500,
-            minWidth: 500,
-            minHeight: 500,
-            resizable: false,
-            useContentSize: true,
-        });
-        const indexHTML = path.join(__dirname, "views/option.html");
-        optionWindow.loadFile(indexHTML).catch((error) => {
-            console.log(error);
-        });
-        optionOpen = true;
-        optionWindow.on("close", () => {
-            optionOpen = false;
-        });
-    }
+function openOption(parent: BrowserWindow) {
+    const optionWindow = new BrowserWindow({
+        width: 600,
+        height: 600,
+        resizable: false,
+        useContentSize: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        },
+        autoHideMenuBar: true,
+        modal: true,
+        parent,
+    });
+    const indexHTML = path.join(__dirname, "views/option.html");
+    optionWindow.loadFile(indexHTML);
 }
 
 function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {

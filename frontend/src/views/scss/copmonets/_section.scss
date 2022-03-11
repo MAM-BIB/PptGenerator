@@ -26,6 +26,10 @@
                 align-self: flex-end;
                 font-size: 1.1rem;
                 cursor: pointer;
+
+                .secondary {
+                    display: none;
+                }
             }
         }
     }
@@ -37,14 +41,74 @@
         text-overflow: ellipsis;
         cursor: pointer;
 
+        &.selected {
+            background: var(--btn--background);
+            color: var(--btn--font);
+
+            &:hover {
+                background: var(--btn--hover--background);
+                color: var(--btn--font);
+            }
+        }
+
+        &.hidden-slide {
+            position: relative;
+            &:before {
+                content: "";
+                display: block;
+                width: $size-3;
+                height: $size-3;
+                position: absolute;
+                top: 50%;
+                transform: translate(-100%, -50%);
+
+                background-color: var(--font--primary);
+                -webkit-mask-image: url("../icons/hidden.svg");
+                -webkit-mask-size: contain;
+                mask-image: url("../icons/hidden.svg");
+                mask-size: contain;
+            }
+        }
+
         &:hover {
-            background: var(--btn--hover--background);
+            background: #{$accent--color--highlight}50;
             color: $btn--font--slide;
             box-shadow: $shadow-1;
+            color: var(--font--primary);
         }
     }
 
     &.open .slide {
         display: block;
+    }
+
+    &.open {
+        .sectionHeader {
+            .sectionButtons {
+                button.collapseSection {
+                    .primary {
+                        display: none;
+                    }
+                    .secondary {
+                        display: initial;
+                    }
+                }
+            }
+        }
+    }
+
+    &.selected {
+        .sectionHeader {
+            .sectionButtons {
+                button.selectSection {
+                    .primary {
+                        display: none;
+                    }
+                    .secondary {
+                        display: block;
+                    }
+                }
+            }
+        }
     }
 }

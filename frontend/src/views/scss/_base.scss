@@ -14,6 +14,14 @@ body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+h1 {
+    color: $accent--color--highlight;
+
+    @media (prefers-color-scheme: dark) {
+        color: $accent--color;
+    }
+}
+
 button {
     padding: $size-2 $size-8;
     background-color: var(--btn--background);
@@ -22,10 +30,15 @@ button {
     cursor: pointer;
     border-radius: 0.5em;
     box-shadow: $shadow-1;
+    font-weight: bold;
 
     &:hover {
         background-color: var(--btn--hover--background);
-        box-shadow: $shadow-2;
+    }
+
+    &:disabled {
+        background-color: #{$accent--color}50;
+        box-shadow: none;
     }
 }
 
@@ -33,20 +46,90 @@ input[type="text"] {
     background-color: var(--background--primary);
 }
 
-.right::-webkit-scrollbar {
-    width: 20px;
+select {
+    background: var(--background--primary);
+    color: var(--font--primary);
 }
-.right::-webkit-scrollbar-corner {
+
+*::-webkit-scrollbar {
+    width: $size-4;
+}
+
+*::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0);
 }
-.right::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+*::-webkit-scrollbar-thumb {
+    background-color: var(--background--primary);
     border-radius: 6px;
     border: 4px solid rgba(0, 0, 0, 0);
     background-clip: content-box;
-    min-width: 32px;
-    min-height: 32px;
+    min-width: 0;
+    min-height: 0;
 }
-.right::-webkit-scrollbar-track {
+
+*::-webkit-scrollbar-track {
     background-color: rgba(0, 0, 0, 0);
+}
+
+#loading-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    width: 100vw;
+    height: 100vh;
+
+    #loading-circle {
+        background-color: rgba(0, 0, 0, 0);
+        background-image: url("../icons/rotate_right.svg");
+        background-size: contain;
+
+        width: $size-11;
+        height: $size-11;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.spacer {
+    height: $size-5;
+}
+
+.plus,
+.minus {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 1rem;
+        height: 0.2rem;
+        background-color: var(--font--primary);
+    }
+}
+
+.plus {
+    &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+
+        width: 0.2rem;
+        height: 1rem;
+        background-color: var(--font--primary);
+    }
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>ppt Generator</title>
+    </head>
+
+    <body>
+        <div class="option-container">
+            <div class="main-section">
+                <h1 class="headline">Export</h1>
+                <div class="container-section">
+                    <div class="section">
+                        <label for="name-input" class="lbl">Name:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="name-input" />
+                        </div>
+                    </div>
+                    <div class="section">
+                        <label for="path-input" class="lbl">Location:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="path-input" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                    <div class="section toggle-button">
+                        <label for="savePresetToggleBtn" class="ignore-lbl">Save as preset:</label>
+                        <div class="checkbox-toggle-btn">
+                            <label class="switch">
+                                <input type="checkbox" id="save-preset-toggle-btn" />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="section" id="preset-path" style="display: none">
+                        <label for="preset-path-input" class="lbl">Preset location:</label>
+                        <div class="browse-input">
+                            <input type="text" class="input-path" id="preset-path-input" />
+                            <button class="browse-btn directory">...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="cancel-btn">Cancel</button>
+                <button id="export-btn">Export</button>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require("../ui/controller/export.js");
+    </script>
+</html>

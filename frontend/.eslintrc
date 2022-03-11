@@ -14,11 +14,15 @@
     ],
     "rules": {
         "no-console": "warn",
+        "no-alert": "error",
         "linebreak-style": "off",
-        "no-plusplus":"off",
+        "no-plusplus": "off",
         "max-len": ["error", { "code": 120 }],
         "@typescript-eslint/quotes": ["error", "double"],
         "@typescript-eslint/indent": ["error", 4],
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/lines-between-class-members": ["off"],
         "no-restricted-syntax": [
             "error",
             {
@@ -30,11 +34,12 @@
                 "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
             }
         ],
-        "object-curly-newline": ["error", {
-            "ExportDeclaration": { "multiline": true, "minProperties": 5 }
-        }],
-        "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/no-unused-vars": "warn",
+        "object-curly-newline": [
+            "error",
+            {
+                "ExportDeclaration": { "multiline": true, "minProperties": 5 }
+            }
+        ],
         "import/extensions": [
             "error",
             "ignorePackages",
