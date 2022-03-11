@@ -2,12 +2,12 @@ $dark--primary: #212121;
 $dark--light: #484848;
 $dark--dark: #000000;
 
-$light--primary: #bdbdbd;
+$light--primary: #e2e2e2;
 $light--light: #efefef;
 $light--dark: #8d8d8d;
 
-$accent--color: #1c6b2b;
-$accent--color--highlight: #258036;
+$accent--color: #0ea5ff;
+$accent--color--highlight: #0077cb;
 
 $secondary--dark--light: #363636;
 
@@ -81,7 +81,7 @@ $slider-margin: $size-2;
 $slider-size: $switch-height - $slider-margin;
 //normal color
 :root {
-    --font--primary: #{$dark--primary};
+    --font--primary: #{#383838};
     --font--light: #{$dark--light};
     --font--dark: #{$dark--dark};
 
@@ -92,8 +92,8 @@ $slider-size: $switch-height - $slider-margin;
     --border--color: #{$border-normal};
 
     --btn--font: #{$light--light};
-    --btn--background: #{$accent--color};
-    --btn--hover--background: #{$accent--color--highlight};
+    --btn--background: #{$accent--color--highlight};
+    --btn--hover--background: #{$accent--color};
 }
 
 //take the Systemsettings color, if its dark the programm doing that else the normal :root

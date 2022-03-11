@@ -113,13 +113,11 @@ export default class SectionElement {
         const buttonSelect = document.createElement("button");
 
         const spanPlus = document.createElement("span");
-        spanPlus.textContent = "➕";
-        spanPlus.classList.add("primary");
+        spanPlus.className = "primary plus";
         buttonSelect.appendChild(spanPlus);
 
         const spanMinus = document.createElement("span");
-        spanMinus.textContent = "➖";
-        spanMinus.classList.add("secondary");
+        spanMinus.className = "secondary minus";
         buttonSelect.appendChild(spanMinus);
 
         buttonSelect.title = `select all slides of ${this.section.Name}`;
