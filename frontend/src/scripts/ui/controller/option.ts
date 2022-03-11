@@ -29,14 +29,14 @@ addLanguageBtn.addEventListener("click", () => {
     }
     if (languageInput.value.trim() === "" || languageInput.value.length < 2) {
         openPopup({
-            text: "Es muss eine Länge von mindestens 2 Buchstaben enthalten! ",
+            text: "It must contain a length of at least 2 characters! ",
             heading: "Error",
         });
         return;
     }
     if (languageInput.value.length > 5) {
         openPopup({
-            text: "Es darf nur eine Länge von maximal 5 Buchstaben enthalten! ",
+            text: "It may only contain a maximum length of 5 characters! ",
             heading: "Error",
         });
         return;
