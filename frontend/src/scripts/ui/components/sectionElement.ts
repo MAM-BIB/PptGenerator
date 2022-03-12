@@ -14,6 +14,8 @@ export default class SectionElement {
     public slides: SlideElement[];
     public selectedSlides: SlideElement[];
 
+    public lastSelectedIndex = -1;
+
     public selectedElement: HTMLDivElement;
     public selectedElementHeader: HTMLHeadingElement;
 
@@ -60,10 +62,12 @@ export default class SectionElement {
             if (sectionType === SectionType.normal) {
                 newSlide = new SlideElement(slide);
 
-                newSlide.element.addEventListener("selected", () => {
+                newSlide.element.addEventListener("selected", (event) => {
+                    this.multiSelect(true, event);
                     this.handleSelectionChange();
                 });
-                newSlide.element.addEventListener("deselected", () => {
+                newSlide.element.addEventListener("deselected", (event) => {
+                    this.multiSelect(false, event);
                     this.handleSelectionChange();
                 });
                 this.slides.push(newSlide);
@@ -73,6 +77,28 @@ export default class SectionElement {
             }
             element.appendChild(newSlide.element);
         }
+    }
+
+    private multiSelect(select: boolean, event: Event) {
+        const curSelectedIndex = Array.prototype.indexOf.call(this.element.children, event.target) - 1;
+        let startIndex = this.lastSelectedIndex;
+        let endIndex = curSelectedIndex;
+        if (endIndex < startIndex) {
+            startIndex = curSelectedIndex;
+            endIndex = this.lastSelectedIndex + 1;
+        }
+
+        if (this.lastSelectedIndex >= 0) {
+            for (let i = startIndex; i < endIndex; i++) {
+                const slideElement = this.slides[i];
+                if (select) {
+                    slideElement.select();
+                } else {
+                    slideElement.deselect();
+                }
+            }
+        }
+        this.lastSelectedIndex = curSelectedIndex;
     }
 
     private handleSelectionChange() {
