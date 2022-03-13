@@ -43,8 +43,12 @@ export default function initMenu(mainWindow: BrowserWindow) {
                             "-outPath",
                             getConfig().metaJsonPath,
                         ]);
+
                         bat.stderr.on("data", (d) => {
-                            openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
+                            const options = { text: `Error during the scan:\n${d?.toString()}`, heading: "Error" };
+                            console.log("options", options);
+
+                            openPopup(options);
                         });
                         bat.on("exit", (code) => {
                             if (code !== 0) {

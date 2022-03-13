@@ -19,20 +19,6 @@ let presentations: Presentation[];
 let loadedPreset: Preset;
 const sectionElements: SectionElement[] = [];
 
-let isShiftPressed = false;
-
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Shift") {
-        isShiftPressed = true;
-    }
-});
-
-document.addEventListener("keyup", (event) => {
-    if (event.key === "Shift") {
-        isShiftPressed = false;
-    }
-});
-
 async function read() {
     try {
         const presentationsJson = await fs.readFile(metaJsonPath, { encoding: "utf-8" });

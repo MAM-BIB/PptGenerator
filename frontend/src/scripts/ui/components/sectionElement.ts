@@ -3,6 +3,7 @@ import { Section } from "../../interfaces/interfaces";
 import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
 import { getConfig } from "../../config";
+import isShiftPressed from "../keyHandler";
 
 enum SectionType {
     "normal",
@@ -81,20 +82,22 @@ export default class SectionElement {
 
     private multiSelect(select: boolean, event: Event) {
         const curSelectedIndex = Array.prototype.indexOf.call(this.element.children, event.target) - 1;
-        let startIndex = this.lastSelectedIndex;
-        let endIndex = curSelectedIndex;
-        if (endIndex < startIndex) {
-            startIndex = curSelectedIndex;
-            endIndex = this.lastSelectedIndex + 1;
-        }
+        if (isShiftPressed()) {
+            let startIndex = this.lastSelectedIndex;
+            let endIndex = curSelectedIndex;
+            if (endIndex < startIndex) {
+                startIndex = curSelectedIndex;
+                endIndex = this.lastSelectedIndex + 1;
+            }
 
-        if (this.lastSelectedIndex >= 0) {
-            for (let i = startIndex; i < endIndex; i++) {
-                const slideElement = this.slides[i];
-                if (select) {
-                    slideElement.select();
-                } else {
-                    slideElement.deselect();
+            if (this.lastSelectedIndex >= 0) {
+                for (let i = startIndex; i < endIndex; i++) {
+                    const slideElement = this.slides[i];
+                    if (select) {
+                        slideElement.select();
+                    } else {
+                        slideElement.deselect();
+                    }
                 }
             }
         }
