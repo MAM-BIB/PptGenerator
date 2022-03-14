@@ -14,7 +14,6 @@ const sectionContainer = document.querySelector(".presentation-slide-container.l
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
-const testBtn = document.getElementById("test-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
 let loadedPreset: Preset;
@@ -42,43 +41,43 @@ async function read() {
 read();
 
 exportBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke(
-        "openWindow",
-        "export.html",
-        {
-            width: 500,
-            height: 400,
-            minWidth: 500,
-            minHeight: 400,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+    if (foundVariables()) {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "variables.html",
+            {
+                width: 500,
+                height: 400,
+                minWidth: 500,
+                minHeight: 400,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: true,
             },
-            autoHideMenuBar: true,
-            modal: true,
-        },
-        presentations,
-    );
-});
-
-testBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke(
-        "openWindow",
-        "variables.html",
-        {
-            width: 500,
-            height: 400,
-            minWidth: 500,
-            minHeight: 400,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+            presentations,
+        );
+    } else {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "export.html",
+            {
+                width: 500,
+                height: 400,
+                minWidth: 500,
+                minHeight: 400,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: true,
             },
-            autoHideMenuBar: true,
-            modal: true,
-        },
-        presentations,
-    );
+            presentations,
+        );
+    }
 });
 
 loadPresetBtn.addEventListener("click", async () => {
@@ -115,4 +114,17 @@ function loadPreset() {
             }
         }
     }
+}
+
+function foundVariables(): boolean {
+    for (const presentation of presentations) {
+        for (const section of presentation.Sections) {
+            for (const slide of section.Slides) {
+                if (slide.Placeholders.length > 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }

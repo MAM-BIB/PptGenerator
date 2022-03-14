@@ -4,7 +4,7 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
-import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
 import openPopup from "../../helper";
@@ -19,10 +19,12 @@ const savePresetToggleBtn = document.getElementById("save-preset-toggle-btn") as
 const presetPathSection = document.getElementById("preset-path") as HTMLDivElement;
 const presetPathInput = document.getElementById("preset-path-input") as HTMLInputElement;
 
+let placeholders: Placeholder[];
 let presentations: Presentation[];
 
 ipcRenderer.on("data", (event, data) => {
-    presentations = data;
+    presentations = data.presentations;
+    placeholders = data.placeholders;
 });
 
 pathInput.value = getConfig().defaultExportPath;
