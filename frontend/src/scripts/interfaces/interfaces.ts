@@ -38,6 +38,7 @@ export interface Config {
 export interface Preset {
     path: string;
     sections: PresetSection[];
+    placeholders: Placeholder[];
 }
 
 export interface PresetSection {
@@ -50,4 +51,9 @@ export interface PopupOptions {
     title?: string;
     heading?: string;
     text?: string;
+}
+
+export interface Placeholder {
+    name: string;
+    value: string;
 }

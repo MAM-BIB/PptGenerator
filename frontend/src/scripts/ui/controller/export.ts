@@ -120,6 +120,7 @@ async function createPreset(savePath: string) {
     const preset: Preset = {
         path: savePath,
         sections: [],
+        placeholders: [],
     };
 
     for (const presentation of presentations) {
