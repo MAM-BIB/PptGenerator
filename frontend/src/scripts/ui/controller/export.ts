@@ -104,6 +104,8 @@ function exportToPptx(outPath: string) {
         "-basePath",
         getConfig().basePath,
         "-deleteFirstSlide",
+        "-placeholders",
+        ...placeholders.map((elem) => `${elem.name},${elem.value}`),
     ]);
 
     bat.stderr.on("data", (d) => {
