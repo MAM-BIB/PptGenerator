@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using D = DocumentFormat.OpenXml.Drawing;
 
 /**
 * Credit: 
@@ -14,7 +15,7 @@ using System.Linq;
 namespace PptGenerator.Manager {
     class PptFileManager {
 
-        public static void Copy(string sourcePresentationStream, List<uint> copiedSlidePositions, string destPresentationStream) {
+        public static void Copy(string sourcePresentationStream, List<uint> copiedSlidePositions, string destPresentationStream, List<KeyValuePair<string, string>> placeholders) {
             using (PresentationDocument destDoc = PresentationDocument.Open(destPresentationStream, true)) {
                 PresentationDocument sourceDoc = PresentationDocument.Open(sourcePresentationStream, false);
 
@@ -24,8 +25,13 @@ namespace PptGenerator.Manager {
                 PresentationPart sourcePresentationPart = sourceDoc.PresentationPart;
                 Presentation sourcePresentation = sourcePresentationPart.Presentation;
 
+
+                foreach (var item in placeholders) {
+                    Console.WriteLine($"{item.Key}: {item.Value}");
+                }
+
                 foreach (uint copiedSlidePosition in copiedSlidePositions) {
-                    copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation);
+                    copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation, placeholders);
                 }
 
                 destDoc.PresentationPart.Presentation.Save();
@@ -78,7 +84,14 @@ namespace PptGenerator.Manager {
         }
 
         
-        private static void copyOneSlide(uint copiedSlideIndex, PresentationPart destPresentationPart, Presentation destPresentation, PresentationPart sourcePresentationPart, Presentation sourcePresentation) {
+        private static void copyOneSlide(
+            uint copiedSlideIndex, 
+            PresentationPart destPresentationPart, 
+            Presentation destPresentation, 
+            PresentationPart sourcePresentationPart, 
+            Presentation sourcePresentation, 
+            List<KeyValuePair<string, string>> placeholders
+        ) {
             int countSlidesInSourcePresentation = sourcePresentation.SlideIdList.Count();
 
             if (copiedSlideIndex < 0 || copiedSlideIndex >= countSlidesInSourcePresentation)
@@ -104,6 +117,32 @@ namespace PptGenerator.Manager {
                 RelationshipId = destPresentationPart.GetIdOfPart(addedSlidePart)
             };
 
+            addedSlidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
+
+            if (addedSlidePart.Slide != null) {
+                foreach (var item in addedSlidePart.Slide.Descendants<Shape>()) {
+                    Console.WriteLine("InnerText: " + item.TextBody.InnerText);
+                    foreach (var paragraph in item.TextBody.Descendants<D.Paragraph>()) {
+
+                        List<D.Text> paragraphs = paragraph.Descendants<D.Text>().ToList();
+                        for (int i = 0; i < paragraphs.Count; i++) {
+                            D.Text text = paragraphs[i];
+                            replacePlaceholder(text, placeholders);
+                        }
+
+                        foreach (var text in paragraph.Descendants<D.Text>()) {
+                            Console.WriteLine("text.Text: " + text.Text);
+
+                            
+
+                            foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                                text.Text = text.Text.Replace($"~${placeholder.Key}$~", placeholder.Value);
+                            }
+                        }
+                    }
+                }
+            }
+
             // TODO: Adding a SlideIdList dosen't work yet
             if (destPresentation.SlideIdList == null) {
                 destPresentation.SlideIdList = new SlideIdList();
@@ -115,6 +154,55 @@ namespace PptGenerator.Manager {
                 SlidePart slidePart2 = (SlidePart)destPresentationPart.GetPartById(slideId.RelationshipId);
                 NotesSlidePart notesSlidePart1 = slidePart2.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
                 notesSlidePart1.NotesSlide = notes;
+            }
+        }
+
+        private static bool isInPlaceholder = false;
+
+        private static void replacePlaceholder(D.Text text, List<KeyValuePair<string, string>> placeholders) {
+            int startCount = text.Text.Split("~$").Length - 1;
+            int endCount = text.Text.Split("$~").Length - 1;
+            if (startCount == 0 && endCount == 0) {
+                if (isInPlaceholder) {
+                    foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                        text.Text = text.Text.Replace($"{placeholder.Key}", placeholder.Value);
+                    }
+                }
+                return;
+            }
+
+            if (startCount > endCount) {
+                isInPlaceholder = true;
+                if (startCount == 1) {
+                    foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                        text.Text = text.Text.Replace($"~${placeholder.Key}", placeholder.Value);
+                    }
+                    text.Text = text.Text.Replace("~$", "");
+                } else {
+                    // TODO: 
+                    foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                        text.Text = text.Text.Replace($"~${placeholder.Key}$~", placeholder.Value);
+                    }
+                    replacePlaceholder(text, placeholders);
+                }
+            } else if (endCount > startCount) {
+                isInPlaceholder = false;
+                if (endCount == 1) {
+                    foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                        text.Text = text.Text.Replace($"{placeholder.Key}$~", placeholder.Value);
+                    }
+                    text.Text = text.Text.Replace("$~", "");
+                } else {
+                    // TODO: 
+                    foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                        text.Text = text.Text.Replace($"~${placeholder.Key}$~", placeholder.Value);
+                    }
+                    replacePlaceholder(text, placeholders);
+                }
+            } else {
+                foreach (KeyValuePair<string, string> placeholder in placeholders) {
+                    text.Text = text.Text.Replace($"~${placeholder.Key}$~", placeholder.Value);
+                }
             }
         }
 

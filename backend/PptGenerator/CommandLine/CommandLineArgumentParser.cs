@@ -15,6 +15,7 @@ namespace PptGenerator.CommandLine {
                 Console.WriteLine("-outPath <path>");
                 Console.WriteLine("-inPath <path> (<path>? ...)");
                 Console.WriteLine("-slidePos <slidePos,slidePos,...>");
+                Console.WriteLine("-placeholders <name,value> (<name,value>? ...)");
                 return null;
             }
 
@@ -95,13 +96,23 @@ namespace PptGenerator.CommandLine {
                     }
                 }
 
+                List<KeyValuePair<string, string>> placeholders = new List<KeyValuePair<string, string>>();
+                foreach (string item in getArgument("-placeholders", args)) {
+                    string[] items = item.Split(",");
+                    if (items.Length < 2) {
+                        throw new Exception("Placeholder have to be in form: '-placeholders <name,value> (<name,value>? ...)'");
+                    }
+                    placeholders.Add(new KeyValuePair<string, string>(items[0], item.Substring(items[0].Length + 1)));
+                    Console.WriteLine(item.Substring(items[0].Length));
+                }
+
                 // Parse -ignoreTheme
                 bool ignoreTheme = argList.Contains("-ignoreTheme");
 
                 // Parse -deleteFirstSlide
                 bool deleteFirstSlide = argList.Contains("-deleteFirstSlide");
 
-                return new CommandLineArgument(mode, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath);
+                return new CommandLineArgument(mode, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath, placeholders);
             }
 
             return new CommandLineArgument(mode, outPath, inPaths);
