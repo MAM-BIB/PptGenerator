@@ -1,7 +1,7 @@
 import fsBase from "fs";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation, Preset } from "../../interfaces/interfaces";
+import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
@@ -14,10 +14,11 @@ const sectionContainer = document.querySelector(".presentation-slide-container.l
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
+const sectionElements: SectionElement[] = [];
 
 let presentations: Presentation[];
 let loadedPreset: Preset;
-const sectionElements: SectionElement[] = [];
+let placeholders: Placeholder[] | undefined;
 
 async function read() {
     try {
@@ -57,7 +58,10 @@ exportBtn.addEventListener("click", async () => {
                 autoHideMenuBar: true,
                 modal: true,
             },
-            presentations,
+            {
+                presentations,
+                placeholders,
+            },
         );
     } else {
         await ipcRenderer.invoke(
@@ -77,6 +81,7 @@ exportBtn.addEventListener("click", async () => {
             },
             {
                 presentations,
+                placeholders,
             },
         );
     }
@@ -102,6 +107,8 @@ function loadPreset() {
             slideElement.deselect();
         }
     }
+    // delete placeholders
+    placeholders = undefined;
 
     // go through every section
     for (const section of loadedPreset.sections) {
@@ -115,6 +122,9 @@ function loadPreset() {
                 }
             }
         }
+    }
+    if (loadedPreset.placeholders.length > 0) {
+        placeholders = loadedPreset.placeholders;
     }
 }
 

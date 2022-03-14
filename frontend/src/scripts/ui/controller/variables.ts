@@ -6,22 +6,34 @@ import openPopup from "../../helper";
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
 const setBtn = document.getElementById("set-btn") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
-const placeholders: Placeholder[] = [];
 
 let presentations: Presentation[];
+let placeholders: Placeholder[];
+
 ipcRenderer.on("data", (event, data) => {
-    presentations = data;
-    for (const presentation of presentations) {
-        for (const section of presentation.Sections) {
-            for (const slide of section.Slides) {
-                for (const placeholder of slide.Placeholders) {
-                    variablesContainer.appendChild(createVariableInput(placeholder, placeholders.length));
-                    placeholders.push({
-                        name: placeholder,
-                        value: "",
-                    });
+    presentations = data.presentations;
+    placeholders = data.placeholders;
+
+    if (!placeholders) {
+        placeholders = [];
+        for (const presentation of presentations) {
+            for (const section of presentation.Sections) {
+                for (const slide of section.Slides) {
+                    for (const placeholder of slide.Placeholders) {
+                        variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length));
+                        placeholders.push({
+                            name: placeholder,
+                            value: "",
+                        });
+                    }
                 }
             }
+        }
+    } else {
+        for (const placeholder of placeholders) {
+            variablesContainer.appendChild(
+                createPlaceholderInput(placeholder.name, placeholders.length, placeholder.value),
+            );
         }
     }
 });
@@ -57,7 +69,7 @@ cancelBtn.addEventListener("click", async () => {
     await ipcRenderer.invoke("closeFocusedWindow");
 });
 
-function createVariableInput(varName: string, index: number): HTMLDivElement {
+function createPlaceholderInput(varName: string, index: number, defaultValue = ""): HTMLDivElement {
     const variableContainer = document.createElement("div") as HTMLDivElement;
     const varLabel = document.createElement("label") as HTMLLabelElement;
     const inputContainer = document.createElement("div") as HTMLDivElement;
@@ -70,6 +82,7 @@ function createVariableInput(varName: string, index: number): HTMLDivElement {
 
     varInput.type = "text";
     varInput.id = `input-${varName}`;
+    varInput.value = defaultValue;
     varInput.addEventListener("change", () => {
         placeholders[index].value = varInput.value;
     });
