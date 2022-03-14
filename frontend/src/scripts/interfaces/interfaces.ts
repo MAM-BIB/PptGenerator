@@ -15,6 +15,7 @@ export interface Slide {
     Title: string;
     IsHidden: boolean;
     IsSelected: boolean;
+    Placeholders: string[];
 }
 
 // Config interfaces
