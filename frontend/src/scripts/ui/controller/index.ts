@@ -132,7 +132,7 @@ function foundVariables(): boolean {
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
             for (const slide of section.Slides) {
-                if (slide.Placeholders.length > 0) {
+                if (slide.IsSelected && slide.Placeholders.length > 0) {
                     return true;
                 }
             }
