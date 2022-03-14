@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
 using D = DocumentFormat.OpenXml.Drawing;
+using System.Text.RegularExpressions;
 
 namespace PptGenerator.TemplateInfo {
     class TemplateReader {
@@ -77,14 +78,25 @@ namespace PptGenerator.TemplateInfo {
                                             string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
                                             uid = (uidArr.Length > 1) ? uidArr[1] : "";
                                         }
-                                        
+
+                                        // Match Placeholder
+                                        string text = slidePart.Slide.InnerText;
+                                        Regex regex = new Regex(@"~\$[^~]*\$~", RegexOptions.Compiled);
+                                        MatchCollection matches = regex.Matches(text);
+
+                                        List<String> placeholder = new List<string>();
+
+                                        foreach (Match match in matches) {
+                                            Console.WriteLine($"{match.Value} at {match.Index}");
+                                            placeholder.Add(match.Value.Substring(2, match.Value.Length - 4));
+                                        }
 
                                         bool isHidden = false;
                                         if(slidePart.Slide.Show != null && !slidePart.Slide.Show.Value) {
                                             isHidden = true;
                                         }
 
-                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden));
+                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden, placeholder));
                                     }
                                     position++;
                                 }

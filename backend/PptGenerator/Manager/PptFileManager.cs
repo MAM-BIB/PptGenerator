@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
 /**
 * Credit: 
 *          https://stackoverflow.com/questions/49453527/copying-a-slide-from-one-presentation-to-another-using-open-xml-sdk
@@ -104,9 +103,6 @@ namespace PptGenerator.Manager {
                 Id = CreateId(destPresentation.SlideIdList),
                 RelationshipId = destPresentationPart.GetIdOfPart(addedSlidePart)
             };
-
-            Console.WriteLine(addedSlidePart.Slide.InnerText);
-            Console.WriteLine("----------------");
 
             // TODO: Adding a SlideIdList dosen't work yet
             if (destPresentation.SlideIdList == null) {
