@@ -84,11 +84,11 @@ namespace PptGenerator.TemplateInfo {
                                         Regex regex = new Regex(@"~\$[^~]*\$~", RegexOptions.Compiled);
                                         MatchCollection matches = regex.Matches(text);
 
-                                        List<String> placeholder = new List<string>();
+                                        List<String> placeholders = new List<string>();
 
                                         foreach (Match match in matches) {
                                             Console.WriteLine($"{match.Value} at {match.Index}");
-                                            placeholder.Add(match.Value.Substring(2, match.Value.Length - 4));
+                                            placeholders.Add(match.Value.Substring(2, match.Value.Length - 4));
                                         }
 
                                         bool isHidden = false;
@@ -96,7 +96,7 @@ namespace PptGenerator.TemplateInfo {
                                             isHidden = true;
                                         }
 
-                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden, placeholder));
+                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden, placeholders));
                                     }
                                     position++;
                                 }
