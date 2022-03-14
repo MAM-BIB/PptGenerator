@@ -1,7 +1,7 @@
 import fsBase from "fs";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation, Preset } from "../../interfaces/interfaces";
+import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
@@ -14,11 +14,11 @@ const sectionContainer = document.querySelector(".presentation-slide-container.l
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
-const testBtn = document.getElementById("test-btn") as HTMLButtonElement;
+const sectionElements: SectionElement[] = [];
 
 let presentations: Presentation[];
 let loadedPreset: Preset;
-const sectionElements: SectionElement[] = [];
+let placeholders: Placeholder[] | undefined;
 
 async function read() {
     try {
@@ -42,43 +42,49 @@ async function read() {
 read();
 
 exportBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke(
-        "openWindow",
-        "export.html",
-        {
-            width: 500,
-            height: 400,
-            minWidth: 500,
-            minHeight: 400,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+    if (foundVariables()) {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "variables.html",
+            {
+                width: 500,
+                height: 400,
+                minWidth: 500,
+                minHeight: 400,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: true,
             },
-            autoHideMenuBar: true,
-            modal: true,
-        },
-        presentations,
-    );
-});
-
-testBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke(
-        "openWindow",
-        "variables.html",
-        {
-            width: 500,
-            height: 400,
-            minWidth: 500,
-            minHeight: 400,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
+            {
+                presentations,
+                placeholders,
             },
-            autoHideMenuBar: true,
-            modal: true,
-        },
-        presentations,
-    );
+        );
+    } else {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "export.html",
+            {
+                width: 500,
+                height: 400,
+                minWidth: 500,
+                minHeight: 400,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: true,
+            },
+            {
+                presentations,
+                placeholders,
+            },
+        );
+    }
 });
 
 loadPresetBtn.addEventListener("click", async () => {
@@ -101,6 +107,8 @@ function loadPreset() {
             slideElement.deselect();
         }
     }
+    // delete placeholders
+    placeholders = undefined;
 
     // go through every section
     for (const section of loadedPreset.sections) {
@@ -115,4 +123,20 @@ function loadPreset() {
             }
         }
     }
+    if (loadedPreset.placeholders.length > 0) {
+        placeholders = loadedPreset.placeholders;
+    }
+}
+
+function foundVariables(): boolean {
+    for (const presentation of presentations) {
+        for (const section of presentation.Sections) {
+            for (const slide of section.Slides) {
+                if (slide.Placeholders.length > 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
