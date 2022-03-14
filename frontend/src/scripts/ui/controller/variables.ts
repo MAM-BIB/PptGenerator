@@ -60,6 +60,7 @@ setBtn.addEventListener("click", async () => {
                 placeholders,
             },
         );
+        window.close();
     } else {
         openPopup({ text: "Please fill out all Inputs!", heading: "Error" });
     }
