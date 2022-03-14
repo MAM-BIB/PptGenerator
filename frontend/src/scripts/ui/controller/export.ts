@@ -24,7 +24,11 @@ let presentations: Presentation[];
 
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
-    placeholders = data.placeholders;
+    if (data.placeholders) {
+        placeholders = data.placeholders;
+    } else {
+        placeholders = [];
+    }
 });
 
 pathInput.value = getConfig().defaultExportPath;
@@ -145,6 +149,10 @@ async function createPreset(savePath: string) {
                 preset.sections.push(presetSection);
             }
         }
+    }
+
+    if (placeholders.length > 0) {
+        preset.placeholders = placeholders;
     }
 
     const presetJson = JSON.stringify(preset, null, "\t");

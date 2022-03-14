@@ -75,7 +75,9 @@ exportBtn.addEventListener("click", async () => {
                 autoHideMenuBar: true,
                 modal: true,
             },
-            presentations,
+            {
+                presentations,
+            },
         );
     }
 });
