@@ -6,7 +6,7 @@ import { openWindow } from "./ipcHandler";
 const windowOptions = {
     width: 400,
     height: 200,
-    resizable: true,
+    resizable: false,
     useContentSize: true,
     webPreferences: {
         nodeIntegration: true,
