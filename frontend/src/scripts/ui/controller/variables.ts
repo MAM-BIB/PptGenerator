@@ -62,7 +62,7 @@ setBtn.addEventListener("click", async () => {
         );
         window.close();
     } else {
-        openPopup({ text: "Please fill out all Inputs!", heading: "Error" });
+        openPopup({ text: "Please fill out all inputs!", heading: "Error" });
     }
 });
 
