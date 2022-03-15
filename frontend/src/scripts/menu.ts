@@ -1,9 +1,13 @@
 import { app, BrowserWindow, Menu, MenuItem } from "electron";
 import { spawn } from "child_process";
 import path from "path";
+import fsBase from "fs";
 
 import { getConfig } from "./config";
 import openPopup from "./helper";
+import { Presentation } from "./interfaces/interfaces";
+
+const fs = fsBase.promises;
 
 export default function initMenu(mainWindow: BrowserWindow) {
     const menu = Menu.buildFromTemplate([
@@ -37,6 +41,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 {
                     label: "Scan Presentation",
                     click(item, focusedWindow) {
+                        /*
                         const bat = spawn(getConfig().coreApplication, [
                             "-inPath",
                             getConfig().presentationMasters[0].paths[0],
@@ -53,8 +58,9 @@ export default function initMenu(mainWindow: BrowserWindow) {
                             if (code !== 0) {
                                 openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
                             }
-                            reload(item, focusedWindow);
                         });
+                        */
+                        checkUids();
                     },
                 },
                 {
@@ -106,5 +112,41 @@ function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
             });
         }
         focusedWindow.reload();
+    }
+}
+
+async function checkUids() {
+    const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+    const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
+    const uids: string[] = [];
+    const errors: string[] = [];
+
+    for (const presentation of presentations) {
+        for (const section of presentation.Sections) {
+            for (const slide of section.Slides) {
+                const slideTitle = slide.Title;
+                const slidePos = slide.Position + 1;
+                if (slide.Uid === "") {
+                    errors.push(`The following slide has no uid:\n${slideTitle}, pos: ${slidePos}`);
+                } else if (uids.includes(slide.Uid)) {
+                    const oldSlide = section.Slides.find((elem) => elem.Uid === slide.Uid);
+                    const slideTitel2 = oldSlide?.Title;
+                    const slidePos2 = oldSlide?.Position;
+                    errors.push(`The following slides have the same uid:
+                    \n${slideTitel2}, pos: ${slidePos2}
+                    \n${slideTitle}, pos: ${slidePos}`);
+                } else {
+                    uids.push(slide.Uid);
+                }
+            }
+        }
+    }
+
+    if (errors.length > 0) {
+        let errString = "";
+        for (const error of errors) {
+            errString += `${error}\n`;
+        }
+        openPopup({ text: errString, heading: "Error" });
     }
 }
