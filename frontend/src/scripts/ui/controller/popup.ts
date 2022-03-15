@@ -14,12 +14,28 @@ ipcRenderer.on("data", (event, data) => {
 
     textElement.textContent = `${options.text}`;
     headingElement.textContent = `${options.heading}`;
-});
+    if (options.secondaryButton) {
+        cancelBtn.hidden = false;
+        cancelBtn.textContent = options.secondaryButton;
+    }
+    if (options.primaryButton) {
+        okBtn.textContent = options.primaryButton;
+    }
+    if (options.answer) {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, false);
+        });
 
-cancelBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
-});
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, true);
+        });
+    } else {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
 
-okBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
+    }
 });

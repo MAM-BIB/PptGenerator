@@ -51,6 +51,9 @@ export interface PopupOptions {
     title?: string;
     heading?: string;
     text?: string;
+    primaryButton?: string;
+    secondaryButton?: string;
+    answer?: boolean | string;
 }
 
 export interface Placeholder {

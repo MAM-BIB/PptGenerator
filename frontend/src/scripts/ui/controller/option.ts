@@ -17,10 +17,15 @@ const newPresentationSection = document.getElementById("presentation-section") a
 const selectLanguage = document.getElementById("language-select") as HTMLSelectElement;
 const addLanguageBtn = document.getElementById("add-language-btn") as HTMLButtonElement;
 const languageInput = document.getElementById("language-input") as HTMLInputElement;
+const deleteLanguageBtn = document.getElementById("x-btn") as HTMLButtonElement;
 
 fillInput();
 addAllBrowseHandler();
 fillSelect();
+
+deleteLanguageBtn.addEventListener("click", () => {
+    deleteLanguage();
+});
 
 addLanguageBtn.addEventListener("click", () => {
     if (!languageInput.classList.contains("show")) {
@@ -45,21 +50,10 @@ addLanguageBtn.addEventListener("click", () => {
         lang: languageInput.value,
         paths: [],
     });
-    fillSelect();
+    fillSelect(config.presentationMasters.length - 1);
     languageInput.classList.remove("show");
     languageInput.value = "";
 });
-
-function fillSelect() {
-    selectLanguage.innerHTML = "";
-    selectLanguage.append(document.createElement("option"));
-
-    for (const master of config.presentationMasters) {
-        const newoption = document.createElement("option");
-        newoption.textContent = master.lang;
-        selectLanguage.appendChild(newoption);
-    }
-}
 
 selectLanguage.addEventListener("change", () => {
     newPresentationSection.innerHTML = "";
@@ -103,11 +97,22 @@ saveBtn.addEventListener("click", () => {
 });
 
 // Send a message to the main-process if the cancel-button is clicked.
-cancelBtn.addEventListener("click", () => {
+cancelBtn.addEventListener("click", async () => {
     if (!saveBtn.disabled) {
         // Alert willst du wirklich diese Einstellungen löschen
+        const answer = await openPopup({
+            text: "There are unsaved changes, do you really want to quit?",
+            heading: "Cancel",
+            primaryButton: "Yes",
+            secondaryButton: "Abort",
+            answer: true,
+        });
+        if (answer) {
+            ipcRenderer.invoke("closeFocusedWindow");
+        }
+    } else {
+        ipcRenderer.invoke("closeFocusedWindow");
     }
-    ipcRenderer.invoke("closeFocusedWindow");
 });
 
 function fillInput() {
@@ -181,5 +186,31 @@ function newGroupOfPresentation(masterIndex: number) {
     const presentationMaster = config.presentationMasters[masterIndex];
     for (let pathIndex = 0; pathIndex < presentationMaster.paths.length; pathIndex++) {
         newPresentation(masterIndex, pathIndex);
+    }
+}
+
+function fillSelect(lastIndex?: number) {
+    selectLanguage.innerHTML = "";
+    selectLanguage.append(document.createElement("option"));
+    for (let index = 0; index < config.presentationMasters.length; index++) {
+        const master = config.presentationMasters[index];
+        const newoption = document.createElement("option");
+        if (index === lastIndex) {
+            newoption.selected = true;
+        }
+        newoption.textContent = master.lang;
+        selectLanguage.appendChild(newoption);
+    }
+    selectLanguage.dispatchEvent(new Event("change"));
+}
+
+function deleteLanguage() {
+    for (const master of config.presentationMasters) {
+        if (master.lang === selectLanguage.options[selectLanguage.selectedIndex].value) {
+            config.presentationMasters.splice(selectLanguage.selectedIndex - 1, 1);
+            fillSelect();
+            saveBtn.disabled = false;
+            return;
+        }
     }
 }

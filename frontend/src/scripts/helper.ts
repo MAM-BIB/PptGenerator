@@ -1,23 +1,24 @@
-import { ipcRenderer } from "electron";
+import { BrowserWindow, ipcRenderer } from "electron";
 
 import { PopupOptions } from "./interfaces/interfaces";
+import { openWindow } from "./ipcHandler";
 
-export default function openPopup(options: PopupOptions) {
-    ipcRenderer.invoke(
-        "openWindow",
-        "popup.html",
-        {
-            width: 400,
-            height: 200,
-            resizable: false,
-            useContentSize: true,
-            webPreferences: {
-                nodeIntegration: true,
-                contextIsolation: false,
-            },
-            autoHideMenuBar: true,
-            modal: true,
-        },
-        options,
-    );
+const windowOptions = {
+    width: 400,
+    height: 200,
+    resizable: false,
+    useContentSize: true,
+    webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+    modal: true,
+};
+
+export default async function openPopup(options: PopupOptions) {
+    if (ipcRenderer) {
+        return ipcRenderer.invoke("openWindow", "popup.html", windowOptions, options);
+    }
+    return openWindow(BrowserWindow.getFocusedWindow(), "popup.html", windowOptions, options);
 }
