@@ -15,6 +15,7 @@ export interface Slide {
     Title: string;
     IsHidden: boolean;
     IsSelected: boolean;
+    Placeholders: string[];
 }
 
 // Config interfaces
@@ -37,6 +38,7 @@ export interface Config {
 export interface Preset {
     path: string;
     sections: PresetSection[];
+    placeholders: Placeholder[];
 }
 
 export interface PresetSection {
@@ -52,4 +54,9 @@ export interface PopupOptions {
     primaryButton?: string;
     secondaryButton?: string;
     answer?: boolean | string;
+}
+
+export interface Placeholder {
+    name: string;
+    value: string;
 }

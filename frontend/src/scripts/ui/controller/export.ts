@@ -4,7 +4,7 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
-import { Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
 import openPopup from "../../helper";
@@ -19,10 +19,16 @@ const savePresetToggleBtn = document.getElementById("save-preset-toggle-btn") as
 const presetPathSection = document.getElementById("preset-path") as HTMLDivElement;
 const presetPathInput = document.getElementById("preset-path-input") as HTMLInputElement;
 
+let placeholders: Placeholder[];
 let presentations: Presentation[];
 
 ipcRenderer.on("data", (event, data) => {
-    presentations = data;
+    presentations = data.presentations;
+    if (data.placeholders) {
+        placeholders = data.placeholders;
+    } else {
+        placeholders = [];
+    }
 });
 
 pathInput.value = getConfig().defaultExportPath;
@@ -102,6 +108,8 @@ function exportToPptx(outPath: string) {
         "-basePath",
         getConfig().basePath,
         "-deleteFirstSlide",
+        "-placeholders",
+        ...placeholders.map((elem) => `${elem.name},${elem.value}`),
     ]);
 
     bat.stderr.on("data", (d) => {
@@ -120,6 +128,7 @@ async function createPreset(savePath: string) {
     const preset: Preset = {
         path: savePath,
         sections: [],
+        placeholders: [],
     };
 
     for (const presentation of presentations) {
@@ -140,6 +149,10 @@ async function createPreset(savePath: string) {
                 preset.sections.push(presetSection);
             }
         }
+    }
+
+    if (placeholders.length > 0) {
+        preset.placeholders = placeholders;
     }
 
     const presetJson = JSON.stringify(preset, null, "\t");

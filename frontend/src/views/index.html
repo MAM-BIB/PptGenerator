@@ -12,11 +12,13 @@
         <div class="container">
             <div class="container-item left">
                 <h1 class="headline left">
-                    Presentations
+                    presentation-slide-container
                     <select id="presentation-master-select"></select>
                 </h1>
                 <div class="nested-container template">
-                    <div class="presentation-slide-container left"></div>
+                    <div class="presentation-slide-container left">
+                        <!-- Load content dynamically  -->
+                    </div>
                     <div class="btn-container add">
                         <button class="add-btn">Add</button>
                     </div>
@@ -27,10 +29,16 @@
                 <h1 class="headline right">New Presentation</h1>
                 <div class="nested-container presentation">
                     <div class="presentation-slide-container right">
-                        <!-- Load content dynamicly  -->
+                        <!-- Load content dynamically  -->
                     </div>
                     <div class="btn-container">
-                        <button id="load-preset-btn">Load preset</button>
+                        <button
+                            id="load-preset-btn"
+                            title="Load a generated preset or a pptx file
+to edit a presentation"
+                        >
+                            Load file
+                        </button>
                         <button id="export-btn">Export</button>
                     </div>
                 </div>
