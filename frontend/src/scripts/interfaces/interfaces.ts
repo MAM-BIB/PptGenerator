@@ -49,4 +49,5 @@ export interface PopupOptions {
     title?: string;
     heading?: string;
     text?: string;
+    answer?: boolean | string;
 }

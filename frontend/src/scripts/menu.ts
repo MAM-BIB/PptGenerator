@@ -46,7 +46,6 @@ export default function initMenu(mainWindow: BrowserWindow) {
 
                         bat.stderr.on("data", (d) => {
                             const options = { text: `Error during the scan:\n${d?.toString()}`, heading: "Error" };
-                            console.log("options", options);
 
                             openPopup(options);
                         });

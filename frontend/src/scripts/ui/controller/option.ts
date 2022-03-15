@@ -103,11 +103,31 @@ saveBtn.addEventListener("click", () => {
 });
 
 // Send a message to the main-process if the cancel-button is clicked.
-cancelBtn.addEventListener("click", () => {
+cancelBtn.addEventListener("click", async () => {
     if (!saveBtn.disabled) {
         // Alert willst du wirklich diese Einstellungen löschen
+
+        const options = { answer: true, heading: "Blabla", text: "asdlfkhsdghfjkbjdflfldsghlöj" };
+        const windowOptions = {
+            width: 400,
+            height: 200,
+            resizable: true,
+            useContentSize: true,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+            autoHideMenuBar: true,
+            modal: true,
+        };
+
+        const answer = await ipcRenderer.invoke("openWindow", "popup.html", windowOptions, options);
+        if (answer) {
+            ipcRenderer.invoke("closeFocusedWindow");
+        }
+    } else {
+        ipcRenderer.invoke("closeFocusedWindow");
     }
-    ipcRenderer.invoke("closeFocusedWindow");
 });
 
 function fillInput() {

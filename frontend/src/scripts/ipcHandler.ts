@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
+import { PopupOptions, Presentation } from "./interfaces/interfaces";
 
 export default function initIpcHandlers() {
     // Close the window, sending the ipc-message
@@ -17,8 +18,9 @@ export default function initIpcHandlers() {
 
     ipcMain.handle(
         "openWindow",
-        (event, htmlPath: string, options: Electron.BrowserWindowConstructorOptions | undefined, data) => {
-            openWindow(BrowserWindow.fromWebContents(event.sender), htmlPath, options, data);
+        async (event, htmlPath: string, options: Electron.BrowserWindowConstructorOptions | undefined, data) => {
+            const answer = openWindow(BrowserWindow.fromWebContents(event.sender), htmlPath, options, data);
+            return answer;
         },
     );
 }
@@ -27,7 +29,7 @@ export async function openWindow(
     browserWindow: BrowserWindow | null,
     htmlPath: string,
     options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: any,
+    data: PopupOptions | Presentation[], // TODO: add missing types
 ) {
     const windowOptions = options;
     if (browserWindow && windowOptions?.modal) {
@@ -41,8 +43,27 @@ export async function openWindow(
     window.loadFile(indexHTML);
 
     if (data) {
+        if ((data as PopupOptions).answer) {
+            const popupOptions = data as PopupOptions;
+            popupOptions.answer = `answer${Math.random() * 1000}`;
+
+            window.webContents.once("dom-ready", () => {
+                window.webContents.send("data", data);
+            });
+
+            return new Promise<boolean>((resolve) => {
+                ipcMain.handle(popupOptions.answer as string, (event, answer: boolean) => {
+                    BrowserWindow.fromWebContents(event.sender)?.close();
+                    resolve(answer);
+                });
+            });
+        }
         window.webContents.once("dom-ready", () => {
             window.webContents.send("data", data);
         });
     }
+
+    return new Promise((resolve) => {
+        resolve(false);
+    });
 }

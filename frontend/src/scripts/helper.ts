@@ -6,7 +6,7 @@ import { openWindow } from "./ipcHandler";
 const windowOptions = {
     width: 400,
     height: 200,
-    resizable: false,
+    resizable: true,
     useContentSize: true,
     webPreferences: {
         nodeIntegration: true,
@@ -16,10 +16,9 @@ const windowOptions = {
     modal: true,
 };
 
-export default function openPopup(options: PopupOptions) {
+export default async function openPopup(options: PopupOptions) {
     if (ipcRenderer) {
-        ipcRenderer.invoke("openWindow", "popup.html", windowOptions, options);
-    } else {
-        openWindow(BrowserWindow.getFocusedWindow(), "popup.html", windowOptions, options);
+        return ipcRenderer.invoke("openWindow", "popup.html", windowOptions, options);
     }
+    return openWindow(BrowserWindow.getFocusedWindow(), "popup.html", windowOptions, options);
 }
