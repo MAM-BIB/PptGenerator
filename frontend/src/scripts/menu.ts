@@ -6,6 +6,13 @@ import { getConfig } from "./config";
 import openPopup from "./helper";
 
 export default function initMenu(mainWindow: BrowserWindow) {
+    console.log(
+        "concat",
+        ...([] as string[])
+            .concat(...getConfig().presentationMasters.map((master) => master.paths))
+            .filter((value, index, array) => array.indexOf(value) === index),
+    );
+
     const menu = Menu.buildFromTemplate([
         {
             label: "File",
@@ -39,7 +46,10 @@ export default function initMenu(mainWindow: BrowserWindow) {
                     click(item, focusedWindow) {
                         const bat = spawn(getConfig().coreApplication, [
                             "-inPath",
-                            getConfig().presentationMasters[0].paths[0],
+                            ...([] as string[])
+                                .concat(...getConfig().presentationMasters.map((master) => master.paths))
+                                .map((elem) => path.normalize(elem))
+                                .filter((value, index, array) => array.indexOf(value) === index),
                             "-outPath",
                             getConfig().metaJsonPath,
                         ]);

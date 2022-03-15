@@ -28,6 +28,7 @@
 
         .headline {
             text-align: center;
+            padding: 0 0 $size-3 0;
         }
 
         .container-section {
@@ -184,5 +185,13 @@
         button {
             margin: $size-2;
         }
+    }
+}
+
+.scroll {
+    overflow-y: scroll;
+
+    .section {
+        min-height: unset !important;
     }
 }

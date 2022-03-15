@@ -17,16 +17,19 @@ namespace PptGenerator.Creator {
             bool ignoreTheme = clArg.IgnoreTheme;
             bool deleteFirstSlide = clArg.DeleteFirstSlide;
             string basePath = clArg.BasePath;
+            List<KeyValuePair<string, string>> placeholders = clArg.Placeholders;
 
-            if(basePath != null) {
+            if (basePath != null) {
                 try {
+                    Console.WriteLine("basePath " + basePath);
+                    Console.WriteLine("outPath " + outPath);
                     File.Copy(basePath, outPath, true);
                 } catch (IOException e) {
                     throw e;
                 }
             }
 
-            PptFileManager.Copy(inPath, slidePos, outPath);
+            PptFileManager.Copy(inPath, slidePos, outPath, placeholders);
 
             if (deleteFirstSlide) {
                 PptFileManager.DeleteOneSlide(outPath, 0);

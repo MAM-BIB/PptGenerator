@@ -9,19 +9,22 @@ namespace PptGenerator.TemplateInfo {
         private uint _position;
         private string _title;
         private bool _isHidden;
+        private List<String> _placeholders;
 
         public string RelationshipId { get => _relationshipId; set => _relationshipId = value; }
         public string Uid { get => _uid; set => _uid = value; }
         public uint Position { get => _position; set => _position = value; }
         public bool IsHidden { get => _isHidden; set => _isHidden = value; }
         public string Title { get => _title; set => _title = value; }
+        public List<string> Placeholders { get => _placeholders; set => _placeholders = value; }
 
-        public Slide(string relationshipId, string uid, uint position, string title, bool isHidden = false) {
+        public Slide(string relationshipId, string uid, uint position, string title, bool isHidden = false, List<String> placeholders = null) {
             RelationshipId = relationshipId;
             Uid = uid;
             Position = position;
             Title = title;
             IsHidden = isHidden;
+            Placeholders = placeholders == null ? new List<string>() : placeholders;
         }
 
         public override bool Equals(object obj) {
