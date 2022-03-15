@@ -41,7 +41,6 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 {
                     label: "Scan Presentation",
                     click(item, focusedWindow) {
-                        /*
                         const bat = spawn(getConfig().coreApplication, [
                             "-inPath",
                             getConfig().presentationMasters[0].paths[0],
@@ -59,7 +58,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                                 openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
                             }
                         });
-                        */
+                        reload(item, focusedWindow);
                         checkUids();
                     },
                 },
