@@ -1,44 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>ppt Generator</title>
+    </head>
 
-<head>
-   <meta charset="UTF-8" />
-   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <link rel="stylesheet" href="./css/main.css">
-   <title>ppt Generator</title>
-</head>
-
-<body>
-   <div class="container">
-      <div class="container-item left">
-         <h1 class="headline left">Presentations</h1>
-         <div class="nested-container template">
-            <div class="presentation-slide-container left">
-
+    <body>
+        <div class="container">
+            <div class="container-item left">
+                <h1 class="headline left">
+                    presentation-slide-container
+                    <select id="presentation-master-select"></select>
+                </h1>
+                <div class="nested-container template">
+                    <div class="presentation-slide-container left">
+                        <!-- Load content dynamically  -->
+                    </div>
+                    <div class="btn-container add">
+                        <button class="add-btn">Add</button>
+                    </div>
+                </div>
             </div>
-            <div class="btn-container add">
-               <button class="add-btn">Add</button>
-            </div>
-         </div>
-      </div>
 
-      <div class="container-item right">
-         <h1 class="headline right">New Presentation</h1>
-         <div class="nested-container presentation">
-            <div class="presentation-slide-container right">
-               <!-- Content loaded from script -->
+            <div class="container-item right">
+                <h1 class="headline right">New Presentation</h1>
+                <div class="nested-container presentation">
+                    <div class="presentation-slide-container right">
+                        <!-- Load content dynamically  -->
+                    </div>
+                    <div class="btn-container">
+                        <button
+                            id="load-preset-btn"
+                            title="Load a generated preset or a pptx file
+to edit a presentation"
+                        >
+                            Load file
+                        </button>
+                        <button id="export-btn">Export</button>
+                    </div>
+                </div>
             </div>
-            <div class="btn-container">
-               <button id="load-preset-btn" title="Load a generated preset or a pptx file&#13to edit a presentation">Load file</button>
-               <button id="export-btn">Export</button>
-            </div>
-         </div>
-      </div>
-</body>
+        </div>
+    </body>
 
-<script>
-   require("../ui/controller/index.js");
-</script>
-
+    <script>
+        require("../ui/controller/index.js");
+    </script>
 </html>

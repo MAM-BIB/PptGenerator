@@ -10,17 +10,37 @@ import createPresentationName from "../components/presentationName";
 import openPopup from "../../helper";
 
 const fs = fsBase.promises;
-const { metaJsonPath } = getConfig();
+const { metaJsonPath, presentationMasters } = getConfig();
 
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
+const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
+const presentationMasterSelect = document.getElementById("presentation-master-select") as HTMLSelectElement;
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
-const sectionElements: SectionElement[] = [];
 
 let presentations: Presentation[];
 let loadedPreset: Preset;
 let placeholders: Placeholder[] | undefined;
+
+let presentationMasterLang = "de";
+let sectionElements: SectionElement[] = [];
+
+fillPresentationMasterSelect();
+read();
+
+function fillPresentationMasterSelect() {
+    presentationMasterSelect.innerHTML = "";
+    for (const lang of presentationMasters.map((elem) => elem.lang)) {
+        const optionElem = document.createElement("option");
+        optionElem.textContent = lang;
+        presentationMasterSelect.append(optionElem);
+    }
+    presentationMasterSelect.addEventListener("change", () => {
+        presentationMasterLang = presentationMasterSelect.value;
+        loadSections();
+    });
+}
 
 async function read() {
     try {
@@ -30,18 +50,31 @@ async function read() {
         openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
     }
 
+    loadSections();
+}
+
+function loadSections() {
+    const selectedPresentationMaster = presentationMasters.find((elem) => elem.lang === presentationMasterLang);
+
+    sectionContainer.innerHTML = "";
+    selectedSectionContainer.innerHTML = "";
+    sectionElements = [];
+
+    if (!selectedPresentationMaster) {
+        openPopup({ heading: "Error", text: "Could not find the selected master presentation!" });
+    }
     for (const presentation of presentations) {
-        sectionContainer.appendChild(createPresentationName(presentation));
-        for (const section of presentation.Sections) {
-            const sectionElement = new SectionElement(section);
-            sectionContainer.appendChild(sectionElement.element);
-            selectedSectionContainer.appendChild(sectionElement.selectedElement);
-            sectionElements.push(sectionElement);
+        if (selectedPresentationMaster?.paths.some((p) => path.normalize(p) === path.normalize(presentation.Path))) {
+            sectionContainer.appendChild(createPresentationName(presentation));
+            for (const section of presentation.Sections) {
+                const sectionElement = new SectionElement(section);
+                sectionContainer.appendChild(sectionElement.element);
+                selectedSectionContainer.appendChild(sectionElement.selectedElement);
+                sectionElements.push(sectionElement);
+            }
         }
     }
 }
-
-read();
 
 exportBtn.addEventListener("click", async () => {
     if (foundVariables()) {
