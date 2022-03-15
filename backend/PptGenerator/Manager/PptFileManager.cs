@@ -25,11 +25,6 @@ namespace PptGenerator.Manager {
                 PresentationPart sourcePresentationPart = sourceDoc.PresentationPart;
                 Presentation sourcePresentation = sourcePresentationPart.Presentation;
 
-
-                foreach (var item in placeholders) {
-                    Console.WriteLine($"{item.Key}: {item.Value}");
-                }
-
                 foreach (uint copiedSlidePosition in copiedSlidePositions) {
                     copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation, placeholders);
                 }
@@ -121,20 +116,16 @@ namespace PptGenerator.Manager {
 
             if (addedSlidePart.Slide != null) {
                 foreach (var item in addedSlidePart.Slide.Descendants<Shape>()) {
-                    Console.WriteLine("InnerText: " + item.TextBody.InnerText);
                     foreach (var paragraph in item.TextBody.Descendants<D.Paragraph>()) {
 
                         List<D.Text> paragraphs = paragraph.Descendants<D.Text>().ToList();
+
                         for (int i = 0; i < paragraphs.Count; i++) {
                             D.Text text = paragraphs[i];
                             replacePlaceholder(text, placeholders);
                         }
 
                         foreach (var text in paragraph.Descendants<D.Text>()) {
-                            Console.WriteLine("text.Text: " + text.Text);
-
-                            
-
                             foreach (KeyValuePair<string, string> placeholder in placeholders) {
                                 text.Text = text.Text.Replace($"~${placeholder.Key}$~", placeholder.Value);
                             }

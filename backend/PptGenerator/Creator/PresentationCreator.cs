@@ -19,8 +19,6 @@ namespace PptGenerator.Creator {
             string basePath = clArg.BasePath;
             List<KeyValuePair<string, string>> placeholders = clArg.Placeholders;
 
-            Console.WriteLine("basePath " + basePath);
-            Console.WriteLine("outPath " + outPath);
             if (basePath != null) {
                 try {
                     Console.WriteLine("basePath " + basePath);
