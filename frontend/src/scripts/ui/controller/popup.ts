@@ -14,6 +14,13 @@ ipcRenderer.on("data", (event, data) => {
 
     textElement.textContent = `${options.text}`;
     headingElement.textContent = `${options.heading}`;
+    if (options.secondaryButton) {
+        cancelBtn.hidden = false;
+        cancelBtn.textContent = options.secondaryButton;
+    }
+    if (options.primaryButton) {
+        okBtn.textContent = options.primaryButton;
+    }
 });
 
 cancelBtn.addEventListener("click", () => {

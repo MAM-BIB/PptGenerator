@@ -99,7 +99,12 @@ saveBtn.addEventListener("click", () => {
 // Send a message to the main-process if the cancel-button is clicked.
 cancelBtn.addEventListener("click", () => {
     if (!saveBtn.disabled) {
-        // Alert willst du wirklich diese Einstellungen löschen
+        openPopup({
+            text: "There are unsaved changes, do you really want to quit?",
+            heading: "Cancel",
+            primaryButton: "Yes",
+            secondaryButton: "Abort",
+        });
     }
     ipcRenderer.invoke("closeFocusedWindow");
 });
