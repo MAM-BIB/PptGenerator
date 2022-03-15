@@ -10,31 +10,45 @@
 </head>
 
 <body>
-   <div class="container">
-      <div class="container-item left">
-         <h1 class="headline left">Presentations</h1>
-         <div class="nested-container template">
+   <div class="main-app">
+      <div class="top-bar">
+          <div class="title-bar">
+              <button class="toggle-button" id="show-hidden-menus"></button>
+              <!-- <img src=""> -->
+              <div class="title">ppt Generator</div>
+          </div>
+          <div class="title-bar-btns">
+              <button class="top-btn minimize-btn" id="minimize-btn"></button>
+              <button class="top-btn maximize-btn" id="maximize-btn"></button>
+              <button class="top-btn close-btn" id="close-btn"></button>
+          </div>
+      </div>
+    </div>
+    <div class="container">
+        <div class="container-item left">
+            <h1 class="headline left">Presentations</h1>
+            <div class="nested-container template">
+            </div>
             <div class="presentation-slide-container left">
 
             </div>
             <div class="btn-container add">
-               <button class="add-btn">Add</button>
+                <button class="add-btn">Add</button>
             </div>
-         </div>
-      </div>
+        </div>
+    </div>
 
-      <div class="container-item right">
-         <h1 class="headline right">New Presentation</h1>
-         <div class="nested-container presentation">
-            <div class="presentation-slide-container right">
-               <!-- Load content dynamicly  -->
-            </div>
-            <div class="btn-container">
-               <button id="load-preset-btn">Load preset</button>
-               <button id="export-btn">Export</button>
-            </div>
-         </div>
-      </div>
+    <div class="container-item right">
+        <h1 class="headline right">New Presentation</h1>
+        <div class="nested-container presentation">
+        <div class="presentation-slide-container right">
+            <!-- Load content dynamicly  -->
+        </div>
+        <div class="btn-container">
+            <button id="load-preset-btn">Load preset</button>
+            <button id="export-btn">Export</button>
+        </div>
+    </div>
 </body>
 
 <script>
