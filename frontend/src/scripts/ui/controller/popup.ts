@@ -21,12 +21,21 @@ ipcRenderer.on("data", (event, data) => {
     if (options.primaryButton) {
         okBtn.textContent = options.primaryButton;
     }
-});
+    if (options.answer) {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, false);
+        });
 
-cancelBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
-});
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, true);
+        });
+    } else {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
 
-okBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
+    }
 });

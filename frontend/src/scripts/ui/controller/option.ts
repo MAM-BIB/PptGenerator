@@ -97,16 +97,22 @@ saveBtn.addEventListener("click", () => {
 });
 
 // Send a message to the main-process if the cancel-button is clicked.
-cancelBtn.addEventListener("click", () => {
+cancelBtn.addEventListener("click", async () => {
     if (!saveBtn.disabled) {
-        openPopup({
+        // Alert willst du wirklich diese Einstellungen löschen
+        const answer = await openPopup({
             text: "There are unsaved changes, do you really want to quit?",
             heading: "Cancel",
             primaryButton: "Yes",
             secondaryButton: "Abort",
+            answer: true,
         });
+        if (answer) {
+            ipcRenderer.invoke("closeFocusedWindow");
+        }
+    } else {
+        ipcRenderer.invoke("closeFocusedWindow");
     }
-    ipcRenderer.invoke("closeFocusedWindow");
 });
 
 function fillInput() {

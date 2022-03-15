@@ -51,4 +51,5 @@ export interface PopupOptions {
     text?: string;
     primaryButton?: string;
     secondaryButton?: string;
+    answer?: boolean | string;
 }
