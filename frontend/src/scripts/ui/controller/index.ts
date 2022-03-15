@@ -15,7 +15,6 @@ const { metaJsonPath, presentationMasters } = getConfig();
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
-const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 const presentationMasterSelect = document.getElementById("presentation-master-select") as HTMLSelectElement;
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 

@@ -10,13 +10,6 @@ import { Presentation } from "./interfaces/interfaces";
 const fs = fsBase.promises;
 
 export default function initMenu(mainWindow: BrowserWindow) {
-    console.log(
-        "concat",
-        ...([] as string[])
-            .concat(...getConfig().presentationMasters.map((master) => master.paths))
-            .filter((value, index, array) => array.indexOf(value) === index),
-    );
-
     const menu = Menu.buildFromTemplate([
         {
             label: "File",
