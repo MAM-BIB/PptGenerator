@@ -1,5 +1,7 @@
 import fsBase from "fs";
+import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
+import { spawn } from "child_process";
 
 import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
@@ -13,7 +15,7 @@ const { metaJsonPath } = getConfig();
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
-const loadPresetBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
+const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 const sectionElements: SectionElement[] = [];
 
 let presentations: Presentation[];
@@ -87,16 +89,34 @@ exportBtn.addEventListener("click", async () => {
     }
 });
 
-loadPresetBtn.addEventListener("click", async () => {
+loadFileBtn.addEventListener("click", async () => {
     try {
         const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
         if (!filePath.canceled && filePath.filePaths.length > 0) {
-            const presetJson = await fs.readFile(filePath.filePaths[0], { encoding: "utf-8" });
-            loadedPreset = JSON.parse(presetJson) as Preset;
-            loadPreset();
+            const fileType = path.extname(path.basename(filePath.filePaths[0]));
+            const pathOfFile = filePath.filePaths[0];
+            if (fileType === ".json") {
+                const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
+                loadedPreset = JSON.parse(presetJson) as Preset;
+                loadPreset();
+            } else if (fileType === ".pptx") {
+                const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
+                const bat = spawn(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
+                bat.stderr.on("data", (d) => {
+                    openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
+                });
+                bat.on("exit", (code) => {
+                    if (code !== 0) {
+                        openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
+                    }
+                    createPreset(outPath);
+                });
+            } else {
+                openPopup({ text: "File needs to be a json or pptx:", heading: "Error" });
+            }
         }
     } catch (error) {
-        openPopup({ text: `Could not load template:\n${error}`, heading: "Error" });
+        openPopup({ text: `Could not load file:\n${error}`, heading: "Error" });
     }
 });
 
@@ -139,4 +159,18 @@ function foundVariables(): boolean {
         }
     }
     return false;
+}
+
+async function createPreset(jsonPath: string) {
+    const metaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
+    const loadedMeta = JSON.parse(metaJson) as Presentation;
+
+    const preset: Preset = {
+        path: jsonPath.replace(".TMP.json", ".json"),
+        sections: [],
+        placeholders: [],
+    };
+
+    fs.writeFile(preset.path, JSON.stringify(preset, null, "\t"));
+    fs.rm(jsonPath);
 }
