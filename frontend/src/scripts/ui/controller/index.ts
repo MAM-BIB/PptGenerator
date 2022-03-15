@@ -3,7 +3,7 @@ import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 import { spawn } from "child_process";
 
-import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
+import { Presentation, Preset, Placeholder, PresetSection } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
@@ -162,15 +162,48 @@ function foundVariables(): boolean {
 }
 
 async function createPreset(jsonPath: string) {
-    const metaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
-    const loadedMeta = JSON.parse(metaJson) as Presentation;
+    const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
+    const presMeta = JSON.parse(PresMetaJson) as Presentation[];
 
     const preset: Preset = {
-        path: jsonPath.replace(".TMP.json", ".json"),
+        path: jsonPath,
         sections: [],
         placeholders: [],
     };
 
-    fs.writeFile(preset.path, JSON.stringify(preset, null, "\t"));
-    fs.rm(jsonPath);
+    for (const metaP of presentations) {
+        for (const metaSection of metaP.Sections) {
+            const presetSection: PresetSection = {
+                name: metaSection.Name,
+                includedSlides: [],
+                ignoredSlides: [],
+            };
+            for (const metaSlide of metaSection.Slides) {
+                if (isSlideIncluded(metaSlide.Uid, presMeta)) {
+                    presetSection.includedSlides.push(metaSlide.Uid);
+                } else {
+                    presetSection.ignoredSlides.push(metaSlide.Uid);
+                }
+            }
+            if (presetSection.includedSlides.length > 0) {
+                preset.sections.push(presetSection);
+            }
+        }
+    }
+    loadedPreset = preset;
+    loadPreset();
+    fs.rm(preset.path);
+}
+
+function isSlideIncluded(uid: string, pres: Presentation[]): boolean {
+    for (const presMetaP of pres) {
+        for (const presSection of presMetaP.Sections) {
+            for (const presSlide of presSection.Slides) {
+                if (presSlide.Uid === uid) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
