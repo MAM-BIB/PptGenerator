@@ -119,7 +119,7 @@ function fillInput() {
     defaultExport.value = config.defaultExportPath;
     metaJson.value = config.metaJsonPath;
     metaPics.value = config.metaPicsPath;
-    hiddenSlide.checked = config.ignoreHiddenSlides;
+    hiddenSlide.checked = !config.ignoreHiddenSlides;
 }
 
 defaultExport.addEventListener("change", () => {
@@ -138,12 +138,7 @@ metaPics.addEventListener("change", () => {
 });
 
 hiddenSlide.addEventListener("change", () => {
-    config.ignoreHiddenSlides = hiddenSlide.checked;
-    saveBtn.disabled = false;
-});
-
-hiddenSlide.addEventListener("change", () => {
-    config.ignoreHiddenSlides = hiddenSlide.checked;
+    config.ignoreHiddenSlides = !hiddenSlide.checked;
     saveBtn.disabled = false;
 });
 
