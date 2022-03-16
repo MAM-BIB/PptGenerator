@@ -78,9 +78,9 @@ addBtn.addEventListener("click", () => {
 saveBtn.addEventListener("click", () => {
     if (!saveBtn.disabled) {
         for (let masterIndex = 0; masterIndex < config.presentationMasters.length; masterIndex++) {
-            const pahts = config.presentationMasters[masterIndex].paths;
-            for (let pathIndex = 0; pathIndex < pahts.length; pathIndex++) {
-                const pathString = pahts[pathIndex];
+            const masterPath = config.presentationMasters[masterIndex].paths;
+            for (let pathIndex = 0; pathIndex < masterPath.length; pathIndex++) {
+                const pathString = masterPath[pathIndex];
                 if (pathString.trim() === "") {
                     config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
                     pathIndex--;
@@ -119,7 +119,7 @@ function fillInput() {
     defaultExport.value = config.defaultExportPath;
     metaJson.value = config.metaJsonPath;
     metaPics.value = config.metaPicsPath;
-    hiddenSlide.checked = config.ignoreHiddenSlides;
+    hiddenSlide.checked = !config.ignoreHiddenSlides;
 }
 
 defaultExport.addEventListener("change", () => {
@@ -138,18 +138,13 @@ metaPics.addEventListener("change", () => {
 });
 
 hiddenSlide.addEventListener("change", () => {
-    config.ignoreHiddenSlides = hiddenSlide.checked;
-    saveBtn.disabled = false;
-});
-
-hiddenSlide.addEventListener("change", () => {
-    config.ignoreHiddenSlides = hiddenSlide.checked;
+    config.ignoreHiddenSlides = !hiddenSlide.checked;
     saveBtn.disabled = false;
 });
 
 function newPresentation(masterIndex: number, pathIndex: number) {
-    const newdiv = document.createElement("div");
-    newdiv.className = "section presentation";
+    const newDiv = document.createElement("div");
+    newDiv.className = "section presentation";
 
     const newInput = document.createElement("input");
     newInput.className = "input-path";
@@ -165,7 +160,7 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newDeleteBtn.className = "delete-btn";
     newDeleteBtn.addEventListener("click", () => {
         config.presentationMasters[masterIndex].paths[pathIndex] = "";
-        newdiv.remove();
+        newDiv.remove();
         saveBtn.disabled = false;
     });
 
@@ -175,11 +170,11 @@ function newPresentation(masterIndex: number, pathIndex: number) {
 
     addBrowseHandler(newBrowseBtn);
 
-    newdiv.appendChild(newDeleteBtn);
-    newdiv.appendChild(newInput);
-    newdiv.appendChild(newBrowseBtn);
+    newDiv.appendChild(newDeleteBtn);
+    newDiv.appendChild(newInput);
+    newDiv.appendChild(newBrowseBtn);
 
-    newPresentationSection.appendChild(newdiv);
+    newPresentationSection.appendChild(newDiv);
 }
 
 function newGroupOfPresentation(masterIndex: number) {
@@ -194,12 +189,12 @@ function fillSelect(lastIndex?: number) {
     selectLanguage.append(document.createElement("option"));
     for (let index = 0; index < config.presentationMasters.length; index++) {
         const master = config.presentationMasters[index];
-        const newoption = document.createElement("option");
+        const newOption = document.createElement("option");
         if (index === lastIndex) {
-            newoption.selected = true;
+            newOption.selected = true;
         }
-        newoption.textContent = master.lang;
-        selectLanguage.appendChild(newoption);
+        newOption.textContent = master.lang;
+        selectLanguage.appendChild(newOption);
     }
     selectLanguage.dispatchEvent(new Event("change"));
 }
