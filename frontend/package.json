@@ -16,7 +16,8 @@
         "start-tsc": "tsc && electron .",
         "start-only": "electron .",
         "lint": "eslint . --ext .ts",
-        "lint-fix": "eslint . --fix --ext .ts"
+        "lint-fix": "eslint . --fix --ext .ts",
+        "dist": "node build.js"
     },
     "repository": {
         "type": "git",
@@ -32,6 +33,7 @@
         "@typescript-eslint/eslint-plugin": "^5.13.0",
         "@typescript-eslint/parser": "^5.13.0",
         "copyfiles": "^2.4.1",
+        "electron-packager": "^15.4.0",
         "eslint": "^8.10.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-airbnb-typescript": "^16.1.0",
