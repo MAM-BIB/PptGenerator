@@ -8,90 +8,126 @@
     -webkit-app-region: drag;
 
     .top-bar {
+        flex: 1;
         display: flex;
         flex-direction: row;
         width: 100%;
         height: $size-6;
-        background-color: #2f3241;
         -webkit-user-select: none;
+
+        .title {
+            display: flex;
+            position: absolute;
+            z-index: -1;
+            justify-content: center;
+            width: 100%;
+        }
 
         .title-bar-btns {
             display: flex;
             flex-direction: row;
-            width: 120px;
-            height: 40px;
+            justify-content: flex-end;
+            width: 300px;
+            height: 30px;
 
             .top-btn {
-                width: 48px;
-                height: 40px;
+                //width: 48px;
+                //height: 40px;
+                padding: 0 10px;
                 border: none;
                 outline: none;
                 background-color: transparent;
-                background-repeat: no-repeat;
                 background-position: center;
                 transition: 0.2s;
                 cursor: pointer;
+                border-radius: 0;
+                box-shadow: none;
 
                 &:hover {
-                    background-color: green;
+                    background-color: var(--btn--hover--titlebar);
+                    //light c5c5c5
+                }
+            }
+
+            .svg {
+                background-color: var(--btn--titlebar);
+                width: 19px;
+                height: 19px;
+            }
+
+            .minimize-btn {
+                .svg {
+                    -webkit-mask-image: url("../icons/minimize.svg");
+                    -webkit-mask-size: contain;
+                    mask-image: url("../icons/minimize.svg");
+                    mask-size: contain;
+                }
+            }
+            .maximize-btn {
+                .svg {
+                    -webkit-mask-image: url("../icons/window-maximize.svg");
+                    -webkit-mask-size: contain;
+                    mask-image: url("../icons/window-maximize.svg");
+                    mask-size: contain;
+                }
+            }
+            .restore-btn {
+                .svg {
+                    -webkit-mask-image: url("../icons/window-restore.svg");
+                    -webkit-mask-size: contain;
+                    mask-image: url("../icons/window-restore.svg");
+                    mask-size: contain;
+                }
+            }
+            .close-btn {
+                .svg {
+                    -webkit-mask-image: url("../icons/clear_x.svg");
+                    -webkit-mask-size: contain;
+                    mask-image: url("../icons/clear_x.svg");
+                    mask-size: contain;
+                }
+
+                &:hover {
+                    background-color: red;
+
+                    .svg {
+                        background-color: white;
+                    }
                 }
 
                 &:active {
                     background-color: red;
                 }
             }
-
-            .minimize-btn {
-                background-image: url("../icons/add_circle_x.svg");
-            }
-            .maximize-btn {
-                background-image: url("../icons/add_circle_x.svg");
-            }
-            .restore-btn {
-                background-image: url("../icons/add_circle_x.svg");
-            }
-            .close-btn {
-                background-image: url("../icons/add_circle_x.svg");
-            }
         }
     }
 
-    .title-bar {
+    .title-bar-left-btns {
+        flex: 1;
         display: flex;
         flex-direction: row;
+        justify-content: flex-start;
         align-items: center;
+        height: 30px;
 
-        .toggleButton {
-            width: 45px;
-            height: 40px;
-            border: none;
-            outline: none;
-            background-color: transparent;
-            background-image: url("../icons/add_circle_x.svg");
-            background-repeat: no-repeat;
-            background-position: center;
+        .left-btn {
+            height: 30px;
+            background-color: var(--background--primary);
+            color: var(--btn--titlebar);
             transition: 0.2s;
             cursor: pointer;
+            padding: 0 20px;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            outline: none;
 
             &:hover {
-                background-color: azure;
+                background-color: var(--btn--hover--titlebar);
             }
 
-            &:active {
-                background-color: yellow;
-            }
-
-            img {
-                margin-left: 10px;
-            }
-
-            .title {
-                margin-left: 10px;
-                width: 100%;
-                line-height: 38px;
-                margin-top: 5px;
-                -webkit-app-region: drag;
-            }
+            // &:active {
+            // }
         }
     }
 
@@ -104,7 +140,7 @@
         .leftMenu {
             width: 200px;
             height: 100%;
-            background-color: aqua;
+            background-color: rgb(255, 255, 255);
             transition: 0.4s;
         }
     }
