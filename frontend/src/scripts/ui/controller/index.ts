@@ -137,7 +137,7 @@ loadFileBtn.addEventListener("click", async () => {
                 await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
                 createPreset(outPath);
             } else {
-                openPopup({ text: "File needs to be a json or pptx:", heading: "Error" });
+                openPopup({ text: "File needs to be a json or pptx", heading: "Error" });
             }
         }
     } catch (error) {
@@ -189,8 +189,9 @@ function foundVariables(): boolean {
 async function createPreset(jsonPath: string) {
     const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
     const presMeta = JSON.parse(PresMetaJson) as Presentation[];
+    const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
+
     for (const slideELement of sectionElements.flatMap((elem) => elem.slides)) {
-        const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
         if (allSelectedSlides.some((slide) => slide.Uid === slideELement.slide.Uid)) {
             slideELement.select();
         } else {
