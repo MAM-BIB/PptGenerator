@@ -1,4 +1,7 @@
 {
     "prettier.trailingComma": "all",
-    "prettier.printWidth": 120
+    "prettier.printWidth": 120,
+    "cSpell.words": [
+        "uids"
+    ]
 }
