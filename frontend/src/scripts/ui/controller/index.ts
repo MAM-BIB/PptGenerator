@@ -1,9 +1,8 @@
 import fsBase from "fs";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
-import { spawn } from "child_process";
 
-import { Presentation, Preset, Placeholder, PresetSection } from "../../interfaces/interfaces";
+import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
@@ -198,4 +197,5 @@ async function createPreset(jsonPath: string) {
             slideELement.deselect();
         }
     }
+    fs.rm(jsonPath);
 }
