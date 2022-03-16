@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import fs from "fs";
 
 import { getConfig, setConfig } from "../../config";
-import openPopup from "../../helper";
+import openPopup from "../../helper/popup";
 import { addAllBrowseHandler, addBrowseHandler } from "../components/browseButton";
 
 const config = getConfig();
@@ -92,7 +92,7 @@ saveBtn.addEventListener("click", () => {
             }
         }
         setConfig(config);
-        ipcRenderer.invoke("closeFocusedWindow");
+        ipcRenderer.invoke("saveOptions");
     }
 });
 

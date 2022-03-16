@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import { spawn } from "child_process";
 import path from "path";
 import fsBase from "fs";
 
@@ -7,7 +6,8 @@ import { getConfig } from "../../config";
 import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
-import openPopup from "../../helper";
+import openPopup from "../../helper/popup";
+import call from "../../helper/systemcall";
 
 const fs = fsBase.promises;
 
@@ -84,7 +84,7 @@ cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
-function exportToPptx(outPath: string) {
+async function exportToPptx(outPath: string) {
     const positions: number[] = [];
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
@@ -96,32 +96,30 @@ function exportToPptx(outPath: string) {
         }
     }
 
-    const bat = spawn(getConfig().coreApplication, [
-        "-mode",
-        "create",
-        "-inPath",
-        getConfig().presentationMasters[0].paths[0],
-        "-outPath",
-        outPath,
-        "-slidePos",
-        positions.join(","),
-        "-basePath",
-        getConfig().basePath,
-        "-deleteFirstSlide",
-        "-placeholders",
-        ...placeholders.map((elem) => `${elem.name},${elem.value}`),
-    ]);
-
-    bat.stderr.on("data", (d) => {
-        openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
-    });
-
-    bat.on("exit", (code) => {
-        if (code !== 0) {
-            openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
-        }
-        ipcRenderer.invoke("closeFocusedWindow");
-    });
+    try {
+        await call(getConfig().coreApplication, [
+            "-mode",
+            "create",
+            "-inPath",
+            getConfig().presentationMasters[0].paths[0],
+            "-outPath",
+            outPath,
+            "-slidePos",
+            positions.join(","),
+            "-basePath",
+            getConfig().basePath,
+            "-deleteFirstSlide",
+            "-placeholders",
+            ...placeholders.map((elem) => `${elem.name},${elem.value}`),
+        ]);
+    } catch (error) {
+        await openPopup({
+            text: `The process exited with errors!\n${error}`,
+            heading: "Error",
+            answer: true,
+        });
+    }
+    ipcRenderer.invoke("closeFocusedWindow");
 }
 
 async function createPreset(savePath: string) {

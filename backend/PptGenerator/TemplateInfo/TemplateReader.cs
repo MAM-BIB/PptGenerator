@@ -108,7 +108,7 @@ namespace PptGenerator.TemplateInfo {
             string uid = "";
             if (notesSlidePart != null) {
                 string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                uid = (uidArr.Length > 1) ? uidArr[1] : "";
+                uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
             }
 
             // Match Placeholder

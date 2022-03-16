@@ -10,7 +10,7 @@ app.on("ready", () => {
     const window = new BrowserWindow({
         width: 1280,
         height: 720,
-        minWidth: 500,
+        minWidth: 720,
         minHeight: 400,
         frame: false,
         // titleBarStyle: "hidden",
