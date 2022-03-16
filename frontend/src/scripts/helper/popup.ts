@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcRenderer } from "electron";
 
-import { PopupOptions } from "./interfaces/interfaces";
-import { openWindow } from "./ipcHandler";
+import { PopupOptions } from "../interfaces/interfaces";
+import { openWindow } from "../ipcHandler";
 
 const defaultWindowOptions = {
     width: 400,

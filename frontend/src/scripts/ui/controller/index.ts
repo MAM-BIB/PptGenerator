@@ -6,11 +6,11 @@ import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
-import openPopup from "../../helper";
-import call from "../../systemcall";
+import openPopup from "../../helper/popup";
+import call from "../../helper/systemcall";
+import { startLoading, stopLoading } from "../components/loading";
 
 const fs = fsBase.promises;
-const { metaJsonPath, presentationMasters } = getConfig();
 
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
@@ -28,9 +28,13 @@ let sectionElements: SectionElement[] = [];
 fillPresentationMasterSelect();
 read();
 
+ipcRenderer.on("startLoading", () => {
+    startLoading();
+});
+
 function fillPresentationMasterSelect() {
     presentationMasterSelect.innerHTML = "";
-    for (const lang of presentationMasters.map((elem) => elem.lang)) {
+    for (const lang of getConfig().presentationMasters.map((elem) => elem.lang)) {
         const optionElem = document.createElement("option");
         optionElem.textContent = lang;
         presentationMasterSelect.append(optionElem);
@@ -43,7 +47,7 @@ function fillPresentationMasterSelect() {
 
 async function read() {
     try {
-        const presentationsJson = await fs.readFile(metaJsonPath, { encoding: "utf-8" });
+        const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
         openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
@@ -53,7 +57,9 @@ async function read() {
 }
 
 function loadSections() {
-    const selectedPresentationMaster = presentationMasters.find((elem) => elem.lang === presentationMasterLang);
+    const selectedPresentationMaster = getConfig().presentationMasters.find(
+        (elem) => elem.lang === presentationMasterLang,
+    );
 
     sectionContainer.innerHTML = "";
     selectedSectionContainer.innerHTML = "";
@@ -125,6 +131,7 @@ loadFileBtn.addEventListener("click", async () => {
     try {
         const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
         if (!filePath.canceled && filePath.filePaths.length > 0) {
+            startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
             if (fileType === ".json") {
@@ -142,6 +149,7 @@ loadFileBtn.addEventListener("click", async () => {
     } catch (error) {
         openPopup({ text: `Could not load file:\n${error}`, heading: "Error" });
     }
+    stopLoading();
 });
 
 function loadPreset() {

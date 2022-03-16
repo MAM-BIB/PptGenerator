@@ -3,9 +3,10 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "./config";
-import openPopup from "./helper";
+import openPopup from "./helper/popup";
 import { Presentation, Slide } from "./interfaces/interfaces";
-import call from "./systemcall";
+import call from "./helper/systemcall";
+import reload from "./helper/reload";
 
 const fs = fsBase.promises;
 
@@ -28,7 +29,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                     label: "Reload",
                     accelerator: "CmdOrCtrl+R",
                     click(item, focusedWindow) {
-                        reload(item, focusedWindow);
+                        reload(focusedWindow);
                     },
                 },
                 {
@@ -41,6 +42,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 {
                     label: "Scan Presentation",
                     async click(item, focusedWindow) {
+                        focusedWindow?.webContents.send("startLoading");
                         try {
                             await call(getConfig().coreApplication, [
                                 "-inPath",
@@ -58,7 +60,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                                 answer: true,
                             });
                         }
-                        reload(item, focusedWindow);
+                        reload(focusedWindow);
                         checkUids();
                     },
                 },
@@ -98,20 +100,6 @@ function openOption(parent: BrowserWindow) {
     });
     const indexHTML = path.join(__dirname, "views/option.html");
     optionWindow.loadFile(indexHTML);
-}
-
-function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
-    if (focusedWindow) {
-        // After overloading, refresh and close all secondary forms
-        if (focusedWindow.id === 1) {
-            BrowserWindow.getAllWindows().forEach((win) => {
-                if (win.id > 1) {
-                    win.close();
-                }
-            });
-        }
-        focusedWindow.reload();
-    }
 }
 
 function formatSlide(slides: Slide[]): string {

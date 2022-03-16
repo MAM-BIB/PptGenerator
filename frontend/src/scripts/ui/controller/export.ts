@@ -6,8 +6,8 @@ import { getConfig } from "../../config";
 import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
-import openPopup from "../../helper";
-import call from "../../systemcall";
+import openPopup from "../../helper/popup";
+import call from "../../helper/systemcall";
 
 const fs = fsBase.promises;
 
