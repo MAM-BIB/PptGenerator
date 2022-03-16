@@ -1,11 +1,11 @@
 import { app, BrowserWindow, Menu, MenuItem } from "electron";
-import { spawn } from "child_process";
 import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "./config";
 import openPopup from "./helper";
-import { Presentation } from "./interfaces/interfaces";
+import { Presentation, Slide } from "./interfaces/interfaces";
+import call from "./systemcall";
 
 const fs = fsBase.promises;
 
@@ -40,27 +40,24 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 },
                 {
                     label: "Scan Presentation",
-                    click(item, focusedWindow) {
-                        const bat = spawn(getConfig().coreApplication, [
-                            "-inPath",
-                            ...([] as string[])
-                                .concat(...getConfig().presentationMasters.map((master) => master.paths))
-                                .map((elem) => path.normalize(elem))
-                                .filter((value, index, array) => array.indexOf(value) === index),
-                            "-outPath",
-                            getConfig().metaJsonPath,
-                        ]);
-
-                        bat.stderr.on("data", (d) => {
-                            const options = { text: `Error during the scan:\n${d?.toString()}`, heading: "Error" };
-
-                            openPopup(options);
-                        });
-                        bat.on("exit", (code) => {
-                            if (code !== 0) {
-                                openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
-                            }
-                        });
+                    async click(item, focusedWindow) {
+                        try {
+                            await call(getConfig().coreApplication, [
+                                "-inPath",
+                                ...getConfig()
+                                    .presentationMasters.flatMap((master) => master.paths)
+                                    .map((elem) => path.normalize(elem))
+                                    .filter((elem, index, array) => array.indexOf(elem) === index),
+                                "-outPath",
+                                getConfig().metaJsonPath,
+                            ]);
+                        } catch (error) {
+                            await openPopup({
+                                text: `The process exited with errors!\n${error}`,
+                                heading: "Error",
+                                answer: true,
+                            });
+                        }
                         reload(item, focusedWindow);
                         checkUids();
                     },
@@ -117,38 +114,73 @@ function reload(item: MenuItem, focusedWindow: BrowserWindow | undefined) {
     }
 }
 
+function formatSlide(slides: Slide[]): string {
+    return slides
+        .map((slide) => `Slide ${slide.Position + 1}: ${slide.Title || "No Title"} (UID:${slide.Uid})`)
+        .join("\n");
+}
+
 async function checkUids() {
     const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
     const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
-    const uids: string[] = [];
-    const errors: string[] = [];
+    // const uids: string[] = [];
+    // const errors: string[] = [];
+    const allSlides = presentations.flatMap((pres) => pres.Sections.flatMap((section) => section.Slides));
+    const slidesHashMap: { [key: string]: Slide } = {};
+    const duplicatedUidSlides: Slide[][] = [];
+    const wrongUidSlides: Slide[] = [];
 
-    for (const presentation of presentations) {
-        for (const section of presentation.Sections) {
-            for (const slide of section.Slides) {
-                const slideTitle = slide.Title;
-                const slidePos = slide.Position + 1;
-                if (slide.Uid === "") {
-                    errors.push(`The following slide has no uid:\n${slideTitle}, pos: ${slidePos}`);
-                } else if (uids.includes(slide.Uid)) {
-                    const oldSlide = section.Slides.find((elem) => elem.Uid === slide.Uid);
-                    const slideTitel2 = oldSlide?.Title;
-                    const slidePos2 = oldSlide?.Position;
-                    errors.push(`The following slides have the same uid:
-                    \n${slideTitel2}, pos: ${slidePos2}
-                    \n${slideTitle}, pos: ${slidePos}`);
-                } else {
-                    uids.push(slide.Uid);
-                }
-            }
+    for (const slide of allSlides) {
+        if (slide.Uid.length < 5) {
+            wrongUidSlides.push(slide);
+        } else if (slidesHashMap[slide.Uid]) {
+            duplicatedUidSlides.push([slidesHashMap[slide.Uid], slide]);
         }
+        slidesHashMap[slide.Uid] = slide;
     }
 
-    if (errors.length > 0) {
-        let errString = "";
-        for (const error of errors) {
-            errString += `${error}\n`;
+    if (duplicatedUidSlides.length > 0 || wrongUidSlides.length > 0) {
+        let text = "";
+        if (duplicatedUidSlides.length > 0) {
+            text += `Slides with duplicated Uid(${duplicatedUidSlides.length}):\n\n${duplicatedUidSlides
+                .map((elem) => formatSlide(elem))
+                .join("\n\n")}\n`;
         }
-        openPopup({ text: errString, heading: "Error" });
+        if (wrongUidSlides.length > 0) {
+            text += `\nSlides with incorrect Uid(${wrongUidSlides.length}):\n\n${formatSlide(wrongUidSlides)}`;
+        }
+        openPopup({
+            text,
+            heading: "Error",
+        });
     }
+
+    // for (const presentation of presentations) {
+    //     for (const section of presentation.Sections) {
+    //         for (const slide of section.Slides) {
+    //             const slideTitle = slide.Title;
+    //             const slidePos = slide.Position + 1;
+    //             if (slide.Uid === "") {
+    //                 errors.push(`The following slide has no uid:\n${slideTitle}, pos: ${slidePos}`);
+    //             } else if (uids.includes(slide.Uid)) {
+    //                 const oldSlide = section.Slides.find((elem) => elem.Uid === slide.Uid);
+    //                 const slideTitel2 = oldSlide?.Title;
+    //                 const slidePos2 = oldSlide?.Position;
+    //                 errors.push(`The following slides have the same uid:
+    //                 \n${slideTitel2}, pos: ${slidePos2}
+    //                 \n${slideTitle}, pos: ${slidePos}`);
+    //             } else {
+    //                 uids.push(slide.Uid);
+    //             }
+    //         }
+    //     }
+    // }
+
+    // if (errors.length > 0) {
+    //     let errString = "";
+    //     for (const error of errors) {
+    //         errString += `${error}\n`;
+    //     }
+    //     openPopup({ text: errString, heading: "Error" });
+    // }
 }

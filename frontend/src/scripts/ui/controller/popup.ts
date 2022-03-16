@@ -12,7 +12,13 @@ let options: PopupOptions;
 ipcRenderer.on("data", (event, data) => {
     options = data;
 
-    textElement.textContent = `${options.text}`;
+    const texts = options.text?.split("\n") ?? [];
+    for (const text of texts) {
+        textElement.append(document.createTextNode(text));
+        textElement.append(document.createElement("br"));
+    }
+    textElement.lastChild?.remove();
+
     headingElement.textContent = `${options.heading}`;
     if (options.secondaryButton) {
         cancelBtn.hidden = false;
