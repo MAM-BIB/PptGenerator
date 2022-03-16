@@ -8,6 +8,7 @@ import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import openPopup from "../../helper";
+import call from "../../systemcall";
 
 const fs = fsBase.promises;
 const { metaJsonPath, presentationMasters } = getConfig();
@@ -133,16 +134,8 @@ loadFileBtn.addEventListener("click", async () => {
                 loadPreset();
             } else if (fileType === ".pptx") {
                 const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
-                const bat = spawn(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
-                bat.stderr.on("data", (d) => {
-                    openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
-                });
-                bat.on("exit", (code) => {
-                    if (code !== 0) {
-                        openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
-                    }
-                    createPreset(outPath);
-                });
+                await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
+                createPreset(outPath);
             } else {
                 openPopup({ text: "File needs to be a json or pptx:", heading: "Error" });
             }
@@ -196,46 +189,12 @@ function foundVariables(): boolean {
 async function createPreset(jsonPath: string) {
     const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
     const presMeta = JSON.parse(PresMetaJson) as Presentation[];
-
-    const preset: Preset = {
-        path: jsonPath,
-        sections: [],
-        placeholders: [],
-    };
-
-    for (const metaP of presentations) {
-        for (const metaSection of metaP.Sections) {
-            const presetSection: PresetSection = {
-                name: metaSection.Name,
-                includedSlides: [],
-                ignoredSlides: [],
-            };
-            for (const metaSlide of metaSection.Slides) {
-                if (isSlideIncluded(metaSlide.Uid, presMeta)) {
-                    presetSection.includedSlides.push(metaSlide.Uid);
-                } else {
-                    presetSection.ignoredSlides.push(metaSlide.Uid);
-                }
-            }
-            if (presetSection.includedSlides.length > 0) {
-                preset.sections.push(presetSection);
-            }
+    for (const slideELement of sectionElements.flatMap((elem) => elem.slides)) {
+        const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
+        if (allSelectedSlides.some((slide) => slide.Uid === slideELement.slide.Uid)) {
+            slideELement.select();
+        } else {
+            slideELement.deselect();
         }
     }
-    loadedPreset = preset;
-    loadPreset();
-    fs.rm(preset.path);
-}
-
-function isSlideIncluded(uid: string, pres: Presentation[]): boolean {
-    for (const presMetaP of pres) {
-        for (const presSection of presMetaP.Sections) {
-            for (const presSlide of presSection.Slides) {
-                if (presSlide.Uid === uid) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
 }
