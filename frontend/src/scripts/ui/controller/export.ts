@@ -42,6 +42,13 @@ pathInput.value = getConfig().defaultExportPath;
 presetPathInput.value = getConfig().presetPath;
 addAllBrowseHandler();
 
+nameInput.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        e.preventDefault();
+        exportBtn.focus();
+    }
+});
+
 savePresetToggleBtn.addEventListener("change", () => {
     presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
 });
