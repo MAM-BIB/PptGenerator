@@ -4,7 +4,7 @@
     flex-wrap: nowrap;
     width: 100%;
     overflow: hidden;
-    border: 0.5px solid black;
+    border-bottom: 0.5px solid rgb(32, 32, 32);
     -webkit-app-region: drag;
 
     .top-bar {
@@ -14,13 +14,17 @@
         width: 100%;
         height: $size-6;
         -webkit-user-select: none;
+        user-select: none;
 
         .title {
             display: flex;
+            justify-content: center;
+            align-items: center;
+
             position: absolute;
             z-index: -1;
-            justify-content: center;
             width: 100%;
+            height: $size-6;
         }
 
         .title-bar-btns {

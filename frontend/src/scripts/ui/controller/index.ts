@@ -1,17 +1,17 @@
 import fsBase from "fs";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
-import { spawn } from "child_process";
 
-import { Presentation, Preset, Placeholder, PresetSection } from "../../interfaces/interfaces";
+import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
-import openPopup from "../../helper";
 import initTitlebar from "../components/titlebar";
+import openPopup from "../../helper/popup";
+import call from "../../helper/systemcall";
+import { startLoading, stopLoading } from "../components/loading";
 
 const fs = fsBase.promises;
-const { metaJsonPath, presentationMasters } = getConfig();
 
 const sectionContainer = document.querySelector(".presentation-slide-container.left") as HTMLElement;
 const selectedSectionContainer = document.querySelector(".presentation-slide-container.right") as HTMLElement;
@@ -30,9 +30,13 @@ initTitlebar();
 fillPresentationMasterSelect();
 read();
 
+ipcRenderer.on("startLoading", () => {
+    startLoading();
+});
+
 function fillPresentationMasterSelect() {
     presentationMasterSelect.innerHTML = "";
-    for (const lang of presentationMasters.map((elem) => elem.lang)) {
+    for (const lang of getConfig().presentationMasters.map((elem) => elem.lang)) {
         const optionElem = document.createElement("option");
         optionElem.textContent = lang;
         presentationMasterSelect.append(optionElem);
@@ -45,17 +49,21 @@ function fillPresentationMasterSelect() {
 
 async function read() {
     try {
-        const presentationsJson = await fs.readFile(metaJsonPath, { encoding: "utf-8" });
+        const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
-        openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
+        await openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error", answer: true });
     }
 
     loadSections();
 }
 
 function loadSections() {
-    const selectedPresentationMaster = presentationMasters.find((elem) => elem.lang === presentationMasterLang);
+    if (getConfig().presentationMasters.length === 0) return;
+
+    const selectedPresentationMaster = getConfig().presentationMasters.find(
+        (elem) => elem.lang === presentationMasterLang,
+    );
 
     sectionContainer.innerHTML = "";
     selectedSectionContainer.innerHTML = "";
@@ -129,6 +137,7 @@ loadFileBtn.addEventListener("click", async () => {
     try {
         const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
         if (!filePath.canceled && filePath.filePaths.length > 0) {
+            startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
             if (fileType === ".json") {
@@ -137,23 +146,16 @@ loadFileBtn.addEventListener("click", async () => {
                 loadPreset();
             } else if (fileType === ".pptx") {
                 const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
-                const bat = spawn(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
-                bat.stderr.on("data", (d) => {
-                    openPopup({ text: `Error during the export:\n${d.toString()}`, heading: "Error" });
-                });
-                bat.on("exit", (code) => {
-                    if (code !== 0) {
-                        openPopup({ text: "The process exited with unknown errors!", heading: "Error" });
-                    }
-                    createPreset(outPath);
-                });
+                await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
+                createPreset(outPath);
             } else {
-                openPopup({ text: "File needs to be a json or pptx:", heading: "Error" });
+                openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });
             }
         }
     } catch (error) {
         openPopup({ text: `Could not load file:\n${error}`, heading: "Error" });
     }
+    stopLoading();
 });
 
 function loadPreset() {
@@ -200,46 +202,14 @@ function foundVariables(): boolean {
 async function createPreset(jsonPath: string) {
     const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
     const presMeta = JSON.parse(PresMetaJson) as Presentation[];
+    const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
 
-    const preset: Preset = {
-        path: jsonPath,
-        sections: [],
-        placeholders: [],
-    };
-
-    for (const metaP of presentations) {
-        for (const metaSection of metaP.Sections) {
-            const presetSection: PresetSection = {
-                name: metaSection.Name,
-                includedSlides: [],
-                ignoredSlides: [],
-            };
-            for (const metaSlide of metaSection.Slides) {
-                if (isSlideIncluded(metaSlide.Uid, presMeta)) {
-                    presetSection.includedSlides.push(metaSlide.Uid);
-                } else {
-                    presetSection.ignoredSlides.push(metaSlide.Uid);
-                }
-            }
-            if (presetSection.includedSlides.length > 0) {
-                preset.sections.push(presetSection);
-            }
+    for (const slideELement of sectionElements.flatMap((elem) => elem.slides)) {
+        if (allSelectedSlides.some((slide) => slide.Uid === slideELement.slide.Uid)) {
+            slideELement.select();
+        } else {
+            slideELement.deselect();
         }
     }
-    loadedPreset = preset;
-    loadPreset();
-    fs.rm(preset.path);
-}
-
-function isSlideIncluded(uid: string, pres: Presentation[]): boolean {
-    for (const presMetaP of pres) {
-        for (const presSection of presMetaP.Sections) {
-            for (const presSlide of presSection.Slides) {
-                if (presSlide.Uid === uid) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+    fs.rm(jsonPath);
 }

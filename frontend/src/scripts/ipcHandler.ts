@@ -1,5 +1,7 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
+import { refreshConfig } from "./config";
+import reload from "./helper/reload";
 import { PopupOptions, Presentation } from "./interfaces/interfaces";
 
 export default function initIpcHandlers() {
@@ -36,6 +38,12 @@ export default function initIpcHandlers() {
             return answer;
         },
     );
+
+    ipcMain.handle("saveOptions", (event) => {
+        refreshConfig();
+        BrowserWindow.fromWebContents(event.sender)?.close();
+        reload(null);
+    });
 }
 
 export async function openWindow(
