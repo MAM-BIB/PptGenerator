@@ -32,6 +32,17 @@ async function bundleElectronApp(options) {
     });
 
     minify("../dist/");
+
+    const output = fs.createWriteStream("../dist/PptGenerator.zip");
+    const archive = archiver("zip", {
+        zlib: { level: 9 },
+    });
+
+    archive.pipe(output);
+
+    archive.directory("../dist/pptgenerator-win32-x64/", "PptGenerator");
+
+    archive.finalize();
 })();
 
 function minify(dir) {
