@@ -1,5 +1,6 @@
 {
     "name": "pptgenerator",
+    "productName": "pptgenerator",
     "version": "1.0.0",
     "description": "This projekt is used to mange ppt files",
     "main": "./build/main.js",
@@ -17,7 +18,7 @@
         "start-only": "electron .",
         "lint": "eslint . --ext .ts",
         "lint-fix": "eslint . --fix --ext .ts",
-        "dist": "node build.js"
+        "dist": "npm run clean && npm run build && rimraf ../dist && node ./packager/package.js"
     },
     "repository": {
         "type": "git",

@@ -50,13 +50,15 @@ async function read() {
         const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
-        openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
+        await openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error", answer: true });
     }
 
     loadSections();
 }
 
 function loadSections() {
+    if (getConfig().presentationMasters.length === 0) return;
+
     const selectedPresentationMaster = getConfig().presentationMasters.find(
         (elem) => elem.lang === presentationMasterLang,
     );

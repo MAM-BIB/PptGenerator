@@ -1,0 +1,16 @@
+{
+    "name": "pptgenerator",
+    "productName": "pptgenerator",
+    "version": "1.0.0",
+    "description": "This projekt is used to mange ppt files",
+    "main": "./main.js",
+    "repository": {
+        "type": "git",
+        "url": "https://paiqo@dev.azure.com/paiqo/PptGenerator/_git/PptGenerator"
+    },
+    "keywords": [
+        "ppt"
+    ],
+    "author": "Marc Beyer, Marco Kuehn, Alex Rechtin",
+    "license": "ISC"
+}
