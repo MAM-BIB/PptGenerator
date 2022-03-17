@@ -11,7 +11,7 @@ app.on("ready", () => {
         width: 1280,
         height: 720,
         minWidth: 720,
-        minHeight: 400,
+        minHeight: 500,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
