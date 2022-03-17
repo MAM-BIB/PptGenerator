@@ -31,54 +31,19 @@ async function bundleElectronApp(options) {
         recursive: true,
     });
 
-    // minify("../dist/");
+    minify("../dist/");
 })();
 
 function minify(dir) {
-    const foundFiles = [];
-    const files = fs.readdirSync(dir);
+    const files = fs.readdirSync(dir, { withFileTypes: true });
     for (const file of files) {
         if (file.isDirectory()) {
-            minify(file.name);
-        } else {
-            foundFiles.push(file);
-        }
-    }
-    uglify(foundFiles);
-}
-
-function uglify(files) {
-    for (const file of files) {
-        if (path.extname(file) === ".js") {
-            let options = {
-                mangle: {
-                    properties: true,
-                },
-                nameCache: JSON.parse(fs.readFileSync(file, "utf8")),
-            };
+            minify(path.join(dir, file.name));
+        } else if (file.isFile && file.name.endsWith(".js")) {
             fs.writeFileSync(
-                "part1.js",
-                UglifyJS.minify(
-                    {
-                        "file1.js": fs.readFileSync("file1.js", "utf8"),
-                        "file2.js": fs.readFileSync("file2.js", "utf8"),
-                    },
-                    options,
-                ).code,
-                "utf8",
+                path.join(dir, file.name),
+                uglifyJs.minify(fs.readFileSync(path.join(dir, file.name), "utf8")).code,
             );
-            fs.writeFileSync(
-                "part2.js",
-                UglifyJS.minify(
-                    {
-                        "file3.js": fs.readFileSync("file3.js", "utf8"),
-                        "file4.js": fs.readFileSync("file4.js", "utf8"),
-                    },
-                    options,
-                ).code,
-                "utf8",
-            );
-            fs.writeFileSync(cacheFileName, JSON.stringify(options.nameCache), "utf8");
         }
     }
 }

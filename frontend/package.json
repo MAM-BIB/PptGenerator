@@ -18,7 +18,8 @@
         "start-only": "electron .",
         "lint": "eslint . --ext .ts",
         "lint-fix": "eslint . --fix --ext .ts",
-        "dist": "npm run clean && npm run build && rimraf ../dist && node ./packager/package.js"
+        "package": "rimraf ../dist && node ./packager/package.js",
+        "dist": "npm run clean && npm run build && npm run package"
     },
     "repository": {
         "type": "git",
