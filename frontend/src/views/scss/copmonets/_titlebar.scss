@@ -49,6 +49,10 @@
                     background-color: var(--btn--hover--titlebar);
                 }
 
+                &:focus {
+                    background-color: var(--btn--hover--titlebar);
+                }
+
                 &:disabled:hover {
                     background-color: var(--background--primary);
                 }
@@ -100,6 +104,14 @@
                     }
                 }
 
+                &:focus {
+                    background-color: red;
+
+                    .svg {
+                        background-color: white;
+                    }
+                }
+
                 &:active {
                     background-color: red;
                 }
@@ -131,8 +143,9 @@
                 background-color: var(--btn--hover--titlebar);
             }
 
-            // &:active {
-            // }
+            &:focus {
+                background-color: var(--btn--hover--titlebar);
+            }
         }
     }
 
