@@ -79,10 +79,17 @@ function loadSections() {
                 const sectionElement = new SectionElement(section);
                 sectionContainer.appendChild(sectionElement.element);
                 selectedSectionContainer.appendChild(sectionElement.selectedElement);
+                sectionElement.element.addEventListener("selectionChanged", () => {
+                    handleSelectionChange();
+                });
                 sectionElements.push(sectionElement);
             }
         }
     }
+}
+
+function handleSelectionChange() {
+    exportBtn.disabled = !sectionElements.some((elem) => elem.isSelected);
 }
 
 exportBtn.addEventListener("click", async () => {

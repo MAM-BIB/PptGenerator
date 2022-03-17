@@ -39,6 +39,7 @@ button {
     &:disabled {
         background-color: #{$accent--color}50;
         box-shadow: none;
+        cursor: auto;
     }
 }
 
