@@ -136,7 +136,7 @@ loadFileBtn.addEventListener("click", async () => {
                 await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
                 createPreset(outPath);
             } else {
-                openPopup({ text: "File needs to be a json or pptx", heading: "Error" });
+                openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });
             }
         }
     } catch (error) {
