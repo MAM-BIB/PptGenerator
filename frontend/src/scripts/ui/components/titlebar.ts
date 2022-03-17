@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import { TitlebarOptions } from "../../interfaces/interfaces";
 
 let minimizeBtn: HTMLButtonElement;
 let maximizeBtn: HTMLButtonElement;
@@ -8,11 +9,13 @@ let fileBtn: HTMLButtonElement;
 let optionBtn: HTMLButtonElement;
 let helpBtn: HTMLButtonElement;
 
-createTitlebar();
-btnLogic();
+export default function initTitlebar(options?: TitlebarOptions) {
+    createTitlebar(options);
+    btnLogic();
+}
 
 // Create the Titlebar
-function createTitlebar() {
+function createTitlebar(options?: TitlebarOptions) {
     const mainApp = document.createElement("div");
     mainApp.className = "main-app";
     const topBar = document.createElement("div");
@@ -22,19 +25,22 @@ function createTitlebar() {
     titleBarLeft.className = "title-bar-left-btns";
     fileBtn = document.createElement("button");
     fileBtn.innerText = "File";
+    fileBtn.hidden = options?.menuHidden ?? false;
     fileBtn.classList.add("left-btn");
     fileBtn.classList.add("file-btn");
     optionBtn = document.createElement("button");
     optionBtn.innerText = "Option";
+    optionBtn.hidden = options?.menuHidden ?? false;
     optionBtn.classList.add("left-btn");
     optionBtn.classList.add("option-btn");
     helpBtn = document.createElement("button");
     helpBtn.innerText = "Help";
+    helpBtn.hidden = options?.menuHidden ?? false;
     helpBtn.classList.add("left-btn");
     helpBtn.classList.add("help-btn");
 
     const title = document.createElement("div");
-    title.innerText = "PptGenerator";
+    title.innerText = options?.title ?? "PptGenerator";
     title.className = "title";
 
     const titleBarBtns = document.createElement("div");
@@ -47,10 +53,14 @@ function createTitlebar() {
     svgMinimize.className = "svg";
     maximizeBtn = document.createElement("button");
     maximizeBtn.title = "Maximize";
+    maximizeBtn.disabled = !(options?.resizable ?? true);
     maximizeBtn.classList.add("top-btn");
     maximizeBtn.classList.add("maximize-btn");
     const svgMaximize = document.createElement("div");
     svgMaximize.className = "svg";
+    const svgrestore = document.createElement("div");
+    svgrestore.className = "svg";
+    svgrestore.hidden = true;
     closeBtn = document.createElement("button");
     closeBtn.title = "Close";
     closeBtn.classList.add("top-btn");

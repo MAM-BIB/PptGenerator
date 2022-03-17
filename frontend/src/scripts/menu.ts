@@ -92,6 +92,7 @@ function openOption(parent: BrowserWindow) {
         height: 600,
         resizable: false,
         useContentSize: true,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

@@ -31,8 +31,6 @@
             height: 30px;
 
             .top-btn {
-                //width: 48px;
-                //height: 40px;
                 padding: 0 10px;
                 border: none;
                 outline: none;
@@ -45,7 +43,10 @@
 
                 &:hover {
                     background-color: var(--btn--hover--titlebar);
-                    //light c5c5c5
+                }
+
+                &:disabled:hover {
+                    background-color: var(--background--primary);
                 }
             }
 

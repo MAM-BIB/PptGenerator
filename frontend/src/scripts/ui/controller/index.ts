@@ -8,6 +8,7 @@ import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import openPopup from "../../helper";
+import initTitlebar from "../components/titlebar";
 
 const fs = fsBase.promises;
 const { metaJsonPath, presentationMasters } = getConfig();
@@ -25,6 +26,7 @@ let placeholders: Placeholder[] | undefined;
 let presentationMasterLang = "de";
 let sectionElements: SectionElement[] = [];
 
+initTitlebar();
 fillPresentationMasterSelect();
 read();
 
@@ -85,6 +87,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
@@ -106,6 +109,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,

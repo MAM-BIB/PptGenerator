@@ -8,6 +8,7 @@ const windowOptions = {
     height: 200,
     resizable: false,
     useContentSize: true,
+    frame: false,
     webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,

@@ -60,3 +60,9 @@ export interface Placeholder {
     name: string;
     value: string;
 }
+
+export interface TitlebarOptions {
+    resizable?: boolean;
+    menuHidden?: boolean;
+    title?: string;
+}
