@@ -33,9 +33,20 @@ deleteLanguageBtn.addEventListener("click", () => {
     deleteLanguage();
 });
 
+languageInput.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        addlanguage();
+    }
+});
+
 addLanguageBtn.addEventListener("click", () => {
+    addlanguage();
+});
+
+function addlanguage() {
     if (!languageInput.classList.contains("show")) {
         languageInput.classList.add("show");
+        languageInput.focus();
         return;
     }
     if (languageInput.value.trim() === "" || languageInput.value.length < 2) {
@@ -59,7 +70,7 @@ addLanguageBtn.addEventListener("click", () => {
     fillSelect(config.presentationMasters.length - 1);
     languageInput.classList.remove("show");
     languageInput.value = "";
-});
+}
 
 selectLanguage.addEventListener("change", () => {
     newPresentationSection.innerHTML = "";
@@ -146,6 +157,14 @@ metaPics.addEventListener("change", () => {
 hiddenSlide.addEventListener("change", () => {
     config.ignoreHiddenSlides = !hiddenSlide.checked;
     saveBtn.disabled = false;
+});
+
+hiddenSlide.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        hiddenSlide.checked = !hiddenSlide.checked;
+        config.ignoreHiddenSlides = !hiddenSlide.checked;
+        saveBtn.disabled = false;
+    }
 });
 
 function newPresentation(masterIndex: number, pathIndex: number) {
