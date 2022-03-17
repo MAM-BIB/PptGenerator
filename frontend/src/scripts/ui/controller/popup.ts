@@ -10,13 +10,14 @@ const headingElement = document.getElementById("popup-heading") as HTMLElement;
 
 let options: PopupOptions;
 
-initTitlebar({
-    resizable: false,
-    menuHidden: true,
-});
-
 ipcRenderer.on("data", (event, data) => {
     options = data;
+
+    initTitlebar({
+        resizable: false,
+        menuHidden: true,
+        closeBtnMsg: options.answer as string,
+    });
 
     const texts = options.text?.split("\n") ?? [];
     for (const text of texts) {

@@ -6,5 +6,6 @@
 	"basePath": "./config/assets/base.pptx",
 	"defaultExportPath": "./export",
 	"presentationMasters": [],
-	"ignoreHiddenSlides": true
+	"ignoreHiddenSlides": true,
+	"showTutorial": true
 }

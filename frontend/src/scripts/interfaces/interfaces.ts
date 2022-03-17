@@ -33,6 +33,7 @@ export interface Config {
     ignoreHiddenSlides: boolean;
     basePath: string;
     defaultExportPath: string;
+    showTutorial: boolean;
 }
 
 export interface Preset {
@@ -65,4 +66,5 @@ export interface TitlebarOptions {
     resizable?: boolean;
     menuHidden?: boolean;
     title?: string;
+    closeBtnMsg?: string;
 }

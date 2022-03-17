@@ -11,7 +11,7 @@ let helpBtn: HTMLButtonElement;
 
 export default function initTitlebar(options?: TitlebarOptions) {
     createTitlebar(options);
-    btnLogic();
+    addEventListener(options);
 }
 
 // Create the Titlebar
@@ -86,7 +86,7 @@ function createTitlebar(options?: TitlebarOptions) {
     document.body.insertAdjacentElement("afterbegin", mainApp);
 }
 
-function btnLogic() {
+function addEventListener(options?: TitlebarOptions) {
     fileBtn.addEventListener("click", () => {});
     optionBtn.addEventListener("click", () => {});
     helpBtn.addEventListener("click", () => {});
@@ -97,6 +97,6 @@ function btnLogic() {
         ipcRenderer.invoke("maxAndRestoreWindow");
     });
     closeBtn.addEventListener("click", () => {
-        ipcRenderer.invoke("closeFocusedWindow");
+        ipcRenderer.invoke(options?.closeBtnMsg ?? "closeFocusedWindow");
     });
 }

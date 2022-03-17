@@ -5,7 +5,7 @@ import { openWindow } from "../ipcHandler";
 
 const defaultWindowOptions = {
     width: 400,
-    height: 200,
+    height: 250,
     resizable: true,
     useContentSize: true,
     frame: false,
@@ -21,7 +21,7 @@ export default async function openPopup(options: PopupOptions) {
     const windowOptions = { ...defaultWindowOptions };
     windowOptions.height += 20 * Math.min(options.text?.split("\n").length ?? 0, 10);
     windowOptions.width +=
-        20 * Math.min(Math.max(0, ...(options.text?.split("\n").map((elem) => elem.length - 25) ?? [0])), 20);
+        20 * Math.min(Math.max(0, ...(options.text?.split("\n").map((elem) => elem.length - 50) ?? [0])), 20);
     if (ipcRenderer) {
         return ipcRenderer.invoke("openWindow", "popup.html", windowOptions, options);
     }
