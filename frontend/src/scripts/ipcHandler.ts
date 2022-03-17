@@ -8,6 +8,19 @@ export default function initIpcHandlers() {
         BrowserWindow.fromWebContents(event.sender)?.close();
     });
 
+    ipcMain.handle("maxAndRestoreWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        if (focusWindow?.isMaximized()) {
+            focusWindow?.restore();
+        } else {
+            focusWindow?.maximize();
+        }
+    });
+
+    ipcMain.handle("minimizeWindow", (event) => {
+        BrowserWindow.fromWebContents(event.sender)?.minimize();
+    });
+
     ipcMain.handle("openDialog", async (event, options: Electron.OpenDialogOptions) => {
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
         if (browserWindow) {

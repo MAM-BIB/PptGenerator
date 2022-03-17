@@ -40,6 +40,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 },
                 {
                     label: "Scan Presentation",
+                    accelerator: "+",
                     click(item, focusedWindow) {
                         const bat = spawn(getConfig().coreApplication, [
                             "-inPath",
