@@ -6,6 +6,7 @@ import { getConfig } from "../../config";
 import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 import call from "../../helper/systemcall";
 
@@ -21,6 +22,12 @@ const presetPathInput = document.getElementById("preset-path-input") as HTMLInpu
 
 let placeholders: Placeholder[];
 let presentations: Presentation[];
+
+initTitlebar({
+    resizable: false,
+    menuHidden: true,
+    title: "PptGenerator-Export",
+});
 
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;

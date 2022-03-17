@@ -6,6 +6,7 @@ import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
 import { getConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 import call from "../../helper/systemcall";
 import { startLoading, stopLoading } from "../components/loading";
@@ -25,6 +26,7 @@ let placeholders: Placeholder[] | undefined;
 let presentationMasterLang = "de";
 let sectionElements: SectionElement[] = [];
 
+initTitlebar();
 fillPresentationMasterSelect();
 read();
 
@@ -93,6 +95,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
@@ -114,6 +117,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,

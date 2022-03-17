@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import { Placeholder, Presentation } from "../../interfaces/interfaces";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
@@ -9,6 +10,12 @@ const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
 let placeholders: Placeholder[];
+
+initTitlebar({
+    resizable: false,
+    menuHidden: true,
+    title: "PptGenerator-Variables",
+});
 
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
@@ -48,6 +55,7 @@ setBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,

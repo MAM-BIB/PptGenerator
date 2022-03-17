@@ -8,9 +8,8 @@
 body {
     background-color: var(--background--primary);
     color: var(--font--primary);
-    height: $body-height;
+    height: calc($body-height - $size-6);
     overflow: hidden;
-
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -23,6 +22,7 @@ h1 {
 }
 
 button {
+    -webkit-app-region: no-drag;
     padding: $size-2 $size-8;
     background-color: var(--btn--background);
     color: var(--btn--font);

@@ -12,6 +12,7 @@ app.on("ready", () => {
         height: 720,
         minWidth: 720,
         minHeight: 500,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

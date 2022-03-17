@@ -4,6 +4,7 @@ import fs from "fs";
 import { getConfig, setConfig } from "../../config";
 import openPopup from "../../helper/popup";
 import { addAllBrowseHandler, addBrowseHandler } from "../components/browseButton";
+import initTitlebar from "../components/titlebar";
 
 const config = getConfig();
 const cancelBtn = document.querySelector(".cancel-btn") as HTMLButtonElement;
@@ -19,6 +20,11 @@ const addLanguageBtn = document.getElementById("add-language-btn") as HTMLButton
 const languageInput = document.getElementById("language-input") as HTMLInputElement;
 const deleteLanguageBtn = document.getElementById("x-btn") as HTMLButtonElement;
 
+initTitlebar({
+    resizable: false,
+    menuHidden: true,
+    title: "PptGenerator-Options",
+});
 fillInput();
 addAllBrowseHandler();
 fillSelect();
