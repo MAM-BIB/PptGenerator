@@ -53,6 +53,13 @@ savePresetToggleBtn.addEventListener("change", () => {
     presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
 });
 
+savePresetToggleBtn.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        savePresetToggleBtn.checked = !savePresetToggleBtn.checked;
+        presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
+    }
+});
+
 exportBtn.addEventListener("click", () => {
     startLoading();
 
