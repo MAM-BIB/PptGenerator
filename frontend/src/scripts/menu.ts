@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
 import fsBase from "fs";
 
@@ -142,33 +142,4 @@ async function checkUids() {
             heading: "Error",
         });
     }
-
-    // for (const presentation of presentations) {
-    //     for (const section of presentation.Sections) {
-    //         for (const slide of section.Slides) {
-    //             const slideTitle = slide.Title;
-    //             const slidePos = slide.Position + 1;
-    //             if (slide.Uid === "") {
-    //                 errors.push(`The following slide has no uid:\n${slideTitle}, pos: ${slidePos}`);
-    //             } else if (uids.includes(slide.Uid)) {
-    //                 const oldSlide = section.Slides.find((elem) => elem.Uid === slide.Uid);
-    //                 const slideTitel2 = oldSlide?.Title;
-    //                 const slidePos2 = oldSlide?.Position;
-    //                 errors.push(`The following slides have the same uid:
-    //                 \n${slideTitel2}, pos: ${slidePos2}
-    //                 \n${slideTitle}, pos: ${slidePos}`);
-    //             } else {
-    //                 uids.push(slide.Uid);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // if (errors.length > 0) {
-    //     let errString = "";
-    //     for (const error of errors) {
-    //         errString += `${error}\n`;
-    //     }
-    //     openPopup({ text: errString, heading: "Error" });
-    // }
 }
