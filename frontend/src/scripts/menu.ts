@@ -41,7 +41,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                 },
                 {
                     label: "Scan Presentation",
-                    accelerator: "1",
+                    accelerator: "CmdOrCtrl+I",
                     async click(item, focusedWindow) {
                         focusedWindow?.webContents.send("startLoading");
                         try {
