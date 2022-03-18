@@ -26,6 +26,7 @@ async function bundleElectronApp(options) {
     fs.copyFileSync("./packager/config.json", "../dist/pptgenerator-win32-x64/config/config.json");
     fs.copyFileSync("./packager/meta.json", "../dist/pptgenerator-win32-x64/meta/meta.json");
     fs.copyFileSync("./packager/base.pptx", "../dist/pptgenerator-win32-x64/config/assets/base.pptx");
+    fs.copyFileSync("./packager/README.txt", "../dist/pptgenerator-win32-x64/README.txt");
 
     fs.cpSync("../backend/PptGenerator/bin/Release/netcoreapp3.1/", "../dist/pptgenerator-win32-x64/core/", {
         recursive: true,
