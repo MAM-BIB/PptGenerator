@@ -49,7 +49,7 @@
                     background-color: var(--btn--hover--titlebar);
                 }
 
-                &:focus {
+                &:focus-visible {
                     background-color: var(--btn--hover--titlebar);
                 }
 
@@ -104,7 +104,7 @@
                     }
                 }
 
-                &:focus {
+                &:focus-visible {
                     background-color: red;
 
                     .svg {
@@ -143,7 +143,7 @@
                 background-color: var(--btn--hover--titlebar);
             }
 
-            &:focus {
+            &:focus-visible {
                 background-color: var(--btn--hover--titlebar);
             }
         }
