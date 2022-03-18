@@ -8,7 +8,7 @@ Beim ersten mal starten:
 	  !!WICHTIG!! Die Foliensammlung sollte für dieser Test-Version LOKAL auf dem Computer sein
 	- Dann bei den Optionen auf Save drücken
 	- Im Hauptfenster sicherstellen dass die nue erstellte Sprache oben links ausgewählt ist.
-	- Dann die Präsentation scannen mit "1"
+	- Dann die Präsentation scannen mit "Strg+I"
 
 	Jetzt ist das Setup abgeschlossen
 

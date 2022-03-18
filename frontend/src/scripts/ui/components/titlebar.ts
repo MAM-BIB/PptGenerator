@@ -132,25 +132,27 @@ function createFileMenu(mainFileLi: HTMLElement) {
     const reloadLi = document.createElement("li");
     const reloadBtn = document.createElement("button");
     reloadBtn.innerText = "Reload CTRL+R";
-    // class
+    reloadBtn.addEventListener("click", () => {
+        ipcRenderer.invoke("ReloadWindow");
+    });
     reloadLi.appendChild(reloadBtn);
     fileUl.appendChild(reloadLi);
-
-    const devToolsLi = document.createElement("li");
-    const devToolsBtn = document.createElement("button");
-    devToolsBtn.innerText = "DevTools F12";
-    devToolsLi.appendChild(devToolsBtn);
-    fileUl.appendChild(devToolsLi);
 
     const scanLi = document.createElement("li");
     const scanBtn = document.createElement("button");
     scanBtn.innerText = "Scan CTRL+I";
+    // scanBtn.addEventListener("click", () => {
+    //     ipcRenderer.invoke("ScanWindow");
+    // });
     scanLi.appendChild(scanBtn);
     fileUl.appendChild(scanLi);
 
     const exitLi = document.createElement("li");
     const exitBtn = document.createElement("button");
-    exitBtn.innerText = "Scan ALT+F4";
+    exitBtn.innerText = "Exit ALT+F4";
+    exitBtn.addEventListener("click", () => {
+        ipcRenderer.invoke("closeFocusedWindow");
+    });
     exitLi.appendChild(exitBtn);
     fileUl.appendChild(exitLi);
 

@@ -4,7 +4,7 @@
     margin: 0;
     box-sizing: border-box;
 
-    &:focus {
+    &:focus-visible {
         outline: 1px solid white;
     }
 }
@@ -45,6 +45,12 @@ button {
         box-shadow: none;
         cursor: auto;
     }
+}
+
+img {
+    box-shadow: $shadow-2;
+    border: 1px solid black;
+    margin: $size-4;
 }
 
 input[type="text"] {
