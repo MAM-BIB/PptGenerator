@@ -105,31 +105,66 @@ cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
+interface Positions {
+    [path: string]: number[];
+}
+
 async function exportToPptx(outPath: string) {
-    const positions: number[] = [];
+    const positions: Positions = {};
+
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
             for (const slide of section.Slides) {
                 if (slide.IsSelected) {
-                    positions.push(slide.Position);
+                    if (!positions[presentation.Path]) {
+                        positions[presentation.Path] = [];
+                    }
+                    positions[presentation.Path].push(slide.Position);
                 }
             }
         }
     }
 
+    let firstPresentation = true;
+    let nr = Object.keys(positions).length;
+
+    for (const inPath in positions) {
+        if (Object.prototype.hasOwnProperty.call(positions, inPath)) {
+            nr--;
+            copyPresentation(
+                inPath,
+                outPath,
+                firstPresentation ? getConfig().basePath : outPath,
+                positions[inPath].join(","),
+                nr === 0,
+            );
+            firstPresentation = false;
+        }
+    }
+
+    ipcRenderer.invoke("closeFocusedWindow");
+}
+
+async function copyPresentation(
+    inPath: string,
+    outPath: string,
+    basePath: string,
+    positions: string,
+    deleteFirstSlide?: boolean,
+) {
     try {
         await call(getConfig().coreApplication, [
             "-mode",
             "create",
             "-inPath",
-            getConfig().presentationMasters[0].paths[0],
+            inPath,
             "-outPath",
             outPath,
             "-slidePos",
-            positions.join(","),
+            positions,
             "-basePath",
-            getConfig().basePath,
-            "-deleteFirstSlide",
+            basePath,
+            deleteFirstSlide ? "-deleteFirstSlide" : "",
             "-placeholders",
             ...placeholders.map((elem) => `${elem.name},${elem.value}`),
         ]);
@@ -140,7 +175,6 @@ async function exportToPptx(outPath: string) {
             answer: true,
         });
     }
-    ipcRenderer.invoke("closeFocusedWindow");
 }
 
 async function createPreset(savePath: string) {
