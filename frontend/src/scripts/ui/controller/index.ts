@@ -23,7 +23,7 @@ let presentations: Presentation[];
 let loadedPreset: Preset;
 let placeholders: Placeholder[] | undefined;
 
-let presentationMasterLang = "de";
+let presentationMasterLang: string;
 let sectionElements: SectionElement[] = [];
 
 initTitlebar();
@@ -63,6 +63,7 @@ function fillPresentationMasterSelect() {
         optionElem.textContent = lang;
         presentationMasterSelect.append(optionElem);
     }
+    presentationMasterLang = presentationMasterSelect.value;
     presentationMasterSelect.addEventListener("change", () => {
         presentationMasterLang = presentationMasterSelect.value;
         loadSections();
