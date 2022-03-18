@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { ipcRenderer } from "electron";
 import path from "path";
 import fsBase from "fs";
@@ -131,11 +132,12 @@ async function exportToPptx(outPath: string) {
     for (const inPath in positions) {
         if (Object.prototype.hasOwnProperty.call(positions, inPath)) {
             nr--;
-            copyPresentation(
+
+            await copyPresentation(
                 inPath,
                 outPath,
-                firstPresentation ? getConfig().basePath : outPath,
                 positions[inPath].join(","),
+                firstPresentation ? getConfig().basePath : null,
                 nr === 0,
             );
             firstPresentation = false;
@@ -148,8 +150,8 @@ async function exportToPptx(outPath: string) {
 async function copyPresentation(
     inPath: string,
     outPath: string,
-    basePath: string,
     positions: string,
+    basePath?: string | null,
     deleteFirstSlide?: boolean,
 ) {
     try {
@@ -162,8 +164,8 @@ async function copyPresentation(
             outPath,
             "-slidePos",
             positions,
-            "-basePath",
-            basePath,
+            basePath ? "-basePath" : "",
+            basePath ?? "",
             deleteFirstSlide ? "-deleteFirstSlide" : "",
             "-placeholders",
             ...placeholders.map((elem) => `${elem.name},${elem.value}`),
@@ -175,6 +177,10 @@ async function copyPresentation(
             answer: true,
         });
     }
+
+    return new Promise((resolve) => {
+        resolve(true);
+    });
 }
 
 async function createPreset(savePath: string) {
