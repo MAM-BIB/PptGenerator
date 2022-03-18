@@ -10,8 +10,9 @@ app.on("ready", () => {
     const window = new BrowserWindow({
         width: 1280,
         height: 720,
-        minWidth: 500,
-        minHeight: 400,
+        minWidth: 720,
+        minHeight: 500,
+        frame: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

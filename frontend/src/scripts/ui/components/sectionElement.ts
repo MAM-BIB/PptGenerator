@@ -3,6 +3,7 @@ import { Section } from "../../interfaces/interfaces";
 import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
 import { getConfig } from "../../config";
+import isShiftPressed from "../keyHandler";
 
 enum SectionType {
     "normal",
@@ -13,6 +14,9 @@ export default class SectionElement {
     public section: Section;
     public slides: SlideElement[];
     public selectedSlides: SlideElement[];
+
+    public lastSelectedIndex = -1;
+    public isSelected = false;
 
     public selectedElement: HTMLDivElement;
     public selectedElementHeader: HTMLHeadingElement;
@@ -38,53 +42,91 @@ export default class SectionElement {
         headerText.classList.add("headerText");
         header.classList.add("sectionHeader");
 
-        headerText.textContent = `${this.section.Name} (${this.section.Slides.length})`;
+        const nrOfSlides = this.section.Slides.length;
 
-        const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("sectionButtons");
-
-        buttonContainer.appendChild(this.createCollapseBtn(element));
-
-        if (sectionType === SectionType.normal) {
-            buttonContainer.appendChild(this.createSelectBtn(element));
-        }
+        headerText.textContent = `${this.section.Name} (${nrOfSlides})`;
 
         header.appendChild(headerText);
-        header.appendChild(buttonContainer);
         element.appendChild(header);
 
-        for (let index = 0; index < this.section.Slides.length; index++) {
-            const slide = this.section.Slides[index];
+        if (nrOfSlides !== 0) {
+            const buttonContainer = document.createElement("div");
+            buttonContainer.classList.add("sectionButtons");
 
-            let newSlide;
+            buttonContainer.appendChild(this.createCollapseBtn(element));
+
             if (sectionType === SectionType.normal) {
-                newSlide = new SlideElement(slide);
-
-                newSlide.element.addEventListener("selected", () => {
-                    this.handleSelectionChange();
-                });
-                newSlide.element.addEventListener("deselected", () => {
-                    this.handleSelectionChange();
-                });
-                this.slides.push(newSlide);
-            } else {
-                newSlide = new SelectedSlideElement(slide, this.slides[index]);
-                this.selectedSlides.push(newSlide);
+                buttonContainer.appendChild(this.createSelectBtn());
             }
-            element.appendChild(newSlide.element);
+
+            header.appendChild(buttonContainer);
+
+            for (let index = 0; index < this.section.Slides.length; index++) {
+                const slide = this.section.Slides[index];
+
+                let newSlide;
+                if (sectionType === SectionType.normal) {
+                    newSlide = new SlideElement(slide);
+
+                    newSlide.element.addEventListener("selected", (event) => {
+                        this.multiSelect(true, event);
+                        this.handleSelectionChange();
+                    });
+                    newSlide.element.addEventListener("deselected", (event) => {
+                        this.multiSelect(false, event);
+                        this.handleSelectionChange();
+                    });
+                    this.slides.push(newSlide);
+                } else {
+                    newSlide = new SelectedSlideElement(slide, this.slides[index]);
+                    this.selectedSlides.push(newSlide);
+                }
+                element.appendChild(newSlide.element);
+            }
         }
+    }
+
+    private multiSelect(select: boolean, event: Event) {
+        const curSelectedIndex = Array.prototype.indexOf.call(this.element.children, event.target) - 1;
+        if (isShiftPressed()) {
+            let startIndex = this.lastSelectedIndex;
+            let endIndex = curSelectedIndex;
+            if (endIndex < startIndex) {
+                startIndex = curSelectedIndex;
+                endIndex = this.lastSelectedIndex + 1;
+            }
+
+            if (this.lastSelectedIndex >= 0) {
+                for (let i = startIndex; i < endIndex; i++) {
+                    const slideElement = this.slides[i];
+                    if (select) {
+                        slideElement.select();
+                    } else {
+                        slideElement.deselect();
+                    }
+                }
+            }
+        }
+        this.lastSelectedIndex = curSelectedIndex;
     }
 
     private handleSelectionChange() {
         const nr = this.slides.filter((elem) => elem.slide.IsSelected).length;
 
         if (nr > 0) {
-            this.element.classList.add("selected");
             this.selectedElementHeader.textContent = `${this.section.Name} (${nr}/${this.section.Slides.length})`;
-            this.selectedElement.hidden = false;
-        } else {
+
+            if (!this.isSelected) {
+                this.isSelected = true;
+                this.element.classList.add("selected");
+                this.selectedElement.hidden = false;
+                this.element.dispatchEvent(new Event("selectionChanged"));
+            }
+        } else if (this.isSelected && nr === 0) {
+            this.isSelected = false;
             this.element.classList.remove("selected");
             this.selectedElement.hidden = true;
+            this.element.dispatchEvent(new Event("selectionChanged"));
         }
     }
 
@@ -109,7 +151,7 @@ export default class SectionElement {
         return buttonCollapse;
     }
 
-    private createSelectBtn(element: HTMLDivElement): HTMLButtonElement {
+    private createSelectBtn(/* element: HTMLDivElement */): HTMLButtonElement {
         const buttonSelect = document.createElement("button");
 
         const spanPlus = document.createElement("span");
@@ -133,7 +175,8 @@ export default class SectionElement {
                     slide.select();
                 }
             }
-            element.classList.add("open");
+            // Opens the section if selection is changed
+            // element.classList.add("open");
         });
         return buttonSelect;
     }

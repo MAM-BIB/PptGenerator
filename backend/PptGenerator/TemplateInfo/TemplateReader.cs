@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
 using D = DocumentFormat.OpenXml.Drawing;
+using System.Text.RegularExpressions;
 
 namespace PptGenerator.TemplateInfo {
     class TemplateReader {
@@ -50,12 +51,15 @@ namespace PptGenerator.TemplateInfo {
                 PresentationPart presentationPart = presentationDocument.PresentationPart;
                 Presentation presentation = presentationPart.Presentation;
 
+                bool foundSections = false;
+
                 var extLst = selectElementByTag(presentation, "extLst");
                 foreach (var ext in extLst) {
                     var sectionLst = selectElementByTag(ext, "sectionLst");
                     if (sectionLst == null) continue;
                     foreach (var sectionElem in sectionLst) {
                         if(sectionElem is DocumentFormat.OpenXml.Office2010.PowerPoint.Section of2010Section) {
+                            foundSections = true;
                             Section section = new Section(of2010Section.Name);
                             sections.Add(section);
 
@@ -65,26 +69,9 @@ namespace PptGenerator.TemplateInfo {
                                 foreach (SlideId slideId in presentation.SlideIdList) {
                                     if (slideId.Id == item.Id) {
                                         SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
+                                        Slide slide = getSlideFromPart(position, slideId, slidePart);
 
-                                        string title = "";
-                                        try {
-                                            title = GetSlideTitle(slidePart);
-                                        } catch (Exception) { }
-
-                                        NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
-                                        string uid = "";
-                                        if (notesSlidePart != null) {
-                                            string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                                            uid = (uidArr.Length > 1) ? uidArr[1] : "";
-                                        }
-                                        
-
-                                        bool isHidden = false;
-                                        if(slidePart.Slide.Show != null && !slidePart.Slide.Show.Value) {
-                                            isHidden = true;
-                                        }
-
-                                        section.Slides.Add(new Slide(slideId.RelationshipId, uid, position, title, isHidden));
+                                        section.Slides.Add(slide);
                                     }
                                     position++;
                                 }
@@ -93,9 +80,56 @@ namespace PptGenerator.TemplateInfo {
                     }
                 }
 
+                if (!foundSections) {
+                    Section section = new Section("__defaultSection");
+                    sections.Add(section    );
+                    uint position = 0;
+                    foreach (SlideId slideId in presentation.SlideIdList) {
+                        SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
+                        Slide slide = getSlideFromPart(position, slideId, slidePart);
+
+                        section.Slides.Add(slide);
+                        position++;
+                    }
+                }
+
                 presentationDocument.Close();
                 return sections;
             }
+        }
+
+        private static Slide getSlideFromPart(uint position, SlideId slideId, SlidePart slidePart) {
+            string title = "";
+            try {
+                title = GetSlideTitle(slidePart);
+            } catch (Exception) { }
+
+            NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
+            string uid = "";
+            if (notesSlidePart != null) {
+                string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+            }
+
+            // Match Placeholder
+            string text = slidePart.Slide.InnerText;
+            Regex regex = new Regex(@"~\$[^~]*\$~", RegexOptions.Compiled);
+            MatchCollection matches = regex.Matches(text);
+
+            List<String> placeholders = new List<string>();
+
+            foreach (Match match in matches) {
+                Console.WriteLine($"placehonder: {match.Value}");
+                placeholders.Add(match.Value.Substring(2, match.Value.Length - 4));
+            }
+
+            bool isHidden = false;
+            if (slidePart.Slide.Show != null && !slidePart.Slide.Show.Value) {
+                isHidden = true;
+            }
+
+            Slide slide = new Slide(slideId.RelationshipId, uid, position, title, isHidden, placeholders);
+            return slide;
         }
 
         /// <summary>

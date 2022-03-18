@@ -1,44 +1,52 @@
 {
-  "name": "pptgenerator",
-  "version": "1.0.0",
-  "description": "This projekt is used to mange ppt files",
-  "main": "./build/main.js",
-  "scripts": {
-    "tsc": "tsc",
-    "build-sass": "sass --no-source-map src/views/scss:src/views/css --style compressed",
-    "build-css": "npm run build-sass && copyfiles -u 1 ./src/**/*.css ./build",
-    "build-imgs": "copyfiles -u 1 ./src/**/*.svg ./build",
-    "build-html": "copyfiles -u 1 ./src/**/*.html ./build",
-    "build-web": "npm run build-html && npm run build-css && npm run build-imgs",
-    "build": "npm run lint && tsc && npm run build-web",
-    "clean": "rimraf ./build",
-    "start": "npm run clean && npm run build && electron .",
-    "lint": "eslint . --ext .ts",
-    "lint-fix": "eslint . --fix --ext .ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://paiqo@dev.azure.com/paiqo/PptGenerator/_git/PptGenerator"
-  },
-  "keywords": [
-    "ppt"
-  ],
-  "author": "Marc Beyer, Marco Kuehn, Alex Rechtin",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^17.0.19",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
-    "copyfiles": "^2.4.1",
-    "eslint": "^8.10.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-typescript": "^16.1.0",
-    "eslint-plugin-import": "^2.25.4",
-    "rimraf": "^3.0.2",
-    "sass": "^1.49.9",
-    "typescript": "^4.5.5"
-  },
-  "dependencies": {
-    "electron": "^17.1.0"
-  }
+    "name": "pptgenerator",
+    "productName": "pptgenerator",
+    "version": "1.0.0",
+    "description": "This projekt is used to mange ppt files",
+    "main": "./build/main.js",
+    "scripts": {
+        "tsc": "tsc",
+        "build-sass": "sass --no-source-map src/views/scss:src/views/css --style compressed",
+        "build-css": "npm run build-sass && copyfiles -u 1 ./src/**/*.css ./build",
+        "build-imgs": "copyfiles -u 1 ./src/**/*.svg ./build && copyfiles -u 1 ./src/**/*.png ./build",
+        "build-html": "copyfiles -u 1 ./src/**/*.html ./build",
+        "build-web": "npm run build-html && npm run build-css && npm run build-imgs",
+        "build": "npm run lint && tsc && npm run build-web",
+        "clean": "rimraf ./build",
+        "start": "npm run clean && npm run build && electron .",
+        "start-tsc": "tsc && electron .",
+        "start-only": "electron .",
+        "lint": "eslint . --ext .ts",
+        "lint-fix": "eslint . --fix --ext .ts",
+        "package": "rimraf ../dist && node ./packager/package.js",
+        "dist": "npm run clean && npm run build && npm run package"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://paiqo@dev.azure.com/paiqo/PptGenerator/_git/PptGenerator"
+    },
+    "keywords": [
+        "ppt"
+    ],
+    "author": "Marc Beyer, Marco Kuehn, Alex Rechtin",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^17.0.19",
+        "@typescript-eslint/eslint-plugin": "^5.13.0",
+        "@typescript-eslint/parser": "^5.13.0",
+        "archiver": "^5.3.0",
+        "copyfiles": "^2.4.1",
+        "electron-packager": "^15.4.0",
+        "eslint": "^8.10.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-config-airbnb-typescript": "^16.1.0",
+        "eslint-plugin-import": "^2.25.4",
+        "rimraf": "^3.0.2",
+        "sass": "^1.49.9",
+        "typescript": "^4.5.5",
+        "uglify-js": "^3.15.3"
+    },
+    "dependencies": {
+        "electron": "^17.1.2"
+    }
 }

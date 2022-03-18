@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import { PopupOptions } from "../../interfaces/interfaces";
+import initTitlebar from "../components/titlebar";
 
 const okBtn = document.getElementById("ok-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -12,14 +13,42 @@ let options: PopupOptions;
 ipcRenderer.on("data", (event, data) => {
     options = data;
 
-    textElement.textContent = `${options.text}`;
+    initTitlebar({
+        resizable: false,
+        menuHidden: true,
+        closeBtnMsg: options.answer as string,
+    });
+
+    const texts = options.text?.split("\n") ?? [];
+    for (const text of texts) {
+        textElement.append(document.createTextNode(text));
+        textElement.append(document.createElement("br"));
+    }
+    textElement.lastChild?.remove();
+
     headingElement.textContent = `${options.heading}`;
-});
+    if (options.secondaryButton) {
+        cancelBtn.hidden = false;
+        cancelBtn.textContent = options.secondaryButton;
+    }
+    if (options.primaryButton) {
+        okBtn.textContent = options.primaryButton;
+    }
+    if (options.answer) {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, false);
+        });
 
-cancelBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
-});
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke(options.answer as string, true);
+        });
+    } else {
+        cancelBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
 
-okBtn.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
+        okBtn.addEventListener("click", () => {
+            ipcRenderer.invoke("closeFocusedWindow");
+        });
+    }
 });

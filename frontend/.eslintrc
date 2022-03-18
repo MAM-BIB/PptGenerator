@@ -16,6 +16,7 @@
         "no-console": "warn",
         "no-alert": "error",
         "linebreak-style": "off",
+        "operator-linebreak": ["error", "after"],
         "no-plusplus": "off",
         "max-len": ["error", { "code": 120 }],
         "@typescript-eslint/quotes": ["error", "double"],
@@ -49,7 +50,8 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "prefer-promise-reject-errors": "off"
     },
     "settings": {
         "import/resolver": {

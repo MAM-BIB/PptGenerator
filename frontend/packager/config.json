@@ -1,0 +1,11 @@
+{
+	"metaJsonPath": "./meta/meta.json",
+	"metaPicsPath": "./meta/pics",
+	"coreApplication": "./core/PptGenerator.exe",
+	"presetPath": "./config/presets",
+	"basePath": "./config/assets/base.pptx",
+	"defaultExportPath": "./export",
+	"presentationMasters": [],
+	"ignoreHiddenSlides": true,
+	"showTutorial": true
+}
