@@ -47,6 +47,12 @@ button {
     }
 }
 
+img {
+    box-shadow: $shadow-2;
+    border: 1px solid black;
+    margin: $size-4;
+}
+
 input[type="text"] {
     background-color: var(--background--primary);
 }
