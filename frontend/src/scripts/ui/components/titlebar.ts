@@ -187,9 +187,24 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     const helpUl = document.createElement("ul");
 
     const helpLi = document.createElement("li");
-    const testBtn = document.createElement("button");
-    testBtn.innerText = "Test";
-    helpLi.appendChild(testBtn);
+    const infoBtn = document.createElement("button");
+    infoBtn.innerText = "Open info";
+    infoBtn.addEventListener("click", async () => {
+        await ipcRenderer.invoke("openWindow", "help.html", {
+            width: 800,
+            height: 600,
+            minWidth: 500,
+            minHeight: 400,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+            autoHideMenuBar: true,
+            modal: false,
+        });
+    });
+    helpLi.appendChild(infoBtn);
     helpUl.appendChild(helpLi);
 
     mainHelpLi.appendChild(helpUl);
