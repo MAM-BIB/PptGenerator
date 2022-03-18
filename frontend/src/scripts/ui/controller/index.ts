@@ -3,7 +3,7 @@ import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
 import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
-import { getConfig } from "../../config";
+import { getConfig, setConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import initTitlebar from "../components/titlebar";
@@ -29,6 +29,28 @@ let sectionElements: SectionElement[] = [];
 initTitlebar();
 fillPresentationMasterSelect();
 read();
+showTutorial();
+
+async function showTutorial() {
+    if (getConfig().showTutorial) {
+        const config = getConfig();
+        config.showTutorial = false;
+        setConfig(config);
+        await ipcRenderer.invoke("openWindow", "help.html", {
+            width: 800,
+            height: 600,
+            minWidth: 500,
+            minHeight: 400,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+            autoHideMenuBar: true,
+            modal: false,
+        });
+    }
+}
 
 ipcRenderer.on("startLoading", () => {
     startLoading();

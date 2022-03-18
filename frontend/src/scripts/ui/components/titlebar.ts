@@ -97,26 +97,115 @@ function createBtns(options?: TitlebarOptions) {
 
 // Create the menu at the left
 function createMenu() {
-    const titleBarLeft = document.createElement("div");
+    const titleBarLeft = document.createElement("nav");
     titleBarLeft.className = "title-bar-left-btns";
 
+    const mainUl = document.createElement("ul");
+    titleBarLeft.appendChild(mainUl);
+    const mainFileLi = document.createElement("li");
+
+    createFileMenu(mainFileLi);
+    mainUl.appendChild(mainFileLi);
+
+    const mainOptionLi = document.createElement("li");
+    mainUl.appendChild(mainOptionLi);
+    createOptionMenu(mainOptionLi);
+
+    const mainHelpLi = document.createElement("li");
+    mainUl.appendChild(mainHelpLi);
+    createHelpMenu(mainHelpLi);
+
+    titleBarLeft.appendChild(mainUl);
+    return titleBarLeft;
+}
+
+// Create The File Menu
+function createFileMenu(mainFileLi: HTMLElement) {
     const fileBtn = document.createElement("button");
     fileBtn.innerText = "File";
     fileBtn.classList.add("left-btn");
     fileBtn.classList.add("file-btn");
-    titleBarLeft.appendChild(fileBtn);
+    mainFileLi.appendChild(fileBtn);
 
+    const fileUl = document.createElement("ul");
+
+    const reloadLi = document.createElement("li");
+    const reloadBtn = document.createElement("button");
+    reloadBtn.innerText = "Reload CTRL+R";
+    // class
+    reloadLi.appendChild(reloadBtn);
+    fileUl.appendChild(reloadLi);
+
+    const devToolsLi = document.createElement("li");
+    const devToolsBtn = document.createElement("button");
+    devToolsBtn.innerText = "DevTools F12";
+    devToolsLi.appendChild(devToolsBtn);
+    fileUl.appendChild(devToolsLi);
+
+    const scanLi = document.createElement("li");
+    const scanBtn = document.createElement("button");
+    scanBtn.innerText = "Scan CTRL+I";
+    scanLi.appendChild(scanBtn);
+    fileUl.appendChild(scanLi);
+
+    const exitLi = document.createElement("li");
+    const exitBtn = document.createElement("button");
+    exitBtn.innerText = "Scan ALT+F4";
+    exitLi.appendChild(exitBtn);
+    fileUl.appendChild(exitLi);
+
+    mainFileLi.appendChild(fileUl);
+}
+
+// Create The Option Menu
+function createOptionMenu(mainOptionLi: HTMLElement) {
     const optionBtn = document.createElement("button");
     optionBtn.innerText = "Option";
     optionBtn.classList.add("left-btn");
     optionBtn.classList.add("option-btn");
-    titleBarLeft.appendChild(optionBtn);
+    mainOptionLi.appendChild(optionBtn);
 
+    const optionUl = document.createElement("ul");
+
+    const optionLi = document.createElement("li");
+    const openOptionBtn = document.createElement("button");
+    openOptionBtn.innerText = "Open Option CTRL+O";
+    optionLi.appendChild(openOptionBtn);
+    optionUl.appendChild(optionLi);
+
+    mainOptionLi.appendChild(optionUl);
+}
+
+// Create The Help Menu
+function createHelpMenu(mainHelpLi: HTMLElement) {
     const helpBtn = document.createElement("button");
     helpBtn.innerText = "Help";
     helpBtn.classList.add("left-btn");
     helpBtn.classList.add("help-btn");
-    titleBarLeft.appendChild(helpBtn);
+    mainHelpLi.appendChild(helpBtn);
 
-    return titleBarLeft;
+    const helpUl = document.createElement("ul");
+
+    const helpLi = document.createElement("li");
+    const infoBtn = document.createElement("button");
+    infoBtn.innerText = "Open info";
+    infoBtn.addEventListener("click", async () => {
+        await ipcRenderer.invoke("openWindow", "help.html", {
+            width: 800,
+            height: 600,
+            minWidth: 500,
+            minHeight: 400,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+            autoHideMenuBar: true,
+            modal: false,
+        });
+    });
+    helpLi.appendChild(infoBtn);
+    helpUl.appendChild(helpLi);
+
+    mainHelpLi.appendChild(helpUl);
 }
