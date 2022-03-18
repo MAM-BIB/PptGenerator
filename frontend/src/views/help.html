@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>ppt Generator</title>
+    </head>
+
+    <body>
+        <div class="option-container">
+            <div class="main-section">
+                <h1 class="headline" id="popup-heading">Information</h1>
+                <div class="container-section">
+                    <div class="section">
+                        <div class="info-text scroll">
+                            <p>Beim ersten mal starten:</p>
+                            <p style="padding-left: 50px">- Optionen mit "Strg+o" öffnen</p>
+                            <p style="padding-left: 50px">
+                                - Eine Neue Sprache hinzufügen. Das Plus rechts neben dem Feld und eine Sprache angeben
+                                Beispiel: "de" oder "en"
+                            </p>
+                            <p style="padding-left: 50px">
+                                - Wenn eine Sprache ausgewählt ist einen neuen PresentationMaster hinzufügen mit dem Add
+                                Button
+                            </p>
+                            <p style="padding-left: 50px">
+                                - Rechts neben dem neuen Textfeld auf die drei punkte klicken und eine PPTX-Datei
+                                Auswählen
+                            </p>
+                            <p style="padding-left: 50px">Beispielsweise: Die Foliensammlung.</p>
+                            <p style="padding-left: 50px">
+                                <b
+                                    >!!WICHTIG!! Die Foliensammlung sollte für dieser Test-Version LOKAL auf dem
+                                    Computer sein
+                                </b>
+                            </p>
+                            <p style="padding-left: 50px">- Dann bei den Optionen auf Save drücken</p>
+                            <p style="padding-left: 50px">
+                                - Im Hauptfenster sicherstellen dass die nue erstellte Sprache oben links ausgewählt
+                                ist.
+                            </p>
+                            <p style="padding-left: 50px">- Dann die Präsentation scannen mit "1"</p>
+                            <br />
+                            <p style="padding-left: 50px">Jetzt ist das Setup abgeschlossen</p>
+                            <br />
+                            <br />
+                            <p>Informationen:</p>
+                            <br />
+                            <p style="padding-left: 50px">Standard Speicherpfade</p>
+                            <p style="padding-left: 100px">Presets: Im Ordner der exe unter config/presets/</p>
+                            <p style="padding-left: 100px">Exports: Im Ordner der exe unter exports/</p>
+
+                            <br />
+                            <p style="padding-left: 50px">
+                                - Beim exportieren lassen sich Presets erstellen. Diese lassen sich über Load file
+                                wieder laden
+                            </p>
+                            <p style="padding-left: 50px">- Über load File lassen sich auch PPTX Dateien laden.</p>
+                            <p style="padding-left: 50px">
+                                <b
+                                    >!!WICHTIG!! Bei dieser Testversion sollten die PPTX-Dateien NUR Folien aus der
+                                    Foliensammlung enthalten
+                                </b>
+                            </p>
+                            <p style="padding-left: 50px">
+                                - Platzhalter müssen in der Foliensammlung folgendermaßen formatiert sein:
+                                ~$Platzhalter$~
+                            </p>
+                            <br />
+                            <br />
+                            <p>Alles Informationen lassen sich auch in der README.txt finden</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button id="ok-btn">Ok</button>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require("../ui/controller/help.js");
+    </script>
+</html>
