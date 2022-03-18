@@ -56,7 +56,7 @@ export default class SectionElement {
             buttonContainer.appendChild(this.createCollapseBtn(element));
 
             if (sectionType === SectionType.normal) {
-                buttonContainer.appendChild(this.createSelectBtn(element));
+                buttonContainer.appendChild(this.createSelectBtn());
             }
 
             header.appendChild(buttonContainer);
@@ -151,7 +151,7 @@ export default class SectionElement {
         return buttonCollapse;
     }
 
-    private createSelectBtn(element: HTMLDivElement): HTMLButtonElement {
+    private createSelectBtn(/* element: HTMLDivElement */): HTMLButtonElement {
         const buttonSelect = document.createElement("button");
 
         const spanPlus = document.createElement("span");
