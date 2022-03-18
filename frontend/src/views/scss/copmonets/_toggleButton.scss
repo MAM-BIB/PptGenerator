@@ -39,7 +39,7 @@
                 background-color: #2196f3;
             }
 
-            input:focus + .slider {
+            input:focus-visible + .slider {
                 outline: 1px solid white;
             }
 
