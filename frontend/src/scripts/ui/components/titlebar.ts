@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import reload from "../../helper/reload";
 import { TitlebarOptions } from "../../interfaces/interfaces";
 
 export default function initTitlebar(options?: TitlebarOptions) {
