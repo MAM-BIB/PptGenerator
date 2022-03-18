@@ -3,8 +3,15 @@ import path from "path";
 import { refreshConfig } from "./config";
 import reload from "./helper/reload";
 import { PopupOptions, Presentation } from "./interfaces/interfaces";
+// import { openOption } from "./menu";
+// import { scanPresetations } from "./menu";
 
 export default function initIpcHandlers() {
+    // ipcMain.handle("openOptionWindow", (event) => {
+    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
+    //     openOption(focusWindow);
+    // });
+
     // Close the window, sending the ipc-message
     ipcMain.handle("closeFocusedWindow", (event) => {
         BrowserWindow.fromWebContents(event.sender)?.close();
@@ -44,6 +51,16 @@ export default function initIpcHandlers() {
         BrowserWindow.fromWebContents(event.sender)?.close();
         reload(null);
     });
+
+    ipcMain.handle("ReloadWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        reload(focusWindow);
+    });
+
+    // ipcMain.handle("ScanWindow", (event) => {
+    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
+    //     scanPresetations(focusWindow);
+    // });
 }
 
 export async function openWindow(

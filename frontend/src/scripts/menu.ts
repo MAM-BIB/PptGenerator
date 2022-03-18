@@ -43,6 +43,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
                     label: "Scan Presentation",
                     accelerator: "CmdOrCtrl+I",
                     async click(item, focusedWindow) {
+                        // scanPresetations(focusedWindow);
                         focusedWindow?.webContents.send("startLoading");
                         try {
                             await call(getConfig().coreApplication, [
@@ -85,7 +86,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
     Menu.setApplicationMenu(menu);
 }
 
-function openOption(parent: BrowserWindow) {
+export function openOption(parent: BrowserWindow) {
     const optionWindow = new BrowserWindow({
         width: 600,
         height: 600,
@@ -145,3 +146,26 @@ async function checkUids() {
         });
     }
 }
+
+// export async function scanPresetations(focusedWindow: Electron.BrowserWindow | null | undefined) {
+//     focusedWindow?.webContents.send("startLoading");
+//     try {
+//         await call(getConfig().coreApplication, [
+//             "-inPath",
+//             ...getConfig()
+//                 .presentationMasters.flatMap((master) => master.paths)
+//                 .map((elem) => path.normalize(elem))
+//                 .filter((elem, index, array) => array.indexOf(elem) === index),
+//             "-outPath",
+//             getConfig().metaJsonPath,
+//         ]);
+//     } catch (error) {
+//         await openPopup({
+//             text: `The process exited with errors!\n${error}`,
+//             heading: "Error",
+//             answer: true,
+//         });
+//     }
+//     reload(focusedWindow);
+//     checkUids();
+// }
