@@ -5,8 +5,8 @@
     align-items: stretch;
     margin: 0 auto;
     padding: $size-1;
-    max-width: $window-width;
-    height: $window-height;
+    max-width: $window--width--size;
+    height: $window--height;
 
     .container-item {
         display: flex;

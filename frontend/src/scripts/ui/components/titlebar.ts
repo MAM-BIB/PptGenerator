@@ -31,6 +31,16 @@ function createTitlebar(options?: TitlebarOptions) {
     document.body.insertAdjacentElement("afterbegin", mainApp);
 }
 
+function createBtns(options?: TitlebarOptions) {
+    const titleBarBtns = document.createElement("div");
+    titleBarBtns.className = "title-bar-btns";
+    titleBarBtns.appendChild(createMinimizeBtn());
+    titleBarBtns.appendChild(createMaximizeBtn(options));
+    titleBarBtns.appendChild(createCloseBtn(options));
+
+    return titleBarBtns;
+}
+
 // Create minimize button
 function createMinimizeBtn() {
     const minimizeBtn = document.createElement("button");
@@ -83,16 +93,6 @@ function createCloseBtn(options?: TitlebarOptions) {
     closeBtn.appendChild(svgClose);
 
     return closeBtn;
-}
-
-function createBtns(options?: TitlebarOptions) {
-    const titleBarBtns = document.createElement("div");
-    titleBarBtns.className = "title-bar-btns";
-    titleBarBtns.appendChild(createMinimizeBtn());
-    titleBarBtns.appendChild(createMaximizeBtn(options));
-    titleBarBtns.appendChild(createCloseBtn(options));
-
-    return titleBarBtns;
 }
 
 // Create the menu at the left
@@ -220,6 +220,7 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     mainHelpLi.appendChild(helpUl);
 }
 
+// need a comment
 function createHotkey(hotkey: string) {
     const span = document.createElement("span");
     span.className = "hotkey";
