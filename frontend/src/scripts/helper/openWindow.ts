@@ -15,7 +15,7 @@ export default async function openWindow(
 
     const window = new BrowserWindow(windowOptions);
 
-    const indexHTML = path.join(__dirname, "views", htmlPath);
+    const indexHTML = path.join(__dirname, "../views", htmlPath);
 
     window.loadFile(indexHTML);
 
