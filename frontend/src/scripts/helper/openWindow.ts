@@ -1,12 +1,12 @@
 import { BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { PopupOptions, Presentation } from "../interfaces/interfaces";
+import { Placeholder, PopupOptions, Presentation } from "../interfaces/interfaces";
 
 export default async function openWindow(
     browserWindow: BrowserWindow | null,
     htmlPath: string,
     options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[], // TODO: add missing types
+    data: PopupOptions | Presentation[] | Placeholder[] | undefined,
 ) {
     const windowOptions = options;
     if (browserWindow && windowOptions?.modal) {
