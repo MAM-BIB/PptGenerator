@@ -68,3 +68,12 @@ export interface TitlebarOptions {
     title?: string;
     closeBtnMsg?: string;
 }
+
+export interface UidsWithSlides {
+    [uid: string]: { slide: Slide; path: string }[];
+}
+
+export interface SlidesWithPath {
+    path: string;
+    slides: Slide[];
+}
