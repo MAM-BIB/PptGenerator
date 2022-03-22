@@ -25,6 +25,7 @@ initTitlebar({
     menuHidden: true,
     title: "PptGenerator-Options",
 });
+
 fillInput();
 addAllBrowseHandler();
 fillSelect();

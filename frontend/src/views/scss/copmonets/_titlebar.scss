@@ -21,7 +21,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-
             position: absolute;
             z-index: -1;
             width: 100%;
@@ -55,6 +54,7 @@
 
                 &:disabled:hover {
                     background-color: var(--background--primary);
+                    cursor: auto;
                 }
             }
 
