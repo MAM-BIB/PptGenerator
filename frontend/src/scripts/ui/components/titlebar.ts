@@ -25,7 +25,7 @@ function createTitlebar(options?: TitlebarOptions) {
     topBar.appendChild(title);
 
     // Create titleBarBtns
-    topBar.appendChild(createBtns());
+    topBar.appendChild(createBtns(options));
 
     mainApp.appendChild(topBar);
     document.body.insertAdjacentElement("afterbegin", mainApp);
@@ -52,6 +52,7 @@ function createMaximizeBtn(options?: TitlebarOptions) {
     const maximizeBtn = document.createElement("button");
     maximizeBtn.title = "Maximize";
     maximizeBtn.disabled = !(options?.resizable ?? true);
+
     maximizeBtn.className = "top-btn maximize-btn";
     maximizeBtn.addEventListener("click", () => {
         ipcRenderer.invoke("maxAndRestoreWindow");
@@ -87,7 +88,6 @@ function createCloseBtn(options?: TitlebarOptions) {
 function createBtns(options?: TitlebarOptions) {
     const titleBarBtns = document.createElement("div");
     titleBarBtns.className = "title-bar-btns";
-
     titleBarBtns.appendChild(createMinimizeBtn());
     titleBarBtns.appendChild(createMaximizeBtn(options));
     titleBarBtns.appendChild(createCloseBtn(options));
@@ -201,8 +201,8 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     infoBtn.innerText = "Open info";
     infoBtn.addEventListener("click", async () => {
         await ipcRenderer.invoke("openWindow", "help.html", {
-            width: 800,
-            height: 600,
+            width: 900,
+            height: 700,
             minWidth: 500,
             minHeight: 400,
             frame: false,
