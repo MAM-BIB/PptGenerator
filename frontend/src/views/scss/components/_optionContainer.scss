@@ -68,6 +68,29 @@
                 }
             }
         }
+
+        .content-nav {
+            margin: auto;
+            padding-bottom: $size-4;
+            ul {
+                display: flex;
+                list-style: none;
+
+                li {
+                    a {
+                        text-decoration: none;
+                        color: var(--btn--font);
+                    }
+                    button {
+                        padding: $size-1 $size-3;
+                    }
+                }
+
+                li + li {
+                    margin-left: $size-4;
+                }
+            }
+        }
     }
 
     .master-container {
