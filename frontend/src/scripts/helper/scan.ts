@@ -32,41 +32,98 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
     checkUids();
 }
 
-function formatSlide(slides: Slide[]): string {
+export function formatSlide(slides: Slide[]): string {
     return slides
-        .map((slide) => `Slide ${slide.Position + 1}: ${slide.Title || "No Title"} (UID:${slide.Uid})`)
+        .map((slide) => ` - Slide ${slide.Position + 1}: ${slide.Title || "No Title"} (UID:${slide.Uid})`)
         .join("\n");
 }
 
-async function checkUids() {
-    const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
-    const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
-    // const uids: string[] = [];
-    // const errors: string[] = [];
-    const allSlides = presentations.flatMap((pres) => pres.Sections.flatMap((section) => section.Slides));
-    const slidesHashMap: { [key: string]: Slide } = {};
-    const duplicatedUidSlides: Slide[][] = [];
-    const wrongUidSlides: Slide[] = [];
+interface UidsWithSlides {
+    [uid: string]: { slide: Slide; path: string }[];
+}
 
-    for (const slide of allSlides) {
-        if (slide.Uid.length < 5) {
-            wrongUidSlides.push(slide);
-        } else if (slidesHashMap[slide.Uid]) {
-            duplicatedUidSlides.push([slidesHashMap[slide.Uid], slide]);
+export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWithSlides {
+    const uidsWithSlides: UidsWithSlides = {};
+
+    for (const presentation of presentations) {
+        for (const slide of presentation.Sections.flatMap((section) => section.Slides)) {
+            if (!uidsWithSlides[slide.Uid]) {
+                uidsWithSlides[slide.Uid] = [];
+            }
+            uidsWithSlides[slide.Uid].push({
+                slide,
+                path: presentation.Path,
+            });
         }
-        slidesHashMap[slide.Uid] = slide;
     }
 
-    if (duplicatedUidSlides.length > 0 || wrongUidSlides.length > 0) {
-        let text = "";
-        if (duplicatedUidSlides.length > 0) {
-            text += `Slides with duplicated Uid(${duplicatedUidSlides.length}):\n\n${duplicatedUidSlides
-                .map((elem) => formatSlide(elem))
-                .join("\n\n")}\n`;
+    for (const uid in uidsWithSlides) {
+        if (Object.prototype.hasOwnProperty.call(uidsWithSlides, uid)) {
+            if (uidsWithSlides[uid].length <= 1) {
+                delete uidsWithSlides[uid];
+            }
         }
-        if (wrongUidSlides.length > 0) {
-            text += `\nSlides with incorrect Uid(${wrongUidSlides.length}):\n\n${formatSlide(wrongUidSlides)}`;
+    }
+
+    return uidsWithSlides;
+}
+
+interface SlidesWithPath {
+    path: string;
+    slides: Slide[];
+}
+
+export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithPath[] {
+    const wrongUidSlides: SlidesWithPath[] = [];
+
+    for (const presentation of presentations) {
+        const slides = presentation.Sections.flatMap((section) => section.Slides).filter(
+            (slide) => slide.Uid.length < 5,
+        );
+        if (slides.length > 0) {
+            wrongUidSlides.push({
+                path: presentation.Path,
+                slides,
+            });
         }
+    }
+
+    return wrongUidSlides;
+}
+
+export async function checkUids() {
+    const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+    const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
+
+    const wrongUidSlides = getAllWrongUidSlides(presentations);
+    if (wrongUidSlides.length > 0) {
+        let text = `There are ${wrongUidSlides.length} presentations with incorrect Uids:\n`;
+        for (const slidesWithPath of wrongUidSlides) {
+            text += `\n${path.parse(slidesWithPath.path).name}\n${formatSlide(slidesWithPath.slides)}\n`;
+        }
+        await openPopup({
+            text,
+            heading: "Error",
+            answer: true,
+        });
+    }
+
+    const duplicatedUidSlides = getAllDuplicatedUidSlides(presentations);
+    const nrOfDuplicatedUidSlides = Object.keys(duplicatedUidSlides).length;
+    console.log("JETZT", nrOfDuplicatedUidSlides);
+
+    if (nrOfDuplicatedUidSlides > 0) {
+        let text = `There are ${nrOfDuplicatedUidSlides} slides with duplicated Uids:\n`;
+        for (const uid in duplicatedUidSlides) {
+            if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
+                text += `UID:${uid}`;
+                for (const slide of duplicatedUidSlides[uid]) {
+                    text += `\n${path.parse(slide.path).name}\n${formatSlide([slide.slide])}\n`;
+                }
+            }
+        }
+        console.log("text", text);
+
         openPopup({
             text,
             heading: "Error",
