@@ -3,7 +3,7 @@ import fsBase from "fs";
 
 import { getConfig } from "../config";
 import openPopup from "./popup";
-import { Presentation, Slide } from "../interfaces/interfaces";
+import { Presentation, Slide, UidsWithSlides, SlidesWithPath } from "../interfaces/interfaces";
 import call from "./systemcall";
 import reload from "./reload";
 
@@ -38,10 +38,6 @@ export function formatSlide(slides: Slide[]): string {
         .join("\n");
 }
 
-interface UidsWithSlides {
-    [uid: string]: { slide: Slide; path: string }[];
-}
-
 export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWithSlides {
     const uidsWithSlides: UidsWithSlides = {};
 
@@ -66,11 +62,6 @@ export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWi
     }
 
     return uidsWithSlides;
-}
-
-interface SlidesWithPath {
-    path: string;
-    slides: Slide[];
 }
 
 export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithPath[] {
@@ -110,7 +101,6 @@ export async function checkUids() {
 
     const duplicatedUidSlides = getAllDuplicatedUidSlides(presentations);
     const nrOfDuplicatedUidSlides = Object.keys(duplicatedUidSlides).length;
-    console.log("JETZT", nrOfDuplicatedUidSlides);
 
     if (nrOfDuplicatedUidSlides > 0) {
         let text = `There are ${nrOfDuplicatedUidSlides} slides with duplicated Uids:\n`;
@@ -122,7 +112,6 @@ export async function checkUids() {
                 }
             }
         }
-        console.log("text", text);
 
         openPopup({
             text,
