@@ -168,10 +168,11 @@ loadFileBtn.addEventListener("click", async () => {
         if (!filePath.canceled && filePath.filePaths.length > 0) {
             startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
+            const pathOfFile = filePath.filePaths[0];
 
             if (fileType === ".json" || fileType === ".pptx") {
                 const file: LoadFile = new LoadFile(sectionElements);
-                await file.load(filePath, fileType);
+                await file.load(pathOfFile, fileType);
                 placeholders = file.placeholders;
             } else {
                 openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });

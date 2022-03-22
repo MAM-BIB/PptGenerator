@@ -19,20 +19,22 @@ export default class LoadFile {
         this.loadedPreset = { path: "", sections: [], placeholders: [] };
     }
 
-    public async load(filePath: Electron.OpenDialogReturnValue, fileType: string) {
-        const pathOfFile = filePath.filePaths[0];
+    public async load(pathOfFile: string, fileType: string) {
         if (fileType === ".json") {
             const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
             this.loadedPreset = JSON.parse(presetJson) as Preset;
             this.loadPreset();
         } else if (fileType === ".pptx") {
             const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
-            await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
+            await call(getConfig().coreApplication, ["-inPath", pathOfFile, "-outPath", outPath]);
             this.createPreset(outPath);
         }
     }
 
     public loadPreset() {
+        if (!this.loadedPreset.path || !this.loadedPreset.sections || !this.loadedPreset.placeholders) {
+            throw new Error("selected file is not a preset");
+        }
         // deselect all selected slides
         for (const sectionElement of this.sectionElements) {
             for (const slideElement of sectionElement.slides) {
