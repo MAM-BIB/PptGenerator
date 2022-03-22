@@ -45,6 +45,17 @@ addLanguageBtn.addEventListener("click", () => {
 });
 
 function addlanguage() {
+    for (let index = 0; index < config.presentationMasters.length; index++) {
+        const master = config.presentationMasters[index];
+        if (master.lang === languageInput.value) {
+            openPopup({
+                text: "This language already exists!",
+                heading: "Error",
+            });
+            languageInput.value = "";
+            return;
+        }
+    }
     if (!languageInput.classList.contains("show")) {
         languageInput.classList.add("show");
         languageInput.focus();
