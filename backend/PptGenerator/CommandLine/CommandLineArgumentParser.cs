@@ -85,10 +85,10 @@ namespace PptGenerator.CommandLine {
                 }
 
                 // Parse -basePath <path>
-                string basePath;
+                string basePath = null;
                 int basePathIndex = argList.IndexOf("-basePath");
                 if (basePathIndex < 0 || basePathIndex >= argList.Count - 1) {
-                    throw new Exception("'-basePath' is not given. Invoke the program with the argument '-basePath <path>'");
+                    // Basepath is now optional
                 } else {
                     basePath = argList[basePathIndex + 1];
                     if (basePath.StartsWith("-")) {

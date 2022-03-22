@@ -1,16 +1,15 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import path from "path";
 import { refreshConfig } from "./config";
+import openWindow from "./helper/openWindow";
 import reload from "./helper/reload";
-import { PopupOptions, Presentation } from "./interfaces/interfaces";
-// import { openOption } from "./menu";
-// import { scanPresetations } from "./menu";
+import scanPresentations from "./helper/scan";
+import { openOption } from "./menu";
 
 export default function initIpcHandlers() {
-    // ipcMain.handle("openOptionWindow", (event) => {
-    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
-    //     openOption(focusWindow);
-    // });
+    ipcMain.handle("openOptionWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        openOption(focusWindow);
+    });
 
     // Close the window, sending the ipc-message
     ipcMain.handle("closeFocusedWindow", (event) => {
@@ -57,51 +56,8 @@ export default function initIpcHandlers() {
         reload(focusWindow);
     });
 
-    // ipcMain.handle("ScanWindow", (event) => {
-    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
-    //     scanPresetations(focusWindow);
-    // });
-}
-
-export async function openWindow(
-    browserWindow: BrowserWindow | null,
-    htmlPath: string,
-    options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[], // TODO: add missing types
-) {
-    const windowOptions = options;
-    if (browserWindow && windowOptions?.modal) {
-        windowOptions.parent = browserWindow;
-    }
-
-    const window = new BrowserWindow(windowOptions);
-
-    const indexHTML = path.join(__dirname, "views", htmlPath);
-
-    window.loadFile(indexHTML);
-
-    if (data) {
-        if ((data as PopupOptions).answer) {
-            const popupOptions = data as PopupOptions;
-            popupOptions.answer = `answer${Math.random() * 1000}`;
-
-            window.webContents.once("dom-ready", () => {
-                window.webContents.send("data", data);
-            });
-
-            return new Promise<boolean>((resolve) => {
-                ipcMain.handle(popupOptions.answer as string, (event, answer: boolean) => {
-                    BrowserWindow.fromWebContents(event.sender)?.close();
-                    resolve(answer);
-                });
-            });
-        }
-        window.webContents.once("dom-ready", () => {
-            window.webContents.send("data", data);
-        });
-    }
-
-    return new Promise((resolve) => {
-        resolve(false);
+    ipcMain.handle("ScanWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        scanPresentations(focusWindow);
     });
 }

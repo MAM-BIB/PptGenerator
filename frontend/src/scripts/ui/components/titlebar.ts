@@ -25,7 +25,7 @@ function createTitlebar(options?: TitlebarOptions) {
     topBar.appendChild(title);
 
     // Create titleBarBtns
-    topBar.appendChild(createBtns());
+    topBar.appendChild(createBtns(options));
 
     mainApp.appendChild(topBar);
     document.body.insertAdjacentElement("afterbegin", mainApp);
@@ -52,6 +52,7 @@ function createMaximizeBtn(options?: TitlebarOptions) {
     const maximizeBtn = document.createElement("button");
     maximizeBtn.title = "Maximize";
     maximizeBtn.disabled = !(options?.resizable ?? true);
+
     maximizeBtn.className = "top-btn maximize-btn";
     maximizeBtn.addEventListener("click", () => {
         ipcRenderer.invoke("maxAndRestoreWindow");
@@ -87,7 +88,6 @@ function createCloseBtn(options?: TitlebarOptions) {
 function createBtns(options?: TitlebarOptions) {
     const titleBarBtns = document.createElement("div");
     titleBarBtns.className = "title-bar-btns";
-
     titleBarBtns.appendChild(createMinimizeBtn());
     titleBarBtns.appendChild(createMaximizeBtn(options));
     titleBarBtns.appendChild(createCloseBtn(options));
@@ -131,7 +131,8 @@ function createFileMenu(mainFileLi: HTMLElement) {
 
     const reloadLi = document.createElement("li");
     const reloadBtn = document.createElement("button");
-    reloadBtn.innerText = "Reload CTRL+R";
+    reloadBtn.innerText = "Reload";
+    reloadBtn.appendChild(createHotkey("CTRL+R"));
     reloadBtn.addEventListener("click", () => {
         ipcRenderer.invoke("ReloadWindow");
     });
@@ -140,16 +141,19 @@ function createFileMenu(mainFileLi: HTMLElement) {
 
     const scanLi = document.createElement("li");
     const scanBtn = document.createElement("button");
-    scanBtn.innerText = "Scan CTRL+I";
-    // scanBtn.addEventListener("click", () => {
-    //     ipcRenderer.invoke("ScanWindow");
-    // });
+    scanBtn.innerText = "Scan";
+    scanBtn.appendChild(createHotkey("CTRL+I"));
+
+    scanBtn.addEventListener("click", () => {
+        ipcRenderer.invoke("ScanWindow");
+    });
     scanLi.appendChild(scanBtn);
     fileUl.appendChild(scanLi);
 
     const exitLi = document.createElement("li");
     const exitBtn = document.createElement("button");
-    exitBtn.innerText = "Exit ALT+F4";
+    exitBtn.innerText = "Exit";
+    exitBtn.appendChild(createHotkey("ALT+F4"));
     exitBtn.addEventListener("click", () => {
         ipcRenderer.invoke("closeFocusedWindow");
     });
@@ -171,7 +175,11 @@ function createOptionMenu(mainOptionLi: HTMLElement) {
 
     const optionLi = document.createElement("li");
     const openOptionBtn = document.createElement("button");
-    openOptionBtn.innerText = "Open Option CTRL+O";
+    openOptionBtn.innerText = "Open Option";
+    openOptionBtn.appendChild(createHotkey("CTRL+O"));
+    openOptionBtn.addEventListener("click", () => {
+        ipcRenderer.invoke("openOptionWindow");
+    });
     optionLi.appendChild(openOptionBtn);
     optionUl.appendChild(optionLi);
 
@@ -193,8 +201,8 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     infoBtn.innerText = "Open info";
     infoBtn.addEventListener("click", async () => {
         await ipcRenderer.invoke("openWindow", "help.html", {
-            width: 800,
-            height: 600,
+            width: 900,
+            height: 700,
             minWidth: 500,
             minHeight: 400,
             frame: false,
@@ -210,4 +218,11 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     helpUl.appendChild(helpLi);
 
     mainHelpLi.appendChild(helpUl);
+}
+
+function createHotkey(hotkey: string) {
+    const span = document.createElement("span");
+    span.className = "hotkey";
+    span.textContent = hotkey;
+    return span;
 }
