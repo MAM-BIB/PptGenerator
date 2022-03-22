@@ -201,8 +201,8 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     infoBtn.innerText = "Open info";
     infoBtn.addEventListener("click", async () => {
         await ipcRenderer.invoke("openWindow", "help.html", {
-            width: 800,
-            height: 600,
+            width: 900,
+            height: 700,
             minWidth: 500,
             minHeight: 400,
             frame: false,
