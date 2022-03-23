@@ -11,7 +11,9 @@
             "Position": 0,
             "IsHidden": false,
             "Title": "TestSlide 1.5",
-            "Placeholders": []
+            "Placeholders": [
+              "Name"
+            ]
           }
         ]
       },
@@ -36,8 +38,10 @@
             "Uid": "1234567890123456789042",
             "Position": 2,
             "IsHidden": false,
-            "Title": "TestSlide 3.5",
-            "Placeholders": []
+            "Title": "Test~$Space$~Slide 3.5",
+            "Placeholders": [
+              "Space"
+            ]
           }
         ]
       }

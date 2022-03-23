@@ -162,7 +162,22 @@ test("scan presentation 1 and 2 and check the meta-file", async () => {
     expect(fs.existsSync(metaPath)).toBe(true);
 
     const metaJson = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
-    const expectedMetaJson = JSON.parse(fs.readFileSync(meta1_2Path, { encoding: "utf-8" }));
+    const expectedMeta1Json = JSON.parse(fs.readFileSync(meta1Path, { encoding: "utf-8" })) as Array<any>;
+    const expectedMeta2Json = JSON.parse(fs.readFileSync(meta2Path, { encoding: "utf-8" })) as Array<any>;
 
-    expect(metaJson).toEqual(expectedMetaJson);
+    expect(metaJson).toEqual(expectedMeta1Json.concat(expectedMeta2Json));
+});
+
+test("scan presentation 2 and 1 and check the meta-file", async () => {
+    const metaPath = path.join(tmpPath, "meta.json");
+
+    await call(getConfig().coreApplication, ["-inPath", presentation2Path, presentation1Path, "-outPath", metaPath]);
+
+    expect(fs.existsSync(metaPath)).toBe(true);
+
+    const metaJson = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
+    const expectedMeta1Json = JSON.parse(fs.readFileSync(meta1Path, { encoding: "utf-8" })) as Array<any>;
+    const expectedMeta2Json = JSON.parse(fs.readFileSync(meta2Path, { encoding: "utf-8" })) as Array<any>;
+
+    expect(metaJson).toEqual(expectedMeta2Json.concat(expectedMeta1Json));
 });
