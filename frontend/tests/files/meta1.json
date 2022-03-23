@@ -1,0 +1,45 @@
+[
+  {
+    "Path": "./tests/files/presentation1.pptx",
+    "Sections": [
+      {
+        "Name": "Section 1",
+        "Slides": [
+          {
+            "RelationshipId": "rId2",
+            "Uid": "",
+            "Position": 0,
+            "IsHidden": false,
+            "Title": "TestSlide 1",
+            "Placeholders": []
+          },
+          {
+            "RelationshipId": "rId3",
+            "Uid": "Test1234Test1234Test12",
+            "Position": 1,
+            "IsHidden": false,
+            "Title": "TestSlide 2",
+            "Placeholders": []
+          }
+        ]
+      },
+      {
+        "Name": "Section 2",
+        "Slides": [
+          {
+            "RelationshipId": "rId4",
+            "Uid": "1234567890123456789012",
+            "Position": 2,
+            "IsHidden": false,
+            "Title": "TestSlide3",
+            "Placeholders": []
+          }
+        ]
+      },
+      {
+        "Name": "Section 3",
+        "Slides": []
+      }
+    ]
+  }
+]
