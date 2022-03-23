@@ -5,8 +5,10 @@ import call from "../src/scripts/helper/systemcall";
 
 const presentation1Path = "./tests/files/presentation1.pptx";
 const presentation2Path = "./tests/files/presentation2.pptx";
+const presentation3Path = "./tests/files/presentation3.pptx";
 const meta1Path = "./tests/files/meta1.json";
 const meta2Path = "./tests/files/meta2.json";
+const meta3Path = "./tests/files/meta3.json";
 const meta1_2Path = "./tests/files/meta1-2.json";
 const tmpPath = "./tests/files/tmp";
 
@@ -154,6 +156,19 @@ test("scan presentation2 and check the meta-file", async () => {
     expect(metaJson).toEqual(expectedMetaJson);
 });
 
+test("scan presentation3 and check the meta-file", async () => {
+    const metaPath = path.join(tmpPath, "meta.json");
+
+    await call(getConfig().coreApplication, ["-inPath", presentation3Path, "-outPath", metaPath]);
+
+    expect(fs.existsSync(metaPath)).toBe(true);
+
+    const metaJson = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
+    const expectedMetaJson = JSON.parse(fs.readFileSync(meta3Path, { encoding: "utf-8" }));
+
+    expect(metaJson).toEqual(expectedMetaJson);
+});
+
 test("scan presentation 1 and 2 and check the meta-file", async () => {
     const metaPath = path.join(tmpPath, "meta.json");
 
@@ -180,4 +195,26 @@ test("scan presentation 2 and 1 and check the meta-file", async () => {
     const expectedMeta2Json = JSON.parse(fs.readFileSync(meta2Path, { encoding: "utf-8" })) as Array<any>;
 
     expect(metaJson).toEqual(expectedMeta2Json.concat(expectedMeta1Json));
+});
+
+test("scan presentation 2, 3 and 1 and check the meta-file", async () => {
+    const metaPath = path.join(tmpPath, "meta.json");
+
+    await call(getConfig().coreApplication, [
+        "-inPath",
+        presentation2Path,
+        presentation3Path,
+        presentation1Path,
+        "-outPath",
+        metaPath,
+    ]);
+
+    expect(fs.existsSync(metaPath)).toBe(true);
+
+    const metaJson = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
+    const expectedMeta1Json = JSON.parse(fs.readFileSync(meta1Path, { encoding: "utf-8" })) as Array<any>;
+    const expectedMeta2Json = JSON.parse(fs.readFileSync(meta2Path, { encoding: "utf-8" })) as Array<any>;
+    const expectedMeta3Json = JSON.parse(fs.readFileSync(meta3Path, { encoding: "utf-8" })) as Array<any>;
+
+    expect(metaJson).toEqual(expectedMeta2Json.concat(expectedMeta3Json, expectedMeta1Json));
 });
