@@ -4,12 +4,13 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
-import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+import { Placeholder, Presentation } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
 import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 import call from "../../helper/systemcall";
+import createPreset from "../components/createPreset";
 
 const fs = fsBase.promises;
 
@@ -96,7 +97,7 @@ exportBtn.addEventListener("click", () => {
             return;
         }
 
-        createPreset(path.join(presetPath, `${name}.json`));
+        createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
     }
 
     exportToPptx(path.join(outPath, `${name}.pptx`));
@@ -181,39 +182,4 @@ async function copyPresentation(
     return new Promise((resolve) => {
         resolve(true);
     });
-}
-
-async function createPreset(savePath: string) {
-    const preset: Preset = {
-        path: savePath,
-        sections: [],
-        placeholders: [],
-    };
-
-    for (const presentation of presentations) {
-        for (const section of presentation.Sections) {
-            const presetSection: PresetSection = {
-                name: section.Name,
-                includedSlides: [],
-                ignoredSlides: [],
-            };
-            for (const slide of section.Slides) {
-                if (slide.IsSelected) {
-                    presetSection.includedSlides.push(slide.Uid);
-                } else {
-                    presetSection.ignoredSlides.push(slide.Uid);
-                }
-            }
-            if (presetSection.includedSlides.length > 0) {
-                preset.sections.push(presetSection);
-            }
-        }
-    }
-
-    if (placeholders.length > 0) {
-        preset.placeholders = placeholders;
-    }
-
-    const presetJson = JSON.stringify(preset, null, "\t");
-    fs.writeFile(savePath, presetJson);
 }

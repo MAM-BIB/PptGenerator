@@ -22,8 +22,7 @@ ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
     placeholders = data.placeholders;
 
-    if (!placeholders) {
-        placeholders = [];
+    if (placeholders.length === 0) {
         for (const presentation of presentations) {
             for (const section of presentation.Sections) {
                 for (const slide of section.Slides) {
