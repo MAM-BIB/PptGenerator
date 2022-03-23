@@ -3,7 +3,7 @@ import fs from "fs";
 import { Config } from "./interfaces/interfaces";
 
 const configPath = "./config/config.json";
-export let config: Config;
+let config: Config;
 
 export function getConfig(): Config {
     if (config) return config;
