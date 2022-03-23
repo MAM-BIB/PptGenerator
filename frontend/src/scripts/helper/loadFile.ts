@@ -15,7 +15,7 @@ export default class LoadFile {
 
     constructor(sections: SectionElement[]) {
         this.sectionElements = sections;
-        this.placeholders = [];
+        this.placeholders = [] as Placeholder[];
         this.loadedPreset = { path: "", sections: [], placeholders: [] };
     }
 
@@ -23,15 +23,15 @@ export default class LoadFile {
         if (fileType === ".json") {
             const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
             this.loadedPreset = JSON.parse(presetJson) as Preset;
-            this.loadPreset();
+            this.loadPresetFromJson();
         } else if (fileType === ".pptx") {
             const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
             await call(getConfig().coreApplication, ["-inPath", pathOfFile, "-outPath", outPath]);
-            this.createPreset(outPath);
+            this.loadPresetFromMeta(outPath);
         }
     }
 
-    public loadPreset() {
+    public loadPresetFromJson() {
         if (!this.loadedPreset.path || !this.loadedPreset.sections || !this.loadedPreset.placeholders) {
             throw new Error("selected file is not a preset");
         }
@@ -41,8 +41,6 @@ export default class LoadFile {
                 slideElement.deselect();
             }
         }
-        // delete placeholders
-        this.placeholders = undefined;
 
         // go through every section
         for (const section of this.loadedPreset.sections) {
@@ -62,7 +60,7 @@ export default class LoadFile {
         }
     }
 
-    public async createPreset(jsonPath: string) {
+    public async loadPresetFromMeta(jsonPath: string) {
         const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
         const presMeta = JSON.parse(PresMetaJson) as Presentation[];
         const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
