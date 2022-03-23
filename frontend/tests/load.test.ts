@@ -113,23 +113,6 @@ const sectionElement4 = new SectionElement(section3);
 
 const sectionElements2 = [sectionElement2, sectionElement3, sectionElement4];
 
-function clearTmpFolder() {
-    if (fs.existsSync(tmpPath)) {
-        if (fs.readdirSync(tmpPath).length) {
-            fs.rmSync(tmpPath, { recursive: true });
-        }
-    }
-    fs.mkdirSync(tmpPath, { recursive: true });
-}
-
-beforeEach(() => {
-    clearTmpFolder();
-});
-
-afterAll(() => {
-    clearTmpFolder();
-});
-
 test("selected json file is not a preset", () => {
     expect.assertions(1);
     const sectionElements = [sectionElement1];
@@ -172,7 +155,7 @@ test("selected preset only selects included slides", () => {
 });
 
 test("selected pptx only select all slides", () => {
-    fs.copyFileSync(meta2Path, "./tests/tmp");
+    fs.copyFileSync(meta2Path, path.join(tmpPath, "meta2.json"));
 
     const sectionElements = sectionElements2;
     const file = new LoadFile(sectionElements);
