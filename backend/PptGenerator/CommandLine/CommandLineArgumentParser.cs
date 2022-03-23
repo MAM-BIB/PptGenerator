@@ -8,15 +8,22 @@ namespace PptGenerator.CommandLine {
         public static CommandLineArgument Parse(string[] args) {
             List<string> argList = new List<string>(args);
 
+            Console.WriteLine($"argList.Count: {argList.Count}");
+
+            if (argList.Count == 0) {
+                throw new Exception("No argument are given! Try '-help' to get a list of arguments.");
+            }
+
             // Parse -help
-            if (argList.Contains("-help") || argList.Count == 0) {
+            if (argList.Contains("-help")) {
                 Console.WriteLine("-help");
                 Console.WriteLine("-mode <scan|create>");
                 Console.WriteLine("-outPath <path>");
                 Console.WriteLine("-inPath <path> (<path>? ...)");
                 Console.WriteLine("-slidePos <slidePos,slidePos,...>");
                 Console.WriteLine("-placeholders <name,value> (<name,value>? ...)");
-                return null;
+
+                return new CommandLineArgument(Mode.undefined, "", null);
             }
 
             // Parse the -mode <scan|create> argument
@@ -48,11 +55,11 @@ namespace PptGenerator.CommandLine {
             List<string> inPaths = new List<string>();
             int inIndex = argList.IndexOf("-inPath");
             if (inIndex < 0 || inIndex >= argList.Count - 1) {
-                throw new Exception("'-inIndex' is not given. Invoke the program wwith the argument '-inIndex <path> (<path>? ...)'");
+                throw new Exception("'-inPath' is not given. Invoke the program with the argument '-inPath <path> (<path>? ...)'");
             } else {
                 string firstInPath = argList[inIndex + 1];
                 if (firstInPath.StartsWith("-")) {
-                    throw new Exception("'-inIndex' is not given. Invoke the program with the argument '-inIndex <path> (<path>? ...)'");
+                    throw new Exception("'-inPath' is not given. Invoke the program with the argument '-inPath <path> (<path>? ...)'");
                 }
                 inPaths.Add(firstInPath);
                 for (int i = inIndex + 2; i < argList.Count; i++) {
