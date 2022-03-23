@@ -10,7 +10,7 @@ export default async function openWindow(
 ) {
     const windowOptions = options;
     if (browserWindow && windowOptions?.modal) {
-        windowOptions.parent = browserWindow;
+        // windowOptions.parent = browserWindow;
     }
 
     const window = new BrowserWindow(windowOptions);

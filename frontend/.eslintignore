@@ -2,3 +2,5 @@ node_modules
 build
 packager
 .vscode
+jest.config.js
+tests
