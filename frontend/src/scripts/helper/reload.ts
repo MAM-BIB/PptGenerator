@@ -13,6 +13,7 @@ export default function reload(window: BrowserWindow | undefined | null) {
         window.reload();
     } else {
         for (const win of BrowserWindow.getAllWindows()) {
+            win.focus();
             win.reload();
         }
     }

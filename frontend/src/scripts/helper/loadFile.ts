@@ -9,7 +9,7 @@ import call from "./systemcall";
 const fs = fsBase.promises;
 
 export default class LoadFile {
-    public placeholders: Placeholder[] | undefined;
+    public placeholders: Placeholder[];
     public loadedPreset: Preset;
     public sectionElements: SectionElement[];
 

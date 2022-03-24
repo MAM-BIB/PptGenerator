@@ -19,7 +19,7 @@
         "lint": "eslint . --ext .ts",
         "lint-fix": "eslint . --fix --ext .ts",
         "package": "rimraf ../dist && node ./packager/package.js",
-        "dist": "npm run clean && npm run build && npm run package",
+        "dist": "npm run test && npm run clean && npm run build && npm run package",
         "test": "jest -i",
         "test-scan": "jest -i ./systemcall.scan.test.ts",
         "test-create": "jest -i ./systemcall.create.test.ts",

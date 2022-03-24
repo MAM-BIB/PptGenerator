@@ -20,7 +20,7 @@ const presentationMasterSelect = document.getElementById("presentation-master-se
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
-let placeholders: Placeholder[] | undefined;
+let placeholders: Placeholder[] = [];
 
 let presentationMasterLang: string;
 let sectionElements: SectionElement[];
