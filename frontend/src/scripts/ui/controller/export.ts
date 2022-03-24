@@ -12,8 +12,6 @@ import openPopup from "../../helper/popup";
 import call from "../../helper/systemcall";
 import createPreset from "../components/createPreset";
 
-const fs = fsBase.promises;
-
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const nameInput = document.getElementById("name-input") as HTMLInputElement;

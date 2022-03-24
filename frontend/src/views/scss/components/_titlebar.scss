@@ -17,6 +17,15 @@
         -webkit-user-select: none;
         user-select: none;
 
+        .icon {
+            background-image: url("../icons/pptLogo24x24.png");
+            background-size: contain;
+            align-self: center;
+            width: 20px;
+            height: 20px;
+            margin-left: $size-2;
+        }
+
         .title {
             display: flex;
             justify-content: center;
