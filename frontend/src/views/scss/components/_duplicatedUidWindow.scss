@@ -9,10 +9,13 @@
 }
 
 .main-div {
-    .uid-title-container {
-        padding-bottom: 10px;
-    }
     .presentationame {
         padding-bottom: 10px;
+    }
+}
+
+.main-div + .main-div {
+    .uid-title-container {
+        margin-top: 15px;
     }
 }
