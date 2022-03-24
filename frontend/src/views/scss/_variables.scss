@@ -100,6 +100,8 @@ $slider-size: $switch-height - $slider-margin;
     --btn--background: #{$accent--color--highlight};
     --btn--hover--background: #{$accent--color};
 
+    --toggle--btn--background: #9f9f9f;
+
     --btn--titlebar: #{$dark--dark};
     --btn--hover--titlebar: #c5c5c5;
 }
@@ -116,6 +118,8 @@ $slider-size: $switch-height - $slider-margin;
         --background--dark: #{$dark--dark};
 
         --border--color: #{$border-dark};
+
+        --toggle--btn--background: #{$dark--light};
 
         --btn--titlebar: #908f8f;
         --btn--hover--titlebar: #3d3d3d;
