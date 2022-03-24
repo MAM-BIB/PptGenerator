@@ -6,7 +6,7 @@ import openWindow from "./openWindow";
 const defaultWindowOptions = {
     width: 400,
     height: 250,
-    resizable: true,
+    resizable: false,
     useContentSize: true,
     frame: false,
     webPreferences: {
