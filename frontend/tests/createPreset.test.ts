@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Placeholder, Presentation, Preset, PresetSection, Section, Slide } from "../src/scripts/interfaces/interfaces";
 import createPreset from "../src/scripts/ui/components/createPreset";
+import { clearTmpFolder } from "./testHelper";
 
 const tmpPath = "./tests/files/tmp";
 const presetPath = path.join(tmpPath, "preset.json");
@@ -84,15 +85,6 @@ const placeholder1: Placeholder = {
 const presentations: Presentation[] = [presentation1];
 const placeholders1: Placeholder[] = [placeholder1];
 const placeholders2: Placeholder[] = [];
-
-function clearTmpFolder() {
-    if (fs.existsSync(tmpPath)) {
-        if (fs.readdirSync(tmpPath).length) {
-            fs.rmSync(tmpPath, { recursive: true });
-        }
-    }
-    fs.mkdirSync(tmpPath, { recursive: true });
-}
 
 beforeEach(() => {
     clearTmpFolder();

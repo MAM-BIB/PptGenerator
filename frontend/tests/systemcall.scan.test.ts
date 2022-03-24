@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { getConfig } from "../src/scripts/config";
 import call from "../src/scripts/helper/systemcall";
+import { clearTmpFolder } from "./testHelper";
 
 const presentation1Path = "./tests/files/presentation1.pptx";
 const presentation2Path = "./tests/files/presentation2.pptx";
@@ -12,15 +13,6 @@ const meta3Path = "./tests/files/meta3.json";
 const baseMetaPath = "./tests/files/base-meta.json";
 const tmpPath = "./tests/files/tmp";
 const basePath = "./tests/files/base.pptx";
-
-function clearTmpFolder() {
-    if (fs.existsSync(tmpPath)) {
-        if (fs.readdirSync(tmpPath).length) {
-            fs.rmSync(tmpPath, { recursive: true });
-        }
-    }
-    fs.mkdirSync(tmpPath, { recursive: true });
-}
 
 beforeEach(() => {
     clearTmpFolder();

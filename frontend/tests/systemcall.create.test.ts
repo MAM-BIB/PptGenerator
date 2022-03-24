@@ -3,6 +3,7 @@ import path from "path";
 import { getConfig } from "../src/scripts/config";
 import call from "../src/scripts/helper/systemcall";
 import { Presentation } from "../src/scripts/interfaces/interfaces";
+import { clearTmpFolder, scan } from "./testHelper";
 
 const presentation1Path = "./tests/files/presentation1.pptx";
 const presentation2Path = "./tests/files/presentation2.pptx";
@@ -17,25 +18,6 @@ const out1Path = "./tests/files/out1.pptx";
 
 const tmpPath = "./tests/files/tmp";
 const basePath = "./tests/files/base.pptx";
-
-function clearTmpFolder() {
-    if (fs.existsSync(tmpPath)) {
-        if (fs.readdirSync(tmpPath).length) {
-            fs.rmSync(tmpPath, { recursive: true });
-        }
-    }
-    fs.mkdirSync(tmpPath, { recursive: true });
-}
-
-async function scan(inPath: string) {
-    const metaPath = path.join(tmpPath, "tmpMeta.json");
-
-    await call(getConfig().coreApplication, ["-inPath", inPath, "-outPath", metaPath]);
-
-    const obj = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
-    fs.rmSync(metaPath);
-    return obj;
-}
 
 beforeEach(() => {
     clearTmpFolder();
