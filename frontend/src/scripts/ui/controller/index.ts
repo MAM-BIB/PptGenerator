@@ -2,14 +2,14 @@ import fsBase from "fs";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
+import { Presentation, Placeholder } from "../../interfaces/interfaces";
 import { getConfig, setConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
-import call from "../../helper/systemcall";
 import { startLoading, stopLoading } from "../components/loading";
+import LoadFile from "../../helper/loadFile";
 
 const fs = fsBase.promises;
 
@@ -20,11 +20,10 @@ const presentationMasterSelect = document.getElementById("presentation-master-se
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
-let loadedPreset: Preset;
 let placeholders: Placeholder[] | undefined;
 
 let presentationMasterLang: string;
-let sectionElements: SectionElement[] = [];
+let sectionElements: SectionElement[];
 
 initTitlebar();
 fillPresentationMasterSelect();
@@ -170,14 +169,11 @@ loadFileBtn.addEventListener("click", async () => {
             startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
-            if (fileType === ".json") {
-                const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
-                loadedPreset = JSON.parse(presetJson) as Preset;
-                loadPreset();
-            } else if (fileType === ".pptx") {
-                const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
-                await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
-                createPreset(outPath);
+
+            if (fileType === ".json" || fileType === ".pptx") {
+                const file: LoadFile = new LoadFile(sectionElements);
+                await file.load(pathOfFile, fileType);
+                placeholders = file.placeholders;
             } else {
                 openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });
             }
@@ -187,34 +183,6 @@ loadFileBtn.addEventListener("click", async () => {
     }
     stopLoading();
 });
-
-function loadPreset() {
-    // deselect all selected slides
-    for (const sectionElement of sectionElements) {
-        for (const slideElement of sectionElement.slides) {
-            slideElement.deselect();
-        }
-    }
-    // delete placeholders
-    placeholders = undefined;
-
-    // go through every section
-    for (const section of loadedPreset.sections) {
-        // go through every included slide
-        for (const slideUID of section.includedSlides) {
-            for (const sectionElement of sectionElements) {
-                for (const slideElement of sectionElement.slides) {
-                    if (slideUID === slideElement.slide.Uid) {
-                        slideElement.select();
-                    }
-                }
-            }
-        }
-    }
-    if (loadedPreset.placeholders.length > 0) {
-        placeholders = loadedPreset.placeholders;
-    }
-}
 
 function foundVariables(): boolean {
     for (const presentation of presentations) {
@@ -227,19 +195,4 @@ function foundVariables(): boolean {
         }
     }
     return false;
-}
-
-async function createPreset(jsonPath: string) {
-    const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
-    const presMeta = JSON.parse(PresMetaJson) as Presentation[];
-    const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
-
-    for (const slideELement of sectionElements.flatMap((elem) => elem.slides)) {
-        if (allSelectedSlides.some((slide) => slide.Uid === slideELement.slide.Uid)) {
-            slideELement.select();
-        } else {
-            slideELement.deselect();
-        }
-    }
-    fs.rm(jsonPath);
 }

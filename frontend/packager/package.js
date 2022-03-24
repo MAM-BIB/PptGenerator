@@ -16,6 +16,7 @@ async function bundleElectronApp(options) {
     await bundleElectronApp({
         dir: "./build",
         out: "../dist",
+        icon: "./build/views/icons/pptLogo64x64.ico",
     });
 
     fs.mkdirSync("../dist/pptgenerator-win32-x64/config/presets", { recursive: true });

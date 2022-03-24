@@ -34,53 +34,14 @@ deleteLanguageBtn.addEventListener("click", () => {
     deleteLanguage();
 });
 
-languageInput.addEventListener("keydown", (e) => {
-    if ((e as KeyboardEvent).key === "Enter") {
-        addlanguage();
-    }
-});
-
 addLanguageBtn.addEventListener("click", () => {
     addlanguage();
 });
 
-function addlanguage() {
-    if (!languageInput.classList.contains("show")) {
-        languageInput.classList.add("show");
-        languageInput.focus();
-        return;
+languageInput.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        addlanguage();
     }
-    if (languageInput.value.trim() === "" || languageInput.value.length < 2) {
-        openPopup({
-            text: "It must contain a length of at least 2 characters! ",
-            heading: "Error",
-        });
-        return;
-    }
-    if (languageInput.value.length > 5) {
-        openPopup({
-            text: "It may only contain a maximum length of 5 characters! ",
-            heading: "Error",
-        });
-        return;
-    }
-    config.presentationMasters.push({
-        lang: languageInput.value,
-        paths: [],
-    });
-    fillSelect(config.presentationMasters.length - 1);
-    languageInput.classList.remove("show");
-    languageInput.value = "";
-}
-
-selectLanguage.addEventListener("change", () => {
-    newPresentationSection.innerHTML = "";
-    if (selectLanguage.selectedIndex - 1 < 0 || selectLanguage.selectedIndex - 1 >= config.presentationMasters.length) {
-        addBtn.disabled = true;
-        return;
-    }
-    newGroupOfPresentation(selectLanguage.selectedIndex - 1);
-    addBtn.disabled = false;
 });
 
 addBtn.addEventListener("click", () => {
@@ -117,7 +78,6 @@ saveBtn.addEventListener("click", () => {
 // Send a message to the main-process if the cancel-button is clicked.
 cancelBtn.addEventListener("click", async () => {
     if (!saveBtn.disabled) {
-        // Alert willst du wirklich diese Einstellungen löschen
         const answer = await openPopup({
             text: "There are unsaved changes, do you really want to quit?",
             heading: "Cancel",
@@ -132,13 +92,6 @@ cancelBtn.addEventListener("click", async () => {
         ipcRenderer.invoke("closeFocusedWindow");
     }
 });
-
-function fillInput() {
-    defaultExport.value = config.defaultExportPath;
-    metaJson.value = config.metaJsonPath;
-    metaPics.value = config.metaPicsPath;
-    hiddenSlide.checked = !config.ignoreHiddenSlides;
-}
 
 defaultExport.addEventListener("change", () => {
     config.defaultExportPath = defaultExport.value;
@@ -167,6 +120,23 @@ hiddenSlide.addEventListener("keydown", (e) => {
         saveBtn.disabled = false;
     }
 });
+
+selectLanguage.addEventListener("change", () => {
+    newPresentationSection.innerHTML = "";
+    if (selectLanguage.selectedIndex - 1 < 0 || selectLanguage.selectedIndex - 1 >= config.presentationMasters.length) {
+        addBtn.disabled = true;
+        return;
+    }
+    newGroupOfPresentation(selectLanguage.selectedIndex - 1);
+    addBtn.disabled = false;
+});
+
+function fillInput() {
+    defaultExport.value = config.defaultExportPath;
+    metaJson.value = config.metaJsonPath;
+    metaPics.value = config.metaPicsPath;
+    hiddenSlide.checked = !config.ignoreHiddenSlides;
+}
 
 function newPresentation(masterIndex: number, pathIndex: number) {
     const newDiv = document.createElement("div");
@@ -203,13 +173,6 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newPresentationSection.appendChild(newDiv);
 }
 
-function newGroupOfPresentation(masterIndex: number) {
-    const presentationMaster = config.presentationMasters[masterIndex];
-    for (let pathIndex = 0; pathIndex < presentationMaster.paths.length; pathIndex++) {
-        newPresentation(masterIndex, pathIndex);
-    }
-}
-
 function fillSelect(lastIndex?: number) {
     selectLanguage.innerHTML = "";
     selectLanguage.append(document.createElement("option"));
@@ -233,5 +196,41 @@ function deleteLanguage() {
             saveBtn.disabled = false;
             return;
         }
+    }
+}
+
+function addlanguage() {
+    if (!languageInput.classList.contains("show")) {
+        languageInput.classList.add("show");
+        languageInput.focus();
+        return;
+    }
+    if (languageInput.value.trim() === "" || languageInput.value.length < 2) {
+        openPopup({
+            text: "It must contain a length of at least 2 characters! ",
+            heading: "Error",
+        });
+        return;
+    }
+    if (languageInput.value.length > 5) {
+        openPopup({
+            text: "It may only contain a maximum length of 5 characters! ",
+            heading: "Error",
+        });
+        return;
+    }
+    config.presentationMasters.push({
+        lang: languageInput.value,
+        paths: [],
+    });
+    fillSelect(config.presentationMasters.length - 1);
+    languageInput.classList.remove("show");
+    languageInput.value = "";
+}
+
+function newGroupOfPresentation(masterIndex: number) {
+    const presentationMaster = config.presentationMasters[masterIndex];
+    for (let pathIndex = 0; pathIndex < presentationMaster.paths.length; pathIndex++) {
+        newPresentation(masterIndex, pathIndex);
     }
 }

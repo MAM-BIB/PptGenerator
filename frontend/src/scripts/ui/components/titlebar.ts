@@ -13,6 +13,9 @@ function createTitlebar(options?: TitlebarOptions) {
     const topBar = document.createElement("div");
     topBar.className = "top-bar";
 
+    // Create icon
+    topBar.appendChild(createIcon());
+
     // Create menu
     if (!(options?.menuHidden ?? false)) {
         topBar.appendChild(createMenu());
@@ -31,8 +34,25 @@ function createTitlebar(options?: TitlebarOptions) {
     document.body.insertAdjacentElement("afterbegin", mainApp);
 }
 
+function createIcon(): HTMLDivElement {
+    const imgDiv = document.createElement("div");
+    imgDiv.classList.add("icon");
+
+    return imgDiv;
+}
+
+function createBtns(options?: TitlebarOptions): HTMLDivElement {
+    const titleBarBtns = document.createElement("div");
+    titleBarBtns.className = "title-bar-btns";
+    titleBarBtns.appendChild(createMinimizeBtn());
+    titleBarBtns.appendChild(createMaximizeBtn(options));
+    titleBarBtns.appendChild(createCloseBtn(options));
+
+    return titleBarBtns;
+}
+
 // Create minimize button
-function createMinimizeBtn() {
+function createMinimizeBtn(): HTMLButtonElement {
     const minimizeBtn = document.createElement("button");
     minimizeBtn.title = "Minimize";
     minimizeBtn.className = "top-btn minimize-btn";
@@ -48,7 +68,7 @@ function createMinimizeBtn() {
 }
 
 // Create maximize button
-function createMaximizeBtn(options?: TitlebarOptions) {
+function createMaximizeBtn(options?: TitlebarOptions): HTMLButtonElement {
     const maximizeBtn = document.createElement("button");
     maximizeBtn.title = "Maximize";
     maximizeBtn.disabled = !(options?.resizable ?? true);
@@ -70,7 +90,7 @@ function createMaximizeBtn(options?: TitlebarOptions) {
 }
 
 // Create close button
-function createCloseBtn(options?: TitlebarOptions) {
+function createCloseBtn(options?: TitlebarOptions): HTMLButtonElement {
     const closeBtn = document.createElement("button");
     closeBtn.title = "Close";
     closeBtn.className = "top-btn close-btn";
@@ -85,18 +105,8 @@ function createCloseBtn(options?: TitlebarOptions) {
     return closeBtn;
 }
 
-function createBtns(options?: TitlebarOptions) {
-    const titleBarBtns = document.createElement("div");
-    titleBarBtns.className = "title-bar-btns";
-    titleBarBtns.appendChild(createMinimizeBtn());
-    titleBarBtns.appendChild(createMaximizeBtn(options));
-    titleBarBtns.appendChild(createCloseBtn(options));
-
-    return titleBarBtns;
-}
-
 // Create the menu at the left
-function createMenu() {
+function createMenu(): HTMLElement {
     const titleBarLeft = document.createElement("nav");
     titleBarLeft.className = "title-bar-left-btns";
 
@@ -220,7 +230,8 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     mainHelpLi.appendChild(helpUl);
 }
 
-function createHotkey(hotkey: string) {
+// need a comment
+function createHotkey(hotkey: string): HTMLSpanElement {
     const span = document.createElement("span");
     span.className = "hotkey";
     span.textContent = hotkey;
