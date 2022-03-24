@@ -104,13 +104,16 @@ namespace PptGenerator.CommandLine {
                 }
 
                 List<KeyValuePair<string, string>> placeholders = new List<KeyValuePair<string, string>>();
-                foreach (string item in getArgument("-placeholders", args)) {
-                    string[] items = item.Split(",");
-                    if (items.Length < 2) {
-                        throw new Exception("Placeholder have to be in form: '-placeholders <name,value> (<name,value>? ...)'");
+                List<string> arguments = getArgument("-placeholders", args);
+                if(arguments != null) {
+                    foreach (string item in arguments) {
+                        string[] items = item.Split(",");
+                        if (items.Length < 2) {
+                            throw new Exception("Placeholder have to be in form: '-placeholders <name,value> (<name,value>? ...)'");
+                        }
+                        placeholders.Add(new KeyValuePair<string, string>(items[0], item.Substring(items[0].Length + 1)));
+                        Console.WriteLine(item.Substring(items[0].Length));
                     }
-                    placeholders.Add(new KeyValuePair<string, string>(items[0], item.Substring(items[0].Length + 1)));
-                    Console.WriteLine(item.Substring(items[0].Length));
                 }
 
                 // Parse -ignoreTheme

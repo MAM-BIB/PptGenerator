@@ -154,7 +154,7 @@ test("selected preset only selects included slides", () => {
     expect(file.sectionElements).toEqual(expectedSectionElements);
 });
 
-test("selected pptx only select all slides", () => {
+test("selected pptx only select all slides", async () => {
     fs.copyFileSync(meta2Path, path.join(tmpPath, "meta2.json"));
 
     const sectionElements = sectionElements2;
@@ -163,6 +163,6 @@ test("selected pptx only select all slides", () => {
     sectionElements[1].slides[0].select();
     sectionElements[2].slides[0].select();
     const expectedSectionElements = sectionElements;
-    file.loadPresetFromMeta(path.join(tmpPath, "meta2.json"));
+    await file.loadPresetFromMeta(path.join(tmpPath, "meta2.json"));
     expect(file.sectionElements).toEqual(expectedSectionElements);
 });

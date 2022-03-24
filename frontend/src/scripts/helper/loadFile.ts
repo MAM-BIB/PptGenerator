@@ -72,6 +72,6 @@ export default class LoadFile {
                 slideELement.deselect();
             }
         }
-        fs.rm(jsonPath);
+        await fs.rm(jsonPath);
     }
 }

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { getConfig } from "../src/scripts/config";
 import call from "../src/scripts/helper/systemcall";
+import { clearTmpFolder } from "./testHelper";
 
 const presentation1Path = "./tests/files/presentation1.pptx";
 const presentation2Path = "./tests/files/presentation2.pptx";
@@ -9,17 +10,9 @@ const presentation3Path = "./tests/files/presentation3.pptx";
 const meta1Path = "./tests/files/meta1.json";
 const meta2Path = "./tests/files/meta2.json";
 const meta3Path = "./tests/files/meta3.json";
-const meta1_2Path = "./tests/files/meta1-2.json";
+const baseMetaPath = "./tests/files/base-meta.json";
 const tmpPath = "./tests/files/tmp";
-
-function clearTmpFolder() {
-    if (fs.existsSync(tmpPath)) {
-        if (fs.readdirSync(tmpPath).length) {
-            fs.rmSync(tmpPath, { recursive: true });
-        }
-    }
-    fs.mkdirSync(tmpPath, { recursive: true });
-}
+const basePath = "./tests/files/base.pptx";
 
 beforeEach(() => {
     clearTmpFolder();
@@ -217,4 +210,17 @@ test("scan presentation 2, 3 and 1 and check the meta-file", async () => {
     const expectedMeta3Json = JSON.parse(fs.readFileSync(meta3Path, { encoding: "utf-8" })) as Array<any>;
 
     expect(metaJson).toEqual(expectedMeta2Json.concat(expectedMeta3Json, expectedMeta1Json));
+});
+
+test("scan base presentation with hidden slide and check the meta-file", async () => {
+    const metaPath = path.join(tmpPath, "meta.json");
+
+    await call(getConfig().coreApplication, ["-inPath", basePath, "-outPath", metaPath]);
+
+    expect(fs.existsSync(metaPath)).toBe(true);
+
+    const metaJson = JSON.parse(fs.readFileSync(metaPath, { encoding: "utf-8" }));
+    const expectedMetaJson = JSON.parse(fs.readFileSync(baseMetaPath, { encoding: "utf-8" }));
+
+    expect(metaJson).toEqual(expectedMetaJson);
 });
