@@ -34,6 +34,14 @@ ipcRenderer.on("data", (event, data) => {
     }
 });
 
+cancelBtn.addEventListener("click", async () => {
+    await ipcRenderer.invoke("closeFocusedWindow");
+});
+
+changeUidsBtn.addEventListener("click", async () => {
+    // call();
+});
+
 function createDiv(uid: string, slides: PathWithSlides[]) {
     const uidMainDiv = document.createElement("div");
     uidMainDiv.className = "main-div";
@@ -105,6 +113,9 @@ function createCheckbox(slideDiv: HTMLDivElement) {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.type = "checkbox";
     inputCheckbox.id = "ignore-hidden-slides-toggle-btn";
+    inputCheckbox.addEventListener("change", () => {
+        changeUidsBtn.disabled = false;
+    });
     switchLbl.appendChild(inputCheckbox);
 
     const spanSlider = document.createElement("span");
@@ -114,14 +125,10 @@ function createCheckbox(slideDiv: HTMLDivElement) {
 
     checkboxDiv.appendChild(switchLbl);
 
-    checkboxChange(inputCheckbox);
     sectionToggleBtnDiv.appendChild(checkboxDiv);
     slideDiv.appendChild(sectionToggleBtnDiv);
 }
 
-function checkboxChange(inputCheckbox: HTMLInputElement) {
-    inputCheckbox.addEventListener("change", () => {});
-}
 // function create(options?: DuplicatedUids) {}
 // const texts = options.text?.split("\n") ?? [];
 // for (const text of texts) {
