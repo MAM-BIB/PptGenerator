@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 
 import { Placeholder, Presentation } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
-import openPopup from "../../helper/popup";
+import openPopup from "../../helper/openPopup";
 
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
 const setBtn = document.getElementById("set-btn") as HTMLDivElement;

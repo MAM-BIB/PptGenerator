@@ -69,11 +69,25 @@ export interface TitlebarOptions {
     closeBtnMsg?: string;
 }
 
+export interface PathWithSlides {
+    slide: Slide;
+    path: string;
+}
+
 export interface UidsWithSlides {
-    [uid: string]: { slide: Slide; path: string }[];
+    [uid: string]: PathWithSlides[];
 }
 
 export interface SlidesWithPath {
     path: string;
     slides: Slide[];
+}
+
+export interface DuplicatedUids {
+    uid?: UidsWithSlides;
+    uidTitle?: string;
+    pptTitle?: string;
+    slideName?: string;
+    primaryButton?: string;
+    secondaryButton?: string;
 }

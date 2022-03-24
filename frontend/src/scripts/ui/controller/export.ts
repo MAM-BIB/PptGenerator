@@ -8,7 +8,7 @@ import { Placeholder, Presentation, Preset, PresetSection } from "../../interfac
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
 import initTitlebar from "../components/titlebar";
-import openPopup from "../../helper/popup";
+import openPopup from "../../helper/openPopup";
 import call from "../../helper/systemcall";
 
 const fs = fsBase.promises;

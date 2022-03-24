@@ -7,7 +7,7 @@ import { getConfig, setConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import initTitlebar from "../components/titlebar";
-import openPopup from "../../helper/popup";
+import openPopup from "../../helper/openPopup";
 import call from "../../helper/systemcall";
 import { startLoading, stopLoading } from "../components/loading";
 

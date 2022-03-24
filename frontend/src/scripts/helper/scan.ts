@@ -2,10 +2,11 @@ import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../config";
-import openPopup from "./popup";
+import openPopup from "./openPopup";
 import { Presentation, Slide, UidsWithSlides, SlidesWithPath } from "../interfaces/interfaces";
 import call from "./systemcall";
 import reload from "./reload";
+import duplicatedUidWindow from "./openDuplicatedUidWindow";
 
 const fs = fsBase.promises;
 
@@ -116,6 +117,10 @@ export async function checkUids() {
         openPopup({
             text,
             heading: "Error",
+        });
+
+        duplicatedUidWindow({
+            uid: duplicatedUidSlides,
         });
     }
 }
