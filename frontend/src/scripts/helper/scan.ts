@@ -104,21 +104,6 @@ export async function checkUids() {
     const nrOfDuplicatedUidSlides = Object.keys(duplicatedUidSlides).length;
 
     if (nrOfDuplicatedUidSlides > 0) {
-        let text = `There are ${nrOfDuplicatedUidSlides} slides with duplicated Uids:\n`;
-        for (const uid in duplicatedUidSlides) {
-            if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
-                text += `UID:${uid}`;
-                for (const slide of duplicatedUidSlides[uid]) {
-                    text += `\n${path.parse(slide.path).name}\n${formatSlide([slide.slide])}\n`;
-                }
-            }
-        }
-
-        openPopup({
-            text,
-            heading: "Error",
-        });
-
         duplicatedUidWindow({
             uid: duplicatedUidSlides,
         });
