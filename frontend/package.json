@@ -8,7 +8,7 @@
         "tsc": "tsc",
         "build-sass": "sass --no-source-map src/views/scss:src/views/css --style compressed",
         "build-css": "npm run build-sass && copyfiles -u 1 ./src/**/*.css ./build",
-        "build-imgs": "copyfiles -u 1 ./src/**/*.svg ./build && copyfiles -u 1 ./src/**/*.png ./build",
+        "build-imgs": "copyfiles -u 1 ./src/**/*.svg ./build && copyfiles -u 1 ./src/**/*.png ./build && copyfiles -u 1 ./src/**/*.ico ./build",
         "build-html": "copyfiles -u 1 ./src/**/*.html ./build",
         "build-web": "npm run build-html && npm run build-css && npm run build-imgs",
         "build": "npm run lint && tsc && npm run build-web",
