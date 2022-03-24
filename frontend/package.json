@@ -23,7 +23,7 @@
         "test": "jest -i",
         "test-scan": "jest -i ./systemcall.scan.test.ts",
         "test-create": "jest -i ./systemcall.create.test.ts",
-        "test-load": "jest -i ./load.test.ts",
+        "test-load": "jest -i ./loadFile.test.ts",
         "test-preset": "jest -i ./createPreset.test.ts"
     },
     "repository": {

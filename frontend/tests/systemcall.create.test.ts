@@ -7,14 +7,10 @@ import { clearTmpFolder, scan } from "./testHelper";
 
 const presentation1Path = "./tests/files/presentation1.pptx";
 const presentation2Path = "./tests/files/presentation2.pptx";
-const presentation3Path = "./tests/files/presentation3.pptx";
 const baseMetaPath = "./tests/files/base-meta.json";
 
 const meta1Path = "./tests/files/meta1.json";
 const meta2Path = "./tests/files/meta2.json";
-const meta3Path = "./tests/files/meta3.json";
-
-const out1Path = "./tests/files/out1.pptx";
 
 const tmpPath = "./tests/files/tmp";
 const basePath = "./tests/files/base.pptx";
