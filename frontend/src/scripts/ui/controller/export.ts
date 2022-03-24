@@ -1,13 +1,16 @@
+/* eslint-disable no-await-in-loop */
 import { ipcRenderer } from "electron";
 import path from "path";
 import fsBase from "fs";
 
 import { getConfig } from "../../config";
-import { Placeholder, Presentation, Preset, PresetSection } from "../../interfaces/interfaces";
+import { Placeholder, Presentation } from "../../interfaces/interfaces";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 import call from "../../helper/systemcall";
+import createPreset from "../components/createPreset";
 
 const fs = fsBase.promises;
 
@@ -22,6 +25,12 @@ const presetPathInput = document.getElementById("preset-path-input") as HTMLInpu
 let placeholders: Placeholder[];
 let presentations: Presentation[];
 
+initTitlebar({
+    resizable: false,
+    menuHidden: true,
+    title: "PptGenerator-Export",
+});
+
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
     if (data.placeholders) {
@@ -35,8 +44,22 @@ pathInput.value = getConfig().defaultExportPath;
 presetPathInput.value = getConfig().presetPath;
 addAllBrowseHandler();
 
+nameInput.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        e.preventDefault();
+        exportBtn.focus();
+    }
+});
+
 savePresetToggleBtn.addEventListener("change", () => {
     presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
+});
+
+savePresetToggleBtn.addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") {
+        savePresetToggleBtn.checked = !savePresetToggleBtn.checked;
+        presetPathSection.style.display = savePresetToggleBtn.checked ? "" : "none";
+    }
 });
 
 exportBtn.addEventListener("click", () => {
@@ -74,7 +97,7 @@ exportBtn.addEventListener("click", () => {
             return;
         }
 
-        createPreset(path.join(presetPath, `${name}.json`));
+        createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
     }
 
     exportToPptx(path.join(outPath, `${name}.pptx`));
@@ -84,31 +107,67 @@ cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
+interface Positions {
+    [path: string]: number[];
+}
+
 async function exportToPptx(outPath: string) {
-    const positions: number[] = [];
+    const positions: Positions = {};
+
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
             for (const slide of section.Slides) {
                 if (slide.IsSelected) {
-                    positions.push(slide.Position);
+                    if (!positions[presentation.Path]) {
+                        positions[presentation.Path] = [];
+                    }
+                    positions[presentation.Path].push(slide.Position);
                 }
             }
         }
     }
 
+    let firstPresentation = true;
+    let nr = Object.keys(positions).length;
+
+    for (const inPath in positions) {
+        if (Object.prototype.hasOwnProperty.call(positions, inPath)) {
+            nr--;
+
+            await copyPresentation(
+                inPath,
+                outPath,
+                positions[inPath].join(","),
+                firstPresentation ? getConfig().basePath : null,
+                nr === 0,
+            );
+            firstPresentation = false;
+        }
+    }
+
+    ipcRenderer.invoke("closeFocusedWindow");
+}
+
+async function copyPresentation(
+    inPath: string,
+    outPath: string,
+    positions: string,
+    basePath?: string | null,
+    deleteFirstSlide?: boolean,
+) {
     try {
         await call(getConfig().coreApplication, [
             "-mode",
             "create",
             "-inPath",
-            getConfig().presentationMasters[0].paths[0],
+            inPath,
             "-outPath",
             outPath,
             "-slidePos",
-            positions.join(","),
-            "-basePath",
-            getConfig().basePath,
-            "-deleteFirstSlide",
+            positions,
+            basePath ? "-basePath" : "",
+            basePath ?? "",
+            deleteFirstSlide ? "-deleteFirstSlide" : "",
             "-placeholders",
             ...placeholders.map((elem) => `${elem.name},${elem.value}`),
         ]);
@@ -119,40 +178,8 @@ async function exportToPptx(outPath: string) {
             answer: true,
         });
     }
-    ipcRenderer.invoke("closeFocusedWindow");
-}
 
-async function createPreset(savePath: string) {
-    const preset: Preset = {
-        path: savePath,
-        sections: [],
-        placeholders: [],
-    };
-
-    for (const presentation of presentations) {
-        for (const section of presentation.Sections) {
-            const presetSection: PresetSection = {
-                name: section.Name,
-                includedSlides: [],
-                ignoredSlides: [],
-            };
-            for (const slide of section.Slides) {
-                if (slide.IsSelected) {
-                    presetSection.includedSlides.push(slide.Uid);
-                } else {
-                    presetSection.ignoredSlides.push(slide.Uid);
-                }
-            }
-            if (presetSection.includedSlides.length > 0) {
-                preset.sections.push(presetSection);
-            }
-        }
-    }
-
-    if (placeholders.length > 0) {
-        preset.placeholders = placeholders;
-    }
-
-    const presetJson = JSON.stringify(preset, null, "\t");
-    fs.writeFile(savePath, presetJson);
+    return new Promise((resolve) => {
+        resolve(true);
+    });
 }

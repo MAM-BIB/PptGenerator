@@ -1,0 +1,20 @@
+[
+  {
+    "Path": "./tests/files/base.pptx",
+    "Sections": [
+      {
+        "Name": "__defaultSection",
+        "Slides": [
+          {
+            "RelationshipId": "rId2",
+            "Uid": "",
+            "Position": 0,
+            "IsHidden": true,
+            "Title": "BaseSlide",
+            "Placeholders": []
+          }
+        ]
+      }
+    ]
+  }
+]

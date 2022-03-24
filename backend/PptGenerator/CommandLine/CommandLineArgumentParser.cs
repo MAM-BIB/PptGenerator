@@ -8,15 +8,22 @@ namespace PptGenerator.CommandLine {
         public static CommandLineArgument Parse(string[] args) {
             List<string> argList = new List<string>(args);
 
+            Console.WriteLine($"argList.Count: {argList.Count}");
+
+            if (argList.Count == 0) {
+                throw new Exception("No argument are given! Try '-help' to get a list of arguments.");
+            }
+
             // Parse -help
-            if (argList.Contains("-help") || argList.Count == 0) {
+            if (argList.Contains("-help")) {
                 Console.WriteLine("-help");
                 Console.WriteLine("-mode <scan|create>");
                 Console.WriteLine("-outPath <path>");
                 Console.WriteLine("-inPath <path> (<path>? ...)");
                 Console.WriteLine("-slidePos <slidePos,slidePos,...>");
                 Console.WriteLine("-placeholders <name,value> (<name,value>? ...)");
-                return null;
+
+                return new CommandLineArgument(Mode.undefined, "", null);
             }
 
             // Parse the -mode <scan|create> argument
@@ -48,11 +55,11 @@ namespace PptGenerator.CommandLine {
             List<string> inPaths = new List<string>();
             int inIndex = argList.IndexOf("-inPath");
             if (inIndex < 0 || inIndex >= argList.Count - 1) {
-                throw new Exception("'-inIndex' is not given. Invoke the program wwith the argument '-inIndex <path> (<path>? ...)'");
+                throw new Exception("'-inPath' is not given. Invoke the program with the argument '-inPath <path> (<path>? ...)'");
             } else {
                 string firstInPath = argList[inIndex + 1];
                 if (firstInPath.StartsWith("-")) {
-                    throw new Exception("'-inIndex' is not given. Invoke the program with the argument '-inIndex <path> (<path>? ...)'");
+                    throw new Exception("'-inPath' is not given. Invoke the program with the argument '-inPath <path> (<path>? ...)'");
                 }
                 inPaths.Add(firstInPath);
                 for (int i = inIndex + 2; i < argList.Count; i++) {
@@ -85,10 +92,10 @@ namespace PptGenerator.CommandLine {
                 }
 
                 // Parse -basePath <path>
-                string basePath;
+                string basePath = null;
                 int basePathIndex = argList.IndexOf("-basePath");
                 if (basePathIndex < 0 || basePathIndex >= argList.Count - 1) {
-                    throw new Exception("'-basePath' is not given. Invoke the program with the argument '-basePath <path>'");
+                    // Basepath is now optional
                 } else {
                     basePath = argList[basePathIndex + 1];
                     if (basePath.StartsWith("-")) {
@@ -97,13 +104,16 @@ namespace PptGenerator.CommandLine {
                 }
 
                 List<KeyValuePair<string, string>> placeholders = new List<KeyValuePair<string, string>>();
-                foreach (string item in getArgument("-placeholders", args)) {
-                    string[] items = item.Split(",");
-                    if (items.Length < 2) {
-                        throw new Exception("Placeholder have to be in form: '-placeholders <name,value> (<name,value>? ...)'");
+                List<string> arguments = getArgument("-placeholders", args);
+                if(arguments != null) {
+                    foreach (string item in arguments) {
+                        string[] items = item.Split(",");
+                        if (items.Length < 2) {
+                            throw new Exception("Placeholder have to be in form: '-placeholders <name,value> (<name,value>? ...)'");
+                        }
+                        placeholders.Add(new KeyValuePair<string, string>(items[0], item.Substring(items[0].Length + 1)));
+                        Console.WriteLine(item.Substring(items[0].Length));
                     }
-                    placeholders.Add(new KeyValuePair<string, string>(items[0], item.Substring(items[0].Length + 1)));
-                    Console.WriteLine(item.Substring(items[0].Length));
                 }
 
                 // Parse -ignoreTheme

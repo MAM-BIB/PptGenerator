@@ -33,6 +33,7 @@ export interface Config {
     ignoreHiddenSlides: boolean;
     basePath: string;
     defaultExportPath: string;
+    showTutorial: boolean;
 }
 
 export interface Preset {
@@ -59,4 +60,20 @@ export interface PopupOptions {
 export interface Placeholder {
     name: string;
     value: string;
+}
+
+export interface TitlebarOptions {
+    resizable?: boolean;
+    menuHidden?: boolean;
+    title?: string;
+    closeBtnMsg?: string;
+}
+
+export interface UidsWithSlides {
+    [uid: string]: { slide: Slide; path: string }[];
+}
+
+export interface SlidesWithPath {
+    path: string;
+    slides: Slide[];
 }

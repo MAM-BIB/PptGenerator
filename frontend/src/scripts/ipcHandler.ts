@@ -1,13 +1,32 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import path from "path";
 import { refreshConfig } from "./config";
+import openWindow from "./helper/openWindow";
 import reload from "./helper/reload";
-import { PopupOptions, Presentation } from "./interfaces/interfaces";
+import scanPresentations from "./helper/scan";
+import { openOption } from "./menu";
 
 export default function initIpcHandlers() {
+    ipcMain.handle("openOptionWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        openOption(focusWindow);
+    });
+
     // Close the window, sending the ipc-message
     ipcMain.handle("closeFocusedWindow", (event) => {
         BrowserWindow.fromWebContents(event.sender)?.close();
+    });
+
+    ipcMain.handle("maxAndRestoreWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        if (focusWindow?.isMaximized()) {
+            focusWindow?.restore();
+        } else {
+            focusWindow?.maximize();
+        }
+    });
+
+    ipcMain.handle("minimizeWindow", (event) => {
+        BrowserWindow.fromWebContents(event.sender)?.minimize();
     });
 
     ipcMain.handle("openDialog", async (event, options: Electron.OpenDialogOptions) => {
@@ -31,47 +50,14 @@ export default function initIpcHandlers() {
         BrowserWindow.fromWebContents(event.sender)?.close();
         reload(null);
     });
-}
 
-export async function openWindow(
-    browserWindow: BrowserWindow | null,
-    htmlPath: string,
-    options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[], // TODO: add missing types
-) {
-    const windowOptions = options;
-    if (browserWindow && windowOptions?.modal) {
-        windowOptions.parent = browserWindow;
-    }
+    ipcMain.handle("ReloadWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        reload(focusWindow);
+    });
 
-    const window = new BrowserWindow(windowOptions);
-
-    const indexHTML = path.join(__dirname, "views", htmlPath);
-
-    window.loadFile(indexHTML);
-
-    if (data) {
-        if ((data as PopupOptions).answer) {
-            const popupOptions = data as PopupOptions;
-            popupOptions.answer = `answer${Math.random() * 1000}`;
-
-            window.webContents.once("dom-ready", () => {
-                window.webContents.send("data", data);
-            });
-
-            return new Promise<boolean>((resolve) => {
-                ipcMain.handle(popupOptions.answer as string, (event, answer: boolean) => {
-                    BrowserWindow.fromWebContents(event.sender)?.close();
-                    resolve(answer);
-                });
-            });
-        }
-        window.webContents.once("dom-ready", () => {
-            window.webContents.send("data", data);
-        });
-    }
-
-    return new Promise((resolve) => {
-        resolve(false);
+    ipcMain.handle("ScanWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        scanPresentations(focusWindow);
     });
 }

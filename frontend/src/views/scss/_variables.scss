@@ -7,21 +7,26 @@ $light--light: #efefef;
 $light--dark: #8d8d8d;
 
 $accent--color: #0ea5ff;
-$accent--color--highlight: #0077cb;
+$accent--color--highlight: #006cb9;
 
 $secondary--dark--light: #363636;
 
+$red--primary: #ff0000;
+
+$border-small: 0.5px solid #{$dark--dark};
 $border-normal: 1px solid #{$dark--light};
 $border-dark: 1px solid #{$light--dark};
 
 $btn--font--slide: #{$light--light};
 
-$window-width: 1200px;
-$window-height: 100%;
+$window--width--size: 1200px;
+$window--width: 100%;
 
-$body-height: 100vh;
+$window--height: 100%;
 
-$min--height--small: 0;
+$body--height: 100vh;
+
+$min--size--small: 0;
 
 // sizes
 $size-000: -0.5rem;
@@ -81,7 +86,7 @@ $slider-margin: $size-2;
 $slider-size: $switch-height - $slider-margin;
 //normal color
 :root {
-    --font--primary: #{#383838};
+    --font--primary: #{$dark--light};
     --font--light: #{$dark--light};
     --font--dark: #{$dark--dark};
 

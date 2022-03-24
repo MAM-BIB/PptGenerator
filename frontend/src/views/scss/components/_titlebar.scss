@@ -2,37 +2,38 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    width: 100%;
+    width: $window--width;
+    height: $size-6;
     overflow: hidden;
-    border: 0.5px solid black;
+    border-bottom: $border-small;
     -webkit-app-region: drag;
 
     .top-bar {
         flex: 1;
         display: flex;
         flex-direction: row;
-        width: 100%;
+        width: $window--width;
         height: $size-6;
         -webkit-user-select: none;
+        user-select: none;
 
         .title {
             display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
             z-index: -1;
-            justify-content: center;
-            width: 100%;
+            width: $window--width;
+            height: $size-6;
         }
 
         .title-bar-btns {
+            flex: 1;
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
-            width: 300px;
-            height: 30px;
 
             .top-btn {
-                //width: 48px;
-                //height: 40px;
                 padding: 0 10px;
                 border: none;
                 outline: none;
@@ -45,7 +46,15 @@
 
                 &:hover {
                     background-color: var(--btn--hover--titlebar);
-                    //light c5c5c5
+                }
+
+                &:focus-visible {
+                    background-color: var(--btn--hover--titlebar);
+                }
+
+                &:disabled:hover {
+                    background-color: var(--background--primary);
+                    cursor: auto;
                 }
             }
 
@@ -88,15 +97,23 @@
                 }
 
                 &:hover {
-                    background-color: red;
+                    background-color: $red--primary;
 
                     .svg {
-                        background-color: white;
+                        background-color: $light--primary;
+                    }
+                }
+
+                &:focus-visible {
+                    background-color: $red--primary;
+
+                    .svg {
+                        background-color: $light--primary;
                     }
                 }
 
                 &:active {
-                    background-color: red;
+                    background-color: $red--primary;
                 }
             }
         }
@@ -110,7 +127,7 @@
         align-items: center;
         height: 30px;
 
-        .left-btn {
+        button {
             height: 30px;
             background-color: var(--background--primary);
             color: var(--btn--titlebar);
@@ -124,24 +141,82 @@
 
             &:hover {
                 background-color: var(--btn--hover--titlebar);
+                cursor: pointer;
             }
 
-            // &:active {
-            // }
+            &:focus-visible {
+                background-color: var(--btn--hover--titlebar);
+            }
         }
+
+        ul {
+            display: flex;
+            list-style: none;
+            li {
+                ul {
+                    display: none;
+                    position: absolute;
+                    flex-direction: column;
+                    background-color: $light--dark;
+                    top: calc($size-6 - 0.5px);
+
+                    align-items: stretch;
+
+                    li {
+                        button {
+                            padding: 0 20px 0 10px;
+                            width: $window--width;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            .hotkey {
+                                display: inline-block;
+                                padding-left: 50px;
+                            }
+                        }
+                    }
+                }
+
+                &:hover {
+                    ul {
+                        display: flex;
+                    }
+                }
+            }
+        }
+        // .left-btn {
+        //     height: 30px;
+        //     background-color: var(--background--primary);
+        //     color: var(--btn--titlebar);
+        //     transition: 0.2s;
+        //     cursor: pointer;
+        //     padding: 0 20px;
+        //     border-radius: 0;
+        //     box-shadow: none;
+        //     border: none;
+        //     outline: none;
+
+        //     &:hover {
+        //         background-color: var(--btn--hover--titlebar);
+        //     }
+
+        //     &:focus {
+        //         background-color: var(--btn--hover--titlebar);
+        //     }
     }
+}
 
-    .contentArea {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: 100%;
+.contentArea {
+    display: flex;
+    flex-direction: row;
+    width: $window--width;
+    height: $window--height;
 
-        .leftMenu {
-            width: 200px;
-            height: 100%;
-            background-color: rgb(255, 255, 255);
-            transition: 0.4s;
-        }
+    .leftMenu {
+        width: 200px;
+        height: $window--height;
+        background-color: $light--primary;
+        transition: 0.4s;
     }
 }

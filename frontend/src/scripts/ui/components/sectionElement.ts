@@ -16,6 +16,7 @@ export default class SectionElement {
     public selectedSlides: SlideElement[];
 
     public lastSelectedIndex = -1;
+    public isSelected = false;
 
     public selectedElement: HTMLDivElement;
     public selectedElementHeader: HTMLHeadingElement;
@@ -41,42 +42,47 @@ export default class SectionElement {
         headerText.classList.add("headerText");
         header.classList.add("sectionHeader");
 
-        headerText.textContent = `${this.section.Name} (${this.section.Slides.length})`;
+        const nrOfSlides = this.section.Slides.length;
 
-        const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("sectionButtons");
-
-        buttonContainer.appendChild(this.createCollapseBtn(element));
-
-        if (sectionType === SectionType.normal) {
-            buttonContainer.appendChild(this.createSelectBtn(element));
-        }
+        headerText.textContent = `${this.section.Name} (${nrOfSlides})`;
 
         header.appendChild(headerText);
-        header.appendChild(buttonContainer);
         element.appendChild(header);
 
-        for (let index = 0; index < this.section.Slides.length; index++) {
-            const slide = this.section.Slides[index];
+        if (nrOfSlides !== 0) {
+            const buttonContainer = document.createElement("div");
+            buttonContainer.classList.add("sectionButtons");
 
-            let newSlide;
+            buttonContainer.appendChild(this.createCollapseBtn(element));
+
             if (sectionType === SectionType.normal) {
-                newSlide = new SlideElement(slide);
-
-                newSlide.element.addEventListener("selected", (event) => {
-                    this.multiSelect(true, event);
-                    this.handleSelectionChange();
-                });
-                newSlide.element.addEventListener("deselected", (event) => {
-                    this.multiSelect(false, event);
-                    this.handleSelectionChange();
-                });
-                this.slides.push(newSlide);
-            } else {
-                newSlide = new SelectedSlideElement(slide, this.slides[index]);
-                this.selectedSlides.push(newSlide);
+                buttonContainer.appendChild(this.createSelectBtn());
             }
-            element.appendChild(newSlide.element);
+
+            header.appendChild(buttonContainer);
+
+            for (let index = 0; index < this.section.Slides.length; index++) {
+                const slide = this.section.Slides[index];
+
+                let newSlide;
+                if (sectionType === SectionType.normal) {
+                    newSlide = new SlideElement(slide);
+
+                    newSlide.element.addEventListener("selected", (event) => {
+                        this.multiSelect(true, event);
+                        this.handleSelectionChange();
+                    });
+                    newSlide.element.addEventListener("deselected", (event) => {
+                        this.multiSelect(false, event);
+                        this.handleSelectionChange();
+                    });
+                    this.slides.push(newSlide);
+                } else {
+                    newSlide = new SelectedSlideElement(slide, this.slides[index]);
+                    this.selectedSlides.push(newSlide);
+                }
+                element.appendChild(newSlide.element);
+            }
         }
     }
 
@@ -108,12 +114,19 @@ export default class SectionElement {
         const nr = this.slides.filter((elem) => elem.slide.IsSelected).length;
 
         if (nr > 0) {
-            this.element.classList.add("selected");
             this.selectedElementHeader.textContent = `${this.section.Name} (${nr}/${this.section.Slides.length})`;
-            this.selectedElement.hidden = false;
-        } else {
+
+            if (!this.isSelected) {
+                this.isSelected = true;
+                this.element.classList.add("selected");
+                this.selectedElement.hidden = false;
+                this.element.dispatchEvent(new Event("selectionChanged"));
+            }
+        } else if (this.isSelected && nr === 0) {
+            this.isSelected = false;
             this.element.classList.remove("selected");
             this.selectedElement.hidden = true;
+            this.element.dispatchEvent(new Event("selectionChanged"));
         }
     }
 
@@ -138,7 +151,7 @@ export default class SectionElement {
         return buttonCollapse;
     }
 
-    private createSelectBtn(element: HTMLDivElement): HTMLButtonElement {
+    private createSelectBtn(/* element: HTMLDivElement */): HTMLButtonElement {
         const buttonSelect = document.createElement("button");
 
         const spanPlus = document.createElement("span");
@@ -162,7 +175,8 @@ export default class SectionElement {
                     slide.select();
                 }
             }
-            element.classList.add("open");
+            // Opens the section if selection is changed
+            // element.classList.add("open");
         });
         return buttonSelect;
     }

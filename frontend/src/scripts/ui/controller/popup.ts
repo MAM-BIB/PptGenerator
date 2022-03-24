@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import { PopupOptions } from "../../interfaces/interfaces";
+import initTitlebar from "../components/titlebar";
 
 const okBtn = document.getElementById("ok-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -11,6 +12,12 @@ let options: PopupOptions;
 
 ipcRenderer.on("data", (event, data) => {
     options = data;
+
+    initTitlebar({
+        resizable: false,
+        menuHidden: true,
+        closeBtnMsg: options.answer as string,
+    });
 
     const texts = options.text?.split("\n") ?? [];
     for (const text of texts) {

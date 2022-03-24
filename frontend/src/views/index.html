@@ -9,27 +9,6 @@
     </head>
 
     <body>
-        <!-- <div class="main-app">
-            <div class="top-bar">
-                <div class="title-bar-left-btns">
-                    <button class="left-btn file-btn">File</button>
-                    <button class="left-btn option-btn">Option</button>
-                    <button class="left-btn help-btn">Help</button>
-                </div>
-                <div class="title">ppt Generator</div>
-                <div class="title-bar-btns">
-                    <button class="top-btn minimize-btn" id="minimize-btn">
-                        <div class="svg"></div>
-                    </button>
-                    <button class="top-btn maximize-btn" id="maximize-btn">
-                        <div class="svg"></div>
-                    </button>
-                    <button class="top-btn close-btn" id="close-btn">
-                        <div class="svg"></div>
-                    </button>
-                </div>
-            </div>
-        </div> -->
         <div class="container">
             <div class="container-item left">
                 <h1 class="headline left">
@@ -39,9 +18,6 @@
                 <div class="nested-container template">
                     <div class="presentation-slide-container left">
                         <!-- Load content dynamically  -->
-                    </div>
-                    <div class="btn-container add">
-                        <button class="add-btn">Add</button>
                     </div>
                 </div>
             </div>
@@ -56,11 +32,11 @@
                         <button
                             id="load-preset-btn"
                             title="Load a generated preset or a pptx file
-to edit a presentation"
+to load slides and create a new presentation"
                         >
                             Load file
                         </button>
-                        <button id="export-btn">Export</button>
+                        <button id="export-btn" disabled>Export</button>
                     </div>
                 </div>
             </div>
@@ -68,7 +44,6 @@ to edit a presentation"
     </body>
 
     <script>
-        require("../ui/components/titlebar.js");
         require("../ui/controller/index.js");
     </script>
 </html>

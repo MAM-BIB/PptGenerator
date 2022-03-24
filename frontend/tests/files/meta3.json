@@ -1,0 +1,30 @@
+[
+  {
+    "Path": "./tests/files/presentation3.pptx",
+    "Sections": [
+      {
+        "Name": "__defaultSection",
+        "Slides": [
+          {
+            "RelationshipId": "rId2",
+            "Uid": "Test1234Test1234Test42",
+            "Position": 0,
+            "IsHidden": false,
+            "Title": "TestSlide 1.5",
+            "Placeholders": [
+              "Name"
+            ]
+          },
+          {
+            "RelationshipId": "rId3",
+            "Uid": "1234567890123456789012",
+            "Position": 1,
+            "IsHidden": false,
+            "Title": "TestSlide3",
+            "Placeholders": []
+          }
+        ]
+      }
+    ]
+  }
+]

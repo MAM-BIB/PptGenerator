@@ -2,13 +2,14 @@ import fsBase from "fs";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation, Preset, Placeholder } from "../../interfaces/interfaces";
-import { getConfig } from "../../config";
+import { Presentation, Placeholder } from "../../interfaces/interfaces";
+import { getConfig, setConfig } from "../../config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
-import call from "../../helper/systemcall";
 import { startLoading, stopLoading } from "../components/loading";
+import LoadFile from "../../helper/loadFile";
 
 const fs = fsBase.promises;
 
@@ -19,14 +20,36 @@ const presentationMasterSelect = document.getElementById("presentation-master-se
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
-let loadedPreset: Preset;
 let placeholders: Placeholder[] | undefined;
 
-let presentationMasterLang = "de";
-let sectionElements: SectionElement[] = [];
+let presentationMasterLang: string;
+let sectionElements: SectionElement[];
 
+initTitlebar();
 fillPresentationMasterSelect();
 read();
+showTutorial();
+
+async function showTutorial() {
+    if (getConfig().showTutorial) {
+        const config = getConfig();
+        config.showTutorial = false;
+        setConfig(config);
+        await ipcRenderer.invoke("openWindow", "help.html", {
+            width: 900,
+            height: 700,
+            minWidth: 500,
+            minHeight: 400,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+            autoHideMenuBar: true,
+            modal: false,
+        });
+    }
+}
 
 ipcRenderer.on("startLoading", () => {
     startLoading();
@@ -39,6 +62,7 @@ function fillPresentationMasterSelect() {
         optionElem.textContent = lang;
         presentationMasterSelect.append(optionElem);
     }
+    presentationMasterLang = presentationMasterSelect.value;
     presentationMasterSelect.addEventListener("change", () => {
         presentationMasterLang = presentationMasterSelect.value;
         loadSections();
@@ -50,13 +74,15 @@ async function read() {
         const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
         presentations = JSON.parse(presentationsJson) as Presentation[];
     } catch (error) {
-        openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error" });
+        await openPopup({ text: `Could not open meta-file! \n ${error}`, heading: "Error", answer: true });
     }
 
     loadSections();
 }
 
 function loadSections() {
+    if (getConfig().presentationMasters.length === 0) return;
+
     const selectedPresentationMaster = getConfig().presentationMasters.find(
         (elem) => elem.lang === presentationMasterLang,
     );
@@ -75,10 +101,17 @@ function loadSections() {
                 const sectionElement = new SectionElement(section);
                 sectionContainer.appendChild(sectionElement.element);
                 selectedSectionContainer.appendChild(sectionElement.selectedElement);
+                sectionElement.element.addEventListener("selectionChanged", () => {
+                    handleSelectionChange();
+                });
                 sectionElements.push(sectionElement);
             }
         }
     }
+}
+
+function handleSelectionChange() {
+    exportBtn.disabled = !sectionElements.some((elem) => elem.isSelected);
 }
 
 exportBtn.addEventListener("click", async () => {
@@ -91,6 +124,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
@@ -112,6 +146,7 @@ exportBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
@@ -134,16 +169,13 @@ loadFileBtn.addEventListener("click", async () => {
             startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
-            if (fileType === ".json") {
-                const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
-                loadedPreset = JSON.parse(presetJson) as Preset;
-                loadPreset();
-            } else if (fileType === ".pptx") {
-                const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
-                await call(getConfig().coreApplication, ["-inPath", filePath.filePaths[0], "-outPath", outPath]);
-                createPreset(outPath);
+
+            if (fileType === ".json" || fileType === ".pptx") {
+                const file: LoadFile = new LoadFile(sectionElements);
+                await file.load(pathOfFile, fileType);
+                placeholders = file.placeholders;
             } else {
-                openPopup({ text: "File needs to be a json or pptx", heading: "Error" });
+                openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });
             }
         }
     } catch (error) {
@@ -151,34 +183,6 @@ loadFileBtn.addEventListener("click", async () => {
     }
     stopLoading();
 });
-
-function loadPreset() {
-    // deselect all selected slides
-    for (const sectionElement of sectionElements) {
-        for (const slideElement of sectionElement.slides) {
-            slideElement.deselect();
-        }
-    }
-    // delete placeholders
-    placeholders = undefined;
-
-    // go through every section
-    for (const section of loadedPreset.sections) {
-        // go through every included slide
-        for (const slideUID of section.includedSlides) {
-            for (const sectionElement of sectionElements) {
-                for (const slideElement of sectionElement.slides) {
-                    if (slideUID === slideElement.slide.Uid) {
-                        slideElement.select();
-                    }
-                }
-            }
-        }
-    }
-    if (loadedPreset.placeholders.length > 0) {
-        placeholders = loadedPreset.placeholders;
-    }
-}
 
 function foundVariables(): boolean {
     for (const presentation of presentations) {
@@ -191,19 +195,4 @@ function foundVariables(): boolean {
         }
     }
     return false;
-}
-
-async function createPreset(jsonPath: string) {
-    const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
-    const presMeta = JSON.parse(PresMetaJson) as Presentation[];
-    const allSelectedSlides = presMeta.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
-
-    for (const slideELement of sectionElements.flatMap((elem) => elem.slides)) {
-        if (allSelectedSlides.some((slide) => slide.Uid === slideELement.slide.Uid)) {
-            slideELement.select();
-        } else {
-            slideELement.deselect();
-        }
-    }
-    fs.rm(jsonPath);
 }

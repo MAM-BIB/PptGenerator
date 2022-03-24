@@ -11,14 +11,8 @@ app.on("ready", () => {
         width: 1280,
         height: 720,
         minWidth: 720,
-        minHeight: 400,
+        minHeight: 500,
         frame: false,
-        // titleBarStyle: "hidden",
-        // titleBarOverlay: {
-        //     color: "#2f3241",
-        //     symbolColor: "#74b1be",
-        // },
-
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

@@ -50,7 +50,8 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "prefer-promise-reject-errors": "off"
     },
     "settings": {
         "import/resolver": {

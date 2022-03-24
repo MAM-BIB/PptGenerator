@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
 import { Placeholder, Presentation } from "../../interfaces/interfaces";
+import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/popup";
 
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
@@ -9,13 +10,19 @@ const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
 let placeholders: Placeholder[];
+let firstInput = true;
+
+initTitlebar({
+    resizable: false,
+    menuHidden: true,
+    title: "PptGenerator-Variables",
+});
 
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
     placeholders = data.placeholders;
 
-    if (!placeholders) {
-        placeholders = [];
+    if (placeholders.length === 0) {
         for (const presentation of presentations) {
             for (const section of presentation.Sections) {
                 for (const slide of section.Slides) {
@@ -48,6 +55,7 @@ setBtn.addEventListener("click", async () => {
                 height: 400,
                 minWidth: 500,
                 minHeight: 400,
+                frame: false,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false,
@@ -72,27 +80,49 @@ cancelBtn.addEventListener("click", async () => {
 
 function createPlaceholderInput(varName: string, index: number, defaultValue = ""): HTMLDivElement {
     const variableContainer = document.createElement("div") as HTMLDivElement;
-    const varLabel = document.createElement("label") as HTMLLabelElement;
-    const inputContainer = document.createElement("div") as HTMLDivElement;
-    const varInput = document.createElement("input") as HTMLInputElement;
-
     variableContainer.classList.add("section");
-    varLabel.classList.add("lbl");
-    inputContainer.classList.add("browse-input");
-    varInput.classList.add("input-path");
 
+    // Create label
+    const varLabel = document.createElement("label") as HTMLLabelElement;
+    varLabel.classList.add("lbl");
+    varLabel.textContent = varName;
+    varLabel.htmlFor = `input-${varName}`;
+    variableContainer.appendChild(varLabel);
+
+    // Create input inside a container
+    const inputContainer = document.createElement("div") as HTMLDivElement;
+    inputContainer.classList.add("browse-input");
+
+    // Create input
+    const varInput = document.createElement("input") as HTMLInputElement;
     varInput.type = "text";
     varInput.id = `input-${varName}`;
     varInput.value = defaultValue;
+    varInput.classList.add("input-path");
+    if (firstInput) {
+        firstInput = false;
+        varInput.autofocus = true;
+        varInput.focus();
+    }
     varInput.addEventListener("change", () => {
         placeholders[index].value = varInput.value;
     });
+    varInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const nextInput = varInput.parentElement?.parentElement?.nextElementSibling?.getElementsByTagName(
+                "INPUT",
+            )[0] as HTMLInputElement;
 
-    varLabel.textContent = varName;
-    varLabel.htmlFor = `input-${varName}`;
-
+            if (nextInput) {
+                nextInput.focus();
+            } else {
+                setBtn.focus();
+            }
+        }
+    });
     inputContainer.appendChild(varInput);
-    variableContainer.appendChild(varLabel);
+
     variableContainer.appendChild(inputContainer);
 
     return variableContainer;

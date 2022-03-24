@@ -3,12 +3,16 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+
+    &:focus-visible {
+        outline: 1px solid white;
+    }
 }
 
 body {
     background-color: var(--background--primary);
     color: var(--font--primary);
-    height: calc($body-height - $size-6);
+    height: calc($body--height - $size-6);
     overflow: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -39,7 +43,14 @@ button {
     &:disabled {
         background-color: #{$accent--color}50;
         box-shadow: none;
+        cursor: auto;
     }
+}
+
+img {
+    box-shadow: $shadow-2;
+    border: 1px solid black;
+    margin: $size-4;
 }
 
 input[type="text"] {
