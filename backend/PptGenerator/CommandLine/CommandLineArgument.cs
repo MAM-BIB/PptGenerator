@@ -7,7 +7,8 @@ namespace PptGenerator.CommandLine {
     public enum Mode {
         undefined,
         scan,
-        create
+        create,
+        addUid
     }
 
     class CommandLineArgument {
@@ -20,6 +21,7 @@ namespace PptGenerator.CommandLine {
         private bool _deleteFirstSlide;
         private string _basePath;
         private List<KeyValuePair<string, string>> _placeholders;
+        private List<string> _existingUids;
 
         public Mode Mode { get => _mode; }
         public string OutPath { get => _outPath; }
@@ -29,6 +31,7 @@ namespace PptGenerator.CommandLine {
         public bool DeleteFirstSlide { get => _deleteFirstSlide; }
         public string BasePath { get => _basePath; }
         public List<KeyValuePair<string, string>> Placeholders { get => _placeholders; }
+        public List<string> ExistingUids { get => _existingUids; }
 
         public CommandLineArgument(
             Mode mode,
@@ -59,5 +62,18 @@ namespace PptGenerator.CommandLine {
             _basePath = basePath;
             _placeholders = placeholders;
         }
+
+        public CommandLineArgument(
+            Mode mode,
+            List<string> inPaths,
+            List<string> existingUids,
+            List<uint> slidePos
+        ) {
+            _mode = mode;
+            _inPaths = inPaths;
+            _slidePos = slidePos;
+            _existingUids = existingUids;
+        }
+
     }
 }
