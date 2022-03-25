@@ -5,12 +5,19 @@ using PptGenerator.CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using D = DocumentFormat.OpenXml.Drawing;
 
 namespace PptGenerator.Modifier {
     class UidModifier {
 
         public static void modifyUids(CommandLineArgument clArg) {
+
+            for (int i = 0; i < 100; i++) {
+                Console.WriteLine(GenerateUID(clArg.ExistingUids));
+            }
+
+
             Console.WriteLine(clArg);
             Console.WriteLine(clArg.InPaths);
             Console.WriteLine(clArg.InPaths.FirstOrDefault());
@@ -67,80 +74,34 @@ namespace PptGenerator.Modifier {
                                     new D.Paragraph(
                                         new D.Run(
                                             new D.RunProperties() { Language = "en-US", Dirty = false },
-                                            new D.Text() { Text = "!!!NEUE UID STEHT HIER!!!" }),
+                                            new D.Text() { Text = GenerateUID(clArg.ExistingUids) }),
                                         new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }))
                                     ))),
                         new ColorMapOverride(new D.MasterColorMapping())
                         );
-
-                        /*
-                        notesSlidePart.NotesSlide = new NotesSlide(
-                            new CommonSlideData(new ShapeTree(
-                                new NonVisualGroupShapeProperties(
-                                    new NonVisualDrawingProperties() { Id = (UInt32Value)1U, Name = "" },
-                                    new NonVisualGroupShapeDrawingProperties(),
-                                    new ApplicationNonVisualDrawingProperties()),
-                                    new GroupShapeProperties(new D.TransformGroup()),
-                                    new Shape(
-                                        new NonVisualShapeProperties(
-                                        new NonVisualDrawingProperties() { Id = (UInt32Value)2U, Name = "" },
-                                        new NonVisualShapeDrawingProperties(new D.ShapeLocks() { NoGrouping = true }),
-                                        new ApplicationNonVisualDrawingProperties(new PlaceholderShape())),
-                                        new ShapeProperties(),
-                                        new TextBody(
-                                            new D.BodyProperties(),
-                                            new D.ListStyle(),
-                                            new D.Paragraph(new D.EndParagraphRunProperties())
-                                        )
-                                    )
-                                )
-                            ),
-                            new ColorMapOverride(new D.MasterColorMapping())
-                        );
-
-
-                        /*
-                        ShapeTree shapeTree = notesSlide.Descendants<DocumentFormat.OpenXml.Presentation.ShapeTree>().FirstOrDefault();
-                        Shape shape = new Shape();
-                        D.Paragraph para = new D.Paragraph(new D.Text("TestText"), new D.EndParagraphRunProperties());
-                        shape.TextBody = new TextBody();
-                        shape.TextBody.Append(para);
-                        shapeTree.Append(shape);
-                        */
                     } else {
+                        Shape bestShape = null;
                         foreach (Shape shape in notesSlidePart.NotesSlide.Descendants<Shape>()) {
+                            if (shape.TextBody != null && (bestShape == null || bestShape.TextBody == null)) bestShape = shape;
+                        }
 
-                            if (shape.TextBody == null) {
-                                shape.TextBody = new TextBody(new D.Paragraph(
+                        if (bestShape != null) {
+                            if (bestShape.TextBody == null) {
+                                bestShape.TextBody = new TextBody(new D.Paragraph(
                                     new D.Run(
                                         new D.RunProperties() { Language = "en-US", Dirty = false },
-                                        new D.Text() { Text = "!!!NEUE UID STEHT HIER!!!" }
+                                        new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
                                     ),
                                     new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
                                 ));
                             } else {
-                                shape.TextBody.Append(new D.Paragraph(
+                                bestShape.TextBody.Append(new D.Paragraph(
                                     new D.Run(
                                         new D.RunProperties() { Language = "en-US", Dirty = false },
-                                        new D.Text() { Text = "!!!NEUE UID STEHT HIER!!!" }
+                                        new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
                                     ),
                                     new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
                                 ));
-                                shape.TextBody.Append(
-
-);
-                            }
-
-
-                            foreach (D.Paragraph paragraph in shape.TextBody.Descendants<D.Paragraph>()) {
-
-                                List<D.Text> paragraphs = paragraph.Descendants<D.Text>().ToList();
-
-                                for (int i = 0; i < paragraphs.Count; i++) {
-                                    D.Text text = paragraphs[i];
-                                    Console.WriteLine("text: " + text.Text);
-                                    text.Text += "LOL";
-                                }
                             }
                         }
                     }
@@ -233,6 +194,36 @@ namespace PptGenerator.Modifier {
 
                 notesSlidePart1.NotesSlide = notesSlide;
             }
+        }
+
+        /// <summary>
+        /// Generate a new uid, 
+        /// </summary>
+        /// <param name="existingUids"></param>
+        /// <param name="iteration"></param>
+        /// <returns></returns>
+        private static string GenerateUID(List<string> existingUids, int iteration = 0) {
+            string newUid = GenerateUrlSafeToken();
+            if (existingUids.Contains(newUid)) {
+                if(iteration > 1000) {
+                    throw new Exception("Could not generate a new uid!");
+                }
+                return GenerateUID(existingUids, ++iteration);
+            }
+            existingUids.Add(newUid);
+            return "UID:" + newUid;
+        }
+
+        /// <summary>
+        /// Generates a url safe token and returns it.
+        /// </summary>
+        /// <param name="length">the length of the token in byte</param>
+        /// <returns>The token</returns>
+        private static string GenerateUrlSafeToken(int length = 16) {
+            byte[] key = new byte[length];
+            RNGCryptoServiceProvider.Create().GetBytes(key);
+
+            return Convert.ToBase64String(key).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
     }
 }
