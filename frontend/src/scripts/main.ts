@@ -4,9 +4,12 @@ import * as path from "path";
 import initIpcHandlers from "./ipcHandler";
 import initMenu from "./menu";
 
+// Initialize the ip Handlers
 initIpcHandlers();
 
+// When application can start
 app.on("ready", () => {
+    // Open main window
     const window = new BrowserWindow({
         width: 1280,
         height: 720,
@@ -19,8 +22,10 @@ app.on("ready", () => {
         },
     });
 
+    // Initializes the meanu of the main window
     initMenu(window);
 
+    // Loads the index.html as window structure
     const indexHTML = path.join(__dirname, "views/index.html");
     window.loadFile(indexHTML);
 });

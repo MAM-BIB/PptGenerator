@@ -2,6 +2,14 @@ import { BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { Placeholder, PopupOptions, Presentation } from "../interfaces/interfaces";
 
+/**
+ * This function is used to open any new Window
+ * @param browserWindow You can pass a window to open.
+ * @param htmlPath The path of the html file for the window.
+ * @param options The Option for the structure of the window.
+ * @param data Some data from the previous window.
+ * @returns A promise of the type boolean.
+ */
 export default async function openWindow(
     browserWindow: BrowserWindow | null,
     htmlPath: string,

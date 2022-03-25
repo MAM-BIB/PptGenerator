@@ -10,8 +10,14 @@ import duplicatedUidWindow from "./openDuplicatedUidWindow";
 
 const fs = fsBase.promises;
 
+/**
+ * This function scans all .pptx files that are set in the settings.
+ * @param focusedWindow The window where the loading animation will be displayed.
+ */
 export default async function scanPresentations(focusedWindow: Electron.BrowserWindow | null | undefined) {
+    // start the loading animation.
     focusedWindow?.webContents.send("startLoading");
+    // call the core application to scan the .pptx files.
     try {
         await call(getConfig().coreApplication, [
             "-inPath",
@@ -23,22 +29,35 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
             getConfig().metaJsonPath,
         ]);
     } catch (error) {
+        // open a PopUp when the task failed.
         await openPopup({
             text: `The process exited with errors!\n${error}`,
             heading: "Error",
             answer: true,
         });
     }
+    // Reload the window to display the Data of the Presentations.
     reload(focusedWindow);
+    // Check the UIds of the presentation for errors.
     checkUids();
 }
 
+/**
+ * This function will format a slide to display the information in a PopUp.
+ * @param slides The slides that will be formatted.
+ * @returns A string with the data of the slide.
+ */
 export function formatSlide(slides: Slide[]): string {
     return slides
         .map((slide) => ` - Slide ${slide.Position + 1}: ${slide.Title || "No Title"} (UID:${slide.Uid})`)
         .join("\n");
 }
 
+/**
+ * This Funktion will get all duplicated UIDs from all scanned presentations.
+ * @param presentations The presentations from wich the uids will be taken.
+ * @returns An object that functions like a HashWith the Uids of the slides and the path with the presentation.
+ */
 export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWithSlides {
     const uidsWithSlides: UidsWithSlides = {};
 
@@ -65,6 +84,11 @@ export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWi
     return uidsWithSlides;
 }
 
+/**
+ * This function will get all the incorrect UIDs from all scanned presentations.
+ * @param presentations The presentations from wich the uids will be taken.
+ * @returns An object that functions like a HashWith the Uids of the slides and the path with the presentation.
+ */
 export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithPath[] {
     const wrongUidSlides: SlidesWithPath[] = [];
 
@@ -83,6 +107,9 @@ export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithP
     return wrongUidSlides;
 }
 
+/**
+ * This function check the UIDs for all presentations that were scanned.
+ */
 export async function checkUids() {
     const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
     const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];

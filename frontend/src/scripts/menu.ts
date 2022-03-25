@@ -7,6 +7,10 @@ import isRunning from "./helper/processManager";
 import reload from "./helper/reload";
 import scanPresentations from "./helper/scan";
 
+/**
+ * This function creates a menu for shortcuts.
+ * @param mainWindow Window where the menu will exist
+ */
 export default function initMenu(mainWindow: BrowserWindow) {
     const menu = Menu.buildFromTemplate([
         {
@@ -70,6 +74,10 @@ export default function initMenu(mainWindow: BrowserWindow) {
     Menu.setApplicationMenu(menu);
 }
 
+/**
+ * This functions opens the options
+ * @param parent Browserwindow or null for no window
+ */
 export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({
         width: 600,

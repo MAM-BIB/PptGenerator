@@ -3,6 +3,9 @@ import { BrowserWindow, ipcRenderer } from "electron";
 import { DuplicatedUids } from "../interfaces/interfaces";
 import openWindow from "./openWindow";
 
+/**
+ * These are the default option for the window.
+ */
 const defaultWindowOptions = {
     width: 800,
     height: 650,
@@ -17,6 +20,11 @@ const defaultWindowOptions = {
     modal: true,
 };
 
+/**
+ * This function opens a window with the passed settings.
+ * @param options This is an object where the structure of the windows is saved.
+ * @returns A promise of the type boolean.
+ */
 export default async function duplicatedUidWindow(options: DuplicatedUids) {
     const windowOptions = { ...defaultWindowOptions };
     if (ipcRenderer) {

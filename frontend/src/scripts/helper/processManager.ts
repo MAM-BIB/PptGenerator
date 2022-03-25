@@ -1,5 +1,10 @@
 import { execFileSync } from "child_process";
 
+/**
+ * This function is used to check if a process is running.
+ * @param query The process to check.
+ * @returns A boolean if the process is running.
+ */
 export default function isRunning(query: string): boolean | number {
     const { platform } = process;
     let cmd: string;

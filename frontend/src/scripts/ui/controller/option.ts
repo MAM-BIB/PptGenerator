@@ -20,30 +20,48 @@ const addLanguageBtn = document.getElementById("add-language-btn") as HTMLButton
 const languageInput = document.getElementById("language-input") as HTMLInputElement;
 const deleteLanguageBtn = document.getElementById("x-btn") as HTMLButtonElement;
 
+// Initialization of the custom titlebar.
 initTitlebar({
     resizable: false,
     menuHidden: true,
     title: "PptGenerator-Options",
 });
 
+// Fills the input fields with content.
 fillInput();
+
+// Adds Browser events to all browse buttons.
 addAllBrowseHandler();
+
+// Fills select with saved languages.
 fillSelect();
 
+/**
+ * Adds event for delete language button.
+ */
 deleteLanguageBtn.addEventListener("click", () => {
     deleteLanguage();
 });
 
+/**
+ * Adds event for add language button.
+ */
 addLanguageBtn.addEventListener("click", () => {
     addlanguage();
 });
 
+/**
+ * Adds event for language input.
+ */
 languageInput.addEventListener("keydown", (e) => {
     if ((e as KeyboardEvent).key === "Enter") {
         addlanguage();
     }
 });
 
+/**
+ * Adds event to the add Button
+ */
 addBtn.addEventListener("click", () => {
     if (selectLanguage.selectedIndex - 1 < 0 || selectLanguage.selectedIndex - 1 >= config.presentationMasters.length) {
         return;
@@ -54,6 +72,9 @@ addBtn.addEventListener("click", () => {
     newPresentation(masterIndex, pathIndex);
 });
 
+/**
+ * Adds event to the save Button
+ */
 saveBtn.addEventListener("click", () => {
     if (!saveBtn.disabled) {
         for (let masterIndex = 0; masterIndex < config.presentationMasters.length; masterIndex++) {
@@ -75,7 +96,9 @@ saveBtn.addEventListener("click", () => {
     }
 });
 
-// Send a message to the main-process if the cancel-button is clicked.
+/**
+ * Adds event to the cancel Button
+ */
 cancelBtn.addEventListener("click", async () => {
     if (!saveBtn.disabled) {
         const answer = await openPopup({
@@ -93,26 +116,41 @@ cancelBtn.addEventListener("click", async () => {
     }
 });
 
+/**
+ * Adds event to the default export input
+ */
 defaultExport.addEventListener("change", () => {
     config.defaultExportPath = defaultExport.value;
     saveBtn.disabled = false;
 });
 
+/**
+ * Adds event to the meta json input
+ */
 metaJson.addEventListener("change", () => {
     config.metaJsonPath = metaJson.value;
     saveBtn.disabled = false;
 });
 
+/**
+ * Adds event to the meta pics input
+ */
 metaPics.addEventListener("change", () => {
     config.metaPicsPath = metaPics.value;
     saveBtn.disabled = false;
 });
 
+/**
+ * Adds event to the hidden slides toggle button
+ */
 hiddenSlide.addEventListener("change", () => {
     config.ignoreHiddenSlides = !hiddenSlide.checked;
     saveBtn.disabled = false;
 });
 
+/**
+ * Adds event to the hidden slides toggle button
+ */
 hiddenSlide.addEventListener("keydown", (e) => {
     if ((e as KeyboardEvent).key === "Enter") {
         hiddenSlide.checked = !hiddenSlide.checked;
@@ -121,6 +159,9 @@ hiddenSlide.addEventListener("keydown", (e) => {
     }
 });
 
+/**
+ * Adds event to the language select field
+ */
 selectLanguage.addEventListener("change", () => {
     newPresentationSection.innerHTML = "";
     if (selectLanguage.selectedIndex - 1 < 0 || selectLanguage.selectedIndex - 1 >= config.presentationMasters.length) {
@@ -131,6 +172,9 @@ selectLanguage.addEventListener("change", () => {
     addBtn.disabled = false;
 });
 
+/**
+ * This functions reads all the settings from the config.json file and fills the input field with this data.
+ */
 function fillInput() {
     defaultExport.value = config.defaultExportPath;
     metaJson.value = config.metaJsonPath;
@@ -138,6 +182,12 @@ function fillInput() {
     hiddenSlide.checked = !config.ignoreHiddenSlides;
 }
 
+/**
+ * Adds a new presentation to the presentationMasters array.
+ * Creates html elements to display this in the gui.
+ * @param masterIndex Index for the presentation in array
+ * @param pathIndex Index for the path in array
+ */
 function newPresentation(masterIndex: number, pathIndex: number) {
     const newDiv = document.createElement("div");
     newDiv.className = "section presentation";
@@ -173,6 +223,10 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newPresentationSection.appendChild(newDiv);
 }
 
+/**
+ * This function fills the select input with all the languages that are in the config.json
+ * @param lastIndex can be passed to select the index.
+ */
 function fillSelect(lastIndex?: number) {
     selectLanguage.innerHTML = "";
     selectLanguage.append(document.createElement("option"));
@@ -188,6 +242,9 @@ function fillSelect(lastIndex?: number) {
     selectLanguage.dispatchEvent(new Event("change"));
 }
 
+/**
+ * This function deletes a language from the config.json and updates the select input.
+ */
 function deleteLanguage() {
     for (const master of config.presentationMasters) {
         if (master.lang === selectLanguage.options[selectLanguage.selectedIndex].value) {
@@ -199,6 +256,10 @@ function deleteLanguage() {
     }
 }
 
+/**
+ * This function adds a new Language. The input gets validated by the program and then added to the config.
+ * When a new language was added the input will be updated and the newly added language will be selected.
+ */
 function addlanguage() {
     if (!languageInput.classList.contains("show")) {
         languageInput.classList.add("show");
@@ -228,6 +289,10 @@ function addlanguage() {
     languageInput.value = "";
 }
 
+/**
+ * This function will load the presentation paths and input in the presentationMasters div.
+ * @param masterIndex the index of the group of the languages
+ */
 function newGroupOfPresentation(masterIndex: number) {
     const presentationMaster = config.presentationMasters[masterIndex];
     for (let pathIndex = 0; pathIndex < presentationMaster.paths.length; pathIndex++) {

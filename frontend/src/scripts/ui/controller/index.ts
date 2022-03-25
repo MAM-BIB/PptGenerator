@@ -26,11 +26,18 @@ let placeholders: Placeholder[] = [];
 let presentationMasterLang: string;
 let sectionElements: SectionElement[];
 
+// Initialization of the custom titlebar.
 initTitlebar();
+// Display the left side with presentations, section and slides
 fillPresentationMasterSelect();
+// Reads all data from the meta file
 read();
+// Shows the help window.
 showTutorial();
 
+/**
+ * This function will show you the tutorial automatically if you start the program for the first time
+ */
 async function showTutorial() {
     if (getConfig().showTutorial) {
         const config = getConfig();
@@ -52,10 +59,14 @@ async function showTutorial() {
     }
 }
 
+// used to start the loading animation.
 ipcRenderer.on("startLoading", () => {
     startLoading();
 });
 
+/**
+ * Function to only show the Presentation date from the selected language.
+ */
 function fillPresentationMasterSelect() {
     presentationMasterSelect.innerHTML = "";
     for (const lang of getConfig().presentationMasters.map((elem) => elem.lang)) {
@@ -70,6 +81,9 @@ function fillPresentationMasterSelect() {
     });
 }
 
+/**
+ * Function to read all the data from the meta.json file.
+ */
 async function read() {
     try {
         const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
@@ -81,6 +95,9 @@ async function read() {
     loadSections();
 }
 
+/**
+ * This function will load all sections to display them in th GUI.
+ */
 function loadSections() {
     if (getConfig().presentationMasters.length === 0) return;
 
@@ -111,14 +128,22 @@ function loadSections() {
     }
 }
 
+/**
+ * This function handles the change of a selection.
+ */
 function handleSelectionChange() {
     exportBtn.disabled = !sectionElements.some((elem) => elem.isSelected);
 }
 
+/**
+ * Adds the event to the export button.
+ */
 exportBtn.addEventListener("click", async () => {
+    // warns if powerpoint is open
     if (isRunning("POWERPNT")) {
         openPopup({ text: "We detected that PowerPoint is open. Please close the process", heading: "Warning" });
     } else if (foundVariables()) {
+        // opens variables window if variables were found
         await ipcRenderer.invoke(
             "openWindow",
             "variables.html",
@@ -141,6 +166,7 @@ exportBtn.addEventListener("click", async () => {
             },
         );
     } else {
+        // opens export window.
         await ipcRenderer.invoke(
             "openWindow",
             "export.html",
@@ -165,28 +191,39 @@ exportBtn.addEventListener("click", async () => {
     }
 });
 
+/**
+ * Adds the event for the load file button.
+ */
 loadFileBtn.addEventListener("click", async () => {
     try {
         const filePath: OpenDialogReturnValue = await ipcRenderer.invoke("openDialog", "openFile");
+        // checks if a file was selected
         if (!filePath.canceled && filePath.filePaths.length > 0) {
             startLoading();
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
 
+            // check if the selected file id .json or .pptx
             if (fileType === ".json" || fileType === ".pptx") {
                 const file: LoadFile = new LoadFile(sectionElements);
                 await file.load(pathOfFile, fileType);
                 placeholders = file.placeholders;
             } else {
+                // warns if selected file has wrong type
                 openPopup({ text: "File needs to be a .json or .pptx", heading: "Error" });
             }
         }
     } catch (error) {
+        // waring if the file could not be loaded
         openPopup({ text: `Could not load file:\n${error}`, heading: "Error" });
     }
     stopLoading();
 });
 
+/**
+ * This function checks if there are placeholder in the selected slides.
+ * @returns A boolean if variables were found or not
+ */
 function foundVariables(): boolean {
     for (const presentation of presentations) {
         for (const section of presentation.Sections) {
