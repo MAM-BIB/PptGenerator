@@ -107,8 +107,19 @@ namespace PptGenerator.TemplateInfo {
             NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
             string uid = "";
             if (notesSlidePart != null) {
-                string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                // TODO: search all paragraphs
+                foreach (Shape shape in notesSlidePart.NotesSlide.Descendants<Shape>()) {
+                    if (shape.TextBody != null && shape.TextBody.InnerText.Contains("UID:")) {
+
+                        string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                        Console.WriteLine("uid: " + uidArr[1]);
+                        uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                    }
+                }
+                if(uid == "") {
+                    string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                    uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                }
             }
 
             // Match Placeholder
