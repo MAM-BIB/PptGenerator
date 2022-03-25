@@ -10,6 +10,7 @@ import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
+import isRunning from "../../helper/processManager";
 
 const fs = fsBase.promises;
 
@@ -115,7 +116,9 @@ function handleSelectionChange() {
 }
 
 exportBtn.addEventListener("click", async () => {
-    if (foundVariables()) {
+    if (isRunning("POWERPNT")) {
+        openPopup({ text: "We detected that PowerPoint is open. Please close the process", heading: "Warning" });
+    } else if (foundVariables()) {
         await ipcRenderer.invoke(
             "openWindow",
             "variables.html",
