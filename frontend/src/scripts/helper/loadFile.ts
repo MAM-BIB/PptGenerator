@@ -8,6 +8,10 @@ import call from "./systemcall";
 
 const fs = fsBase.promises;
 
+/**
+ * This Class will be used to load a json or pptx File to select
+ * slides from the presentationMaster
+ */
 export default class LoadFile {
     public placeholders: Placeholder[];
     public loadedPreset: Preset;
@@ -19,6 +23,12 @@ export default class LoadFile {
         this.loadedPreset = { path: "", sections: [], placeholders: [] };
     }
 
+    /**
+     * This function will check the fileType, reads the file and calls a function to
+     * process the date from the file.
+     * @param pathOfFile This is the src path of the file to load
+     * @param fileType The type of the file. It can only be .json or .pptx
+     */
     public async load(pathOfFile: string, fileType: string) {
         if (fileType === ".json") {
             const presetJson = await fs.readFile(pathOfFile, { encoding: "utf-8" });
@@ -31,6 +41,10 @@ export default class LoadFile {
         }
     }
 
+    /**
+     * This functions reads a .json file and process it to select the saved slides from the preset.
+     * If the format of the .json file is not correct, it will throw an error.
+     */
     public loadPresetFromJson() {
         if (!this.loadedPreset.path || !this.loadedPreset.sections || !this.loadedPreset.placeholders) {
             throw new Error("selected file is not a preset");
@@ -55,11 +69,17 @@ export default class LoadFile {
                 }
             }
         }
+        // saves the placeholders in the preset.
         if (this.loadedPreset.placeholders.length > 0) {
             this.placeholders = this.loadedPreset.placeholders;
         }
     }
 
+    /**
+     * This Function reads a .json file which was temporally created to process the data of a .pptx file.
+     * This data is used to select the slides that are in the loaded pptx.
+     * @param jsonPath The path of the file where the data from the pptx file will be formatted as a .json file.
+     */
     public async loadPresetFromMeta(jsonPath: string) {
         const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
         const presMeta = JSON.parse(PresMetaJson) as Presentation[];

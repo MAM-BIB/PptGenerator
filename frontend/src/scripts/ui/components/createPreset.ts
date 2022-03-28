@@ -4,6 +4,13 @@ import { Presentation, Placeholder, Preset, PresetSection } from "../../interfac
 
 const fs = fsBase.promises;
 
+/**
+ * This function will create a preset .json file. It contains all the UIDs from the selected and not selected
+ * slides and all placeholders on these slides.
+ * @param savePath The path where the .json will be saved
+ * @param presetPresentations An Array of Presentations that will be used to create a preset.
+ * @param presetPlaceholders An Array of Placeholders that will be used to create a preset.
+ */
 export default async function createPreset(
     savePath: string,
     presetPresentations: Presentation[],
