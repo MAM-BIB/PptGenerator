@@ -38,9 +38,11 @@ ipcRenderer.on("data", (event, data) => {
     if (options.secondaryButton) {
         cancelBtn.hidden = false;
         cancelBtn.textContent = options.secondaryButton;
+        cancelBtn.title = options.secondaryTooltip ? options.secondaryTooltip : "";
     }
     if (options.primaryButton) {
         okBtn.textContent = options.primaryButton;
+        okBtn.title = options.primaryTooltip ? options.primaryTooltip : "";
     }
     if (options.answer) {
         cancelBtn.addEventListener("click", () => {

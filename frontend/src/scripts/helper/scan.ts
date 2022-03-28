@@ -116,15 +116,57 @@ export async function checkUids() {
 
     const wrongUidSlides = getAllWrongUidSlides(presentations);
     if (wrongUidSlides.length > 0) {
-        let text = `There are ${wrongUidSlides.length} presentations with incorrect Uids:\n`;
+        let text: string;
+        if (wrongUidSlides.length === 1) {
+            text = `There is ${wrongUidSlides.length} presentation with incorrect Uids:\n`;
+        } else {
+            text = `There are ${wrongUidSlides.length} presentations with incorrect Uids:\n`;
+        }
         for (const slidesWithPath of wrongUidSlides) {
             text += `\n${path.parse(slidesWithPath.path).name}\n${formatSlide(slidesWithPath.slides)}\n`;
         }
-        await openPopup({
+        const answer = await openPopup({
             text,
             heading: "Error",
+            primaryButton: "Set UIDs",
+            primaryTooltip: "Generate UIDs for the slides automatically",
+            secondaryButton: "Cancel",
+            secondaryTooltip: "Close Window and add UIDs manually",
             answer: true,
         });
+
+        // if the user wants the program to generate UIDs for slides with wrong uids
+        if (answer) {
+            // get all existing UIDs
+            const existingUids: string[] = [];
+            for (const presentation of presentations) {
+                for (const section of presentation.Sections) {
+                    for (const slide of section.Slides) {
+                        existingUids.push(slide.Uid);
+                    }
+                }
+            }
+            // call the core application to change the UIDs
+            try {
+                for (const slidesWithPath of wrongUidSlides) {
+                    call(getConfig().coreApplication, [
+                        "-inPath",
+                        slidesWithPath.path,
+                        "-slidePos",
+                        slidesWithPath.slides.map((slide) => slide.Position).join(","),
+                        "-existingUids",
+                        ...existingUids,
+                    ]);
+                }
+            } catch (error) {
+                // popup if the core application failed
+                await openPopup({
+                    text: `The process exited with errors!\n${error}`,
+                    heading: "Error",
+                    answer: true,
+                });
+            }
+        }
     }
 
     const duplicatedUidSlides = getAllDuplicatedUidSlides(presentations);
