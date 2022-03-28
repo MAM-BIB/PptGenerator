@@ -89,6 +89,12 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
  * @param slide The slide that has a duplicated UID.
  * @param uidMainDiv The UID that is duplicated.
  */
+
+/**
+ * This Functions creates a div where the Name of the presentation and slides are in.
+ * @param slide The slide that has a duplicated UID.
+ * @returns The div in which the PresentationName will be in.
+ */
 function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentationame";
@@ -106,7 +112,7 @@ function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
 /**
  * This function creates the slide with the name and position of the slide.
  * @param slide The slide that has a duplicated UID.
- * @param presentationDiv The div in which the will be in.
+ * @returns The div in which the SlideName will be in.
  */
 function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
     const slideDiv = document.createElement("div");
@@ -125,7 +131,7 @@ function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
 
 /**
  * This function creates a checkbox to select a slide.
- * @param slideDiv The div where it will be in.
+ * @returns The div in which the checkbox will be in
  */
 function createCheckbox(): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
@@ -155,5 +161,6 @@ function createCheckbox(): HTMLDivElement {
     sectionToggleBtnDiv.appendChild(checkboxDiv);
 
     return sectionToggleBtnDiv;
-    inputCheckbox.addEventListener("change", () => {});
 }
+
+createCheckbox().addEventListener("change", () => {});
