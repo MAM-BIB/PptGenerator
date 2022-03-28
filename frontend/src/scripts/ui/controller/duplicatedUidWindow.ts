@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
 import path from "path";
+import call from "../../helper/systemcall";
 
 import { DuplicatedUids, PathWithSlides } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
@@ -39,7 +40,9 @@ cancelBtn.addEventListener("click", async () => {
  * Adds the eventListener vor the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
-    // call();
+    // if(){
+    //     call();
+    // }
 });
 
 /**
@@ -59,7 +62,7 @@ function createMainDiv(uid: string, slides: PathWithSlides[]) {
     uidMainDiv.appendChild(duplicatedUidTitleContainer);
 
     for (const slide of slides) {
-        createDivPresentationName(slide, uidMainDiv);
+        uidMainDiv.appendChild(createDivPresentationName(slide));
     }
     const presentationNameContainer = document.createElement("div");
     presentationNameContainer.className = "presNameContainer";
@@ -86,7 +89,7 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
  * @param slide The slide that has a duplicated UID.
  * @param uidMainDiv The UID that is duplicated.
  */
-function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivElement) {
+function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentationame";
 
@@ -95,9 +98,9 @@ function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivEle
     presentationName.textContent = `${path.parse(slide.path).name}`;
     presentationDiv.appendChild(presentationName);
 
-    createDivSlideName(slide, presentationDiv);
+    presentationDiv.appendChild(createDivSlideName(slide));
 
-    uidMainDiv.appendChild(presentationDiv);
+    return presentationDiv;
 }
 
 /**
@@ -105,7 +108,7 @@ function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivEle
  * @param slide The slide that has a duplicated UID.
  * @param presentationDiv The div in which the will be in.
  */
-function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivElement) {
+function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
     const slideDiv = document.createElement("div");
     slideDiv.className = "slidename-with-checkbox";
 
@@ -115,16 +118,16 @@ function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivEleme
 
     slideDiv.appendChild(slideName);
 
-    createCheckbox(slideDiv);
+    slideDiv.appendChild(createCheckbox());
 
-    presentationDiv.appendChild(slideDiv);
+    return slideDiv;
 }
 
 /**
  * This function creates a checkbox to select a slide.
  * @param slideDiv The div where it will be in.
  */
-function createCheckbox(slideDiv: HTMLDivElement) {
+function createCheckbox(): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
 
@@ -150,5 +153,7 @@ function createCheckbox(slideDiv: HTMLDivElement) {
     checkboxDiv.appendChild(switchLbl);
 
     sectionToggleBtnDiv.appendChild(checkboxDiv);
-    slideDiv.appendChild(sectionToggleBtnDiv);
+
+    return sectionToggleBtnDiv;
+    inputCheckbox.addEventListener("change", () => {});
 }
