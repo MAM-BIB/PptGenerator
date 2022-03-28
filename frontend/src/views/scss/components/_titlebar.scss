@@ -106,23 +106,23 @@
                 }
 
                 &:hover {
-                    background-color: $red--primary;
+                    background-color: $red-1;
 
                     .svg {
-                        background-color: $light--primary;
+                        background-color: $white-1;
                     }
                 }
 
                 &:focus-visible {
-                    background-color: $red--primary;
+                    background-color: $red-1;
 
                     .svg {
-                        background-color: $light--primary;
+                        background-color: $white-1;
                     }
                 }
 
                 &:active {
-                    background-color: $red--primary;
+                    background-color: $red-1;
                 }
             }
         }
@@ -166,7 +166,7 @@
                     display: none;
                     position: absolute;
                     flex-direction: column;
-                    background-color: $light--dark;
+                    background-color: $gray-3;
                     top: calc($size-6 - 0.5px);
 
                     align-items: stretch;
@@ -194,25 +194,6 @@
                 }
             }
         }
-        // .left-btn {
-        //     height: 30px;
-        //     background-color: var(--background--primary);
-        //     color: var(--btn--titlebar);
-        //     transition: 0.2s;
-        //     cursor: pointer;
-        //     padding: 0 20px;
-        //     border-radius: 0;
-        //     box-shadow: none;
-        //     border: none;
-        //     outline: none;
-
-        //     &:hover {
-        //         background-color: var(--btn--hover--titlebar);
-        //     }
-
-        //     &:focus {
-        //         background-color: var(--btn--hover--titlebar);
-        //     }
     }
 }
 
@@ -225,7 +206,7 @@
     .leftMenu {
         width: 200px;
         height: $window--height;
-        background-color: $light--primary;
+        background-color: $white-1;
         transition: 0.4s;
     }
 }
