@@ -38,8 +38,12 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
     }
     // Reload the window to display the Data of the Presentations.
     reload(focusedWindow);
-    // Check the UIds of the presentation for errors.
-    checkUids();
+
+    // Check the UIds of the presentation for errors and scan again if the program changed uids.
+    const scanAgain = !(await checkUids());
+    if (scanAgain) {
+        scanPresentations(focusedWindow);
+    }
 }
 
 /**
@@ -54,8 +58,8 @@ export function formatSlide(slides: Slide[]): string {
 }
 
 /**
- * This Funktion will get all duplicated UIDs from all scanned presentations.
- * @param presentations The presentations from wich the uids will be taken.
+ * This function will get all duplicated UIDs from all scanned presentations.
+ * @param presentations The presentations from which the uids will be taken.
  * @returns An object that functions like a HashWith the Uids of the slides and the path with the presentation.
  */
 export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWithSlides {
@@ -86,7 +90,7 @@ export function getAllDuplicatedUidSlides(presentations: Presentation[]): UidsWi
 
 /**
  * This function will get all the incorrect UIDs from all scanned presentations.
- * @param presentations The presentations from wich the uids will be taken.
+ * @param presentations The presentations from which the uids will be taken.
  * @returns An object that functions like a HashWith the Uids of the slides and the path with the presentation.
  */
 export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithPath[] {
@@ -109,8 +113,9 @@ export function getAllWrongUidSlides(presentations: Presentation[]): SlidesWithP
 
 /**
  * This function check the UIDs for all presentations that were scanned.
+ * @returns A boolean promise thats false if the program changed uids.
  */
-export async function checkUids() {
+export async function checkUids(): Promise<boolean> {
     const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
     const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
 
@@ -147,12 +152,17 @@ export async function checkUids() {
                 }
             }
             // informs the user about a backup
-            await openPopup({ text: `Backup will be created at: ${getConfig().backupPath}`, heading: "Info" });
+            await openPopup({
+                text: `Backup will be created at: ${getConfig().backupPath}`,
+                heading: "Info",
+                answer: true,
+            });
 
             try {
                 // calling a function to update all wrong UIDs
                 for (const slidesWithPath of wrongUidSlides) {
-                    updateUIDs(slidesWithPath, existingUids);
+                    // eslint-disable-next-line no-await-in-loop
+                    await updateUIDs(slidesWithPath, existingUids);
                 }
             } catch (error) {
                 // popup if the core application failed
@@ -162,6 +172,7 @@ export async function checkUids() {
                     answer: true,
                 });
             }
+            return false;
         }
     }
 
@@ -173,6 +184,8 @@ export async function checkUids() {
             uid: duplicatedUidSlides,
         });
     }
+
+    return true;
 }
 
 /**
@@ -186,7 +199,9 @@ async function updateUIDs(slidesWithPath: SlidesWithPath, existingUids: string[]
     await fs.copyFile(slidesWithPath.path, path.join(getConfig().backupPath, path.basename(slidesWithPath.path)));
 
     // calling the core application
-    call(getConfig().coreApplication, [
+    await call(getConfig().coreApplication, [
+        "-mode",
+        "addUid",
         "-inPath",
         slidesWithPath.path,
         "-slidePos",
