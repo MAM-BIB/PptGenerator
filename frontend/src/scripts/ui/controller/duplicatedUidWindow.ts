@@ -87,12 +87,6 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
 /**
  * This Functions creates a div where the Name of the presentation and slides are in.
  * @param slide The slide that has a duplicated UID.
- * @param uidMainDiv The UID that is duplicated.
- */
-
-/**
- * This Functions creates a div where the Name of the presentation and slides are in.
- * @param slide The slide that has a duplicated UID.
  * @returns The div in which the PresentationName will be in.
  */
 function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
