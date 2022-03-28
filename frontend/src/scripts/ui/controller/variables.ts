@@ -12,16 +12,21 @@ let presentations: Presentation[];
 let placeholders: Placeholder[];
 let firstInput = true;
 
+// Initialization of the custom titlebar.
 initTitlebar({
     resizable: false,
     menuHidden: true,
     title: "PptGenerator-Variables",
 });
 
+/**
+ * This will be called when the window opens
+ */
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
     placeholders = data.placeholders;
 
+    // if there are placeholders no placeholder objects it will create new objects and saves them the array
     if (placeholders.length === 0) {
         for (const presentation of presentations) {
             for (const section of presentation.Sections) {
@@ -37,6 +42,7 @@ ipcRenderer.on("data", (event, data) => {
             }
         }
     } else {
+        // if there are it will take these and save them
         for (const placeholder of placeholders) {
             variablesContainer.appendChild(
                 createPlaceholderInput(placeholder.name, placeholders.length, placeholder.value),
@@ -45,7 +51,12 @@ ipcRenderer.on("data", (event, data) => {
     }
 });
 
+/**
+ * Adds event to the save button
+ */
 setBtn.addEventListener("click", async () => {
+    // if inputs have been filled open the export windows and pass placeholders on
+    // and close window.
     if (filledAllPlaceholders()) {
         await ipcRenderer.invoke(
             "openWindow",
@@ -70,14 +81,25 @@ setBtn.addEventListener("click", async () => {
         );
         window.close();
     } else {
+        // if not filled ope popup with warning
         openPopup({ text: "Please fill out all inputs!", heading: "Error" });
     }
 });
 
+/**
+ * Adds event for the cancel button
+ */
 cancelBtn.addEventListener("click", async () => {
     await ipcRenderer.invoke("closeFocusedWindow");
 });
 
+/**
+ * This function creates a div element with input fields for all placeholders.
+ * @param varName Name of the Placeholder.
+ * @param index index of the placeholder in the array.
+ * @param defaultValue default value for the input field.
+ * @returns A html div element.
+ */
 function createPlaceholderInput(varName: string, index: number, defaultValue = ""): HTMLDivElement {
     const variableContainer = document.createElement("div") as HTMLDivElement;
     variableContainer.classList.add("section");
@@ -128,6 +150,10 @@ function createPlaceholderInput(varName: string, index: number, defaultValue = "
     return variableContainer;
 }
 
+/**
+ * This function checks if all input fields have been filled with values.
+ * @returns A boolean if all inputs have been filled out.
+ */
 function filledAllPlaceholders(): boolean {
     for (const placeholder of placeholders) {
         if (placeholder.value === "") {

@@ -10,15 +10,20 @@ const headingElement = document.getElementById("popup-heading") as HTMLElement;
 
 let options: PopupOptions;
 
+/**
+ * This will be called when the window opens
+ */
 ipcRenderer.on("data", (event, data) => {
     options = data;
 
+    // Initialization of the custom titlebar.
     initTitlebar({
         resizable: false,
         menuHidden: true,
         closeBtnMsg: options.answer as string,
     });
 
+    // Adds line breaks to the message
     const texts = options.text?.split("\n") ?? [];
     for (const text of texts) {
         textElement.append(document.createTextNode(text));
@@ -26,7 +31,10 @@ ipcRenderer.on("data", (event, data) => {
     }
     textElement.lastChild?.remove();
 
+    // sets the text for the header of the popup
     headingElement.textContent = `${options.heading}`;
+
+    // defines the buttons on the popup window
     if (options.secondaryButton) {
         cancelBtn.hidden = false;
         cancelBtn.textContent = options.secondaryButton;

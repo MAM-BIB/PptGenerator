@@ -4,12 +4,15 @@ import path from "path";
 import { DuplicatedUids, PathWithSlides } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
 
-const dupplicatedUidSection = document.getElementById("dupplicated-uid-section") as HTMLDivElement;
+const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const changeUidsBtn = document.getElementById("change-uids-btn") as HTMLButtonElement;
 
 let options: DuplicatedUids;
 
+/**
+ * This will be called when the window opens
+ */
 ipcRenderer.on("data", (event, data) => {
     initTitlebar({
         resizable: false,
@@ -20,38 +23,40 @@ ipcRenderer.on("data", (event, data) => {
     const duplicatedUidSlides = options.uid;
     for (const uid in duplicatedUidSlides) {
         if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
-            createDiv(uid, duplicatedUidSlides[uid]);
-
-            // for (let i = 0; i < array.length; i++) {
-            //     const element = array[i];
-            // }
-            // // uidTitle
-            // uidTitle.textContent = `UID:${uid}`;
-            // for (const slide of duplicatedUidSlides[uid]) {
-            //     text += `\n${path.parse(slide.path).name}\n${[slide.slide]}\n`;
-            // }
+            createMainDiv(uid, duplicatedUidSlides[uid]);
         }
     }
 });
 
+/**
+ * Adds the eventListener vor the cancel button
+ */
 cancelBtn.addEventListener("click", async () => {
     await ipcRenderer.invoke("closeFocusedWindow");
 });
 
+/**
+ * Adds the eventListener vor the change uid button
+ */
 changeUidsBtn.addEventListener("click", async () => {
     // call();
 });
 
-function createDiv(uid: string, slides: PathWithSlides[]) {
+/**
+ * This function creates the main div in which a duplicated uid will be displayed.
+ * @param uid The uid from a slide.
+ * @param slides The path from a presentation and all slides from that path.
+ */
+function createMainDiv(uid: string, slides: PathWithSlides[]) {
     const uidMainDiv = document.createElement("div");
     uidMainDiv.className = "main-div";
 
-    const dublicatedUidTitleContainer = document.createElement("div");
-    dublicatedUidTitleContainer.className = "uid-title-container";
+    const duplicatedUidTitleContainer = document.createElement("div");
+    duplicatedUidTitleContainer.className = "uid-title-container";
 
-    createHeader(uid, dublicatedUidTitleContainer);
+    createHeader(uid, duplicatedUidTitleContainer);
 
-    uidMainDiv.appendChild(dublicatedUidTitleContainer);
+    uidMainDiv.appendChild(duplicatedUidTitleContainer);
 
     for (const slide of slides) {
         createDivPresentationName(slide, uidMainDiv);
@@ -59,20 +64,29 @@ function createDiv(uid: string, slides: PathWithSlides[]) {
     const presentationNameContainer = document.createElement("div");
     presentationNameContainer.className = "presNameContainer";
 
-    dupplicatedUidSection.appendChild(uidMainDiv);
+    duplicatedUidSection.appendChild(uidMainDiv);
 }
 
-function createHeader(uid: string, dublicatedUidTitleContainer: HTMLDivElement) {
+/**
+ * This function creates a div where the UID is written in.
+ * @param uid A uid from a slide.
+ * @param duplicatedUidTitleContainer A html div container where the uid will be in.
+ */
+function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) {
     const uidTitle = document.createElement("h2");
     uidTitle.textContent = `UID: ${uid}`;
-    dublicatedUidTitleContainer.appendChild(uidTitle);
+    duplicatedUidTitleContainer.appendChild(uidTitle);
 
     const line = document.createElement("hr");
-    dublicatedUidTitleContainer.appendChild(line);
+    duplicatedUidTitleContainer.appendChild(line);
 }
 
+/**
+ * This Functions creates a div where the Name of the presentation and slides are in.
+ * @param slide The slide that has a duplicated UID.
+ * @param uidMainDiv The UID that is duplicated.
+ */
 function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivElement) {
-    // const slideName = `${path.parse(slide.path).name}`;
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentationame";
 
@@ -85,6 +99,12 @@ function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivEle
 
     uidMainDiv.appendChild(presentationDiv);
 }
+
+/**
+ * This function creates the slide with the name and position of the slide.
+ * @param slide The slide that has a duplicated UID.
+ * @param presentationDiv The div in which the will be in.
+ */
 function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivElement) {
     const slideDiv = document.createElement("div");
     slideDiv.className = "slidename-with-checkbox";
@@ -100,6 +120,10 @@ function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivEleme
     presentationDiv.appendChild(slideDiv);
 }
 
+/**
+ * This function creates a checkbox to select a slide.
+ * @param slideDiv The div where it will be in.
+ */
 function createCheckbox(slideDiv: HTMLDivElement) {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
@@ -128,27 +152,3 @@ function createCheckbox(slideDiv: HTMLDivElement) {
     sectionToggleBtnDiv.appendChild(checkboxDiv);
     slideDiv.appendChild(sectionToggleBtnDiv);
 }
-
-// function create(options?: DuplicatedUids) {}
-// const texts = options.text?.split("\n") ?? [];
-// for (const text of texts) {
-//     textElement.append(document.createTextNode(text));
-//     textElement.append(document.createElement("br"));
-// }
-// textElement.lastChild?.remove();
-
-// headingElement.textContent = `${options.heading}`;
-// if (options.secondaryButton) {
-//     cancelBtn.hidden = false;
-//     cancelBtn.textContent = options.secondaryButton;
-// }
-// if (options.primaryButton) {
-//     okBtn.textContent = options.primaryButton;
-// }
-// cancelBtn.addEventListener("click", () => {
-//     ipcRenderer.invoke("closeFocusedWindow");
-// });
-
-// okBtn.addEventListener("click", () => {
-//     ipcRenderer.invoke("closeFocusedWindow");
-// });

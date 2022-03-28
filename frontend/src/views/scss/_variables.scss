@@ -1,23 +1,27 @@
-$dark--primary: #212121;
-$dark--light: #484848;
-$dark--dark: #000000;
+$black-1: #000000;
+$black-2: #212121;
+$black-3: #363636;
 
-$light--primary: #e2e2e2;
-$light--light: #efefef;
-$light--dark: #8d8d8d;
+$gray-1: #3d3d3d;
+$gray-2: #484848;
+$gray-3: #8d8d8d;
+$gray-4: #9f9f9f;
+$gray-5: #908f8f;
+$gray-6: #c5c5c5;
+
+$white-1: #e2e2e2;
+$white-2: #efefef;
+
+$red-1: #ff0000;
 
 $accent--color: #0ea5ff;
 $accent--color--highlight: #006cb9;
 
-$secondary--dark--light: #363636;
+$border-small: 0.5px solid #{$black-1};
+$border-normal: 1px solid #{$gray-2};
+$border-dark: 1px solid #{$gray-3};
 
-$red--primary: #ff0000;
-
-$border-small: 0.5px solid #{$dark--dark};
-$border-normal: 1px solid #{$dark--light};
-$border-dark: 1px solid #{$light--dark};
-
-$btn--font--slide: #{$light--light};
+$btn--font--slide: #{$white-2};
 
 $window--width--size: 1200px;
 $window--width: 100%;
@@ -86,42 +90,42 @@ $slider-margin: $size-2;
 $slider-size: $switch-height - $slider-margin;
 //normal color
 :root {
-    --font--primary: #{$dark--light};
-    --font--light: #{$dark--light};
-    --font--dark: #{$dark--dark};
+    --font--primary: #{$gray-2};
+    --font--light: #{$gray-2};
+    --font--dark: #{$black-1};
 
-    --background--primary: #{$light--primary};
-    --background--light: #{$light--light};
-    --background--dark: #{$light--dark};
+    --background--primary: #{$white-1};
+    --background--light: #{$white-2};
+    --background--dark: #{$gray-3};
 
     --border--color: #{$border-normal};
 
-    --btn--font: #{$light--light};
+    --btn--font: #{$white-2};
     --btn--background: #{$accent--color--highlight};
     --btn--hover--background: #{$accent--color};
 
-    --toggle--btn--background: #9f9f9f;
+    --toggle--btn--background: #{$gray-4};
 
-    --btn--titlebar: #{$dark--dark};
-    --btn--hover--titlebar: #c5c5c5;
+    --btn--titlebar: #{$black-1};
+    --btn--hover--titlebar: #{$gray-6};
 }
 
 //take the Systemsettings color, if its dark the programm doing that else the normal :root
 @media (prefers-color-scheme: dark) {
     :root {
-        --font--primary: #{$light--primary};
-        --font--light: #{$light--light};
-        --font--dark: #{$light--dark};
+        --font--primary: #{$white-1};
+        --font--light: #{$white-2};
+        --font--dark: #{$gray-3};
 
-        --background--primary: #{$dark--primary};
-        --background--light: #{$secondary--dark--light};
-        --background--dark: #{$dark--dark};
+        --background--primary: #{$black-2};
+        --background--light: #{$black-3};
+        --background--dark: #{$black-1};
 
         --border--color: #{$border-dark};
 
-        --toggle--btn--background: #{$dark--light};
+        --toggle--btn--background: #{$gray-2};
 
-        --btn--titlebar: #908f8f;
-        --btn--hover--titlebar: #3d3d3d;
+        --btn--titlebar: #{$gray-5};
+        --btn--hover--titlebar: #{$gray-1};
     }
 }

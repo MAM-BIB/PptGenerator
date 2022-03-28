@@ -2,9 +2,15 @@ import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
 
 import { getConfig } from "./config";
+import openPopup from "./helper/openPopup";
+import isRunning from "./helper/processManager";
 import reload from "./helper/reload";
 import scanPresentations from "./helper/scan";
 
+/**
+ * This function creates a menu for shortcuts.
+ * @param mainWindow Window where the menu will exist
+ */
 export default function initMenu(mainWindow: BrowserWindow) {
     mainWindow.on("focus", () => {
         const menu = Menu.buildFromTemplate([
@@ -39,7 +45,14 @@ export default function initMenu(mainWindow: BrowserWindow) {
                         label: "Scan Presentation",
                         accelerator: "CmdOrCtrl+I",
                         async click(item, focusedWindow) {
-                            scanPresentations(focusedWindow);
+                            if (isRunning("POWERPNT")) {
+                                openPopup({
+                                    text: "We detected that PowerPoint is open. Please close the process",
+                                    heading: "Warning",
+                                });
+                            } else {
+                                scanPresentations(focusedWindow);
+                            }
                         },
                     },
                     {
@@ -73,6 +86,10 @@ export default function initMenu(mainWindow: BrowserWindow) {
     });
 }
 
+/**
+ * This functions opens the options
+ * @param parent Browserwindow or null for no window
+ */
 export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({
         width: 600,
