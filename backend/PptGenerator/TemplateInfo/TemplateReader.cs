@@ -98,6 +98,13 @@ namespace PptGenerator.TemplateInfo {
             }
         }
 
+        /// <summary>
+        /// Creates a Slide object from a slidePart and returns it.
+        /// </summary>
+        /// <param name="position">The position of the Slide in its presenbtation</param>
+        /// <param name="slideId">The slide id</param>
+        /// <param name="slidePart">The slidePart</param>
+        /// <returns>A Slide object created form the slidePart</returns>
         private static Slide getSlideFromPart(uint position, SlideId slideId, SlidePart slidePart) {
             string title = "";
             try {
@@ -107,13 +114,15 @@ namespace PptGenerator.TemplateInfo {
             NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
             string uid = "";
             if (notesSlidePart != null) {
-                // TODO: search all paragraphs
                 foreach (Shape shape in notesSlidePart.NotesSlide.Descendants<Shape>()) {
-                    if (shape.TextBody != null && shape.TextBody.InnerText.Contains("UID:")) {
-
-                        string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                        Console.WriteLine("uid: " + uidArr[1]);
-                        uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                    if (shape.TextBody != null && shape.TextBody.InnerText.ToLower().Contains("uid:")) {
+                        foreach (var paragraph in shape.TextBody.Descendants<D.Paragraph>()) {
+                            if (paragraph.InnerText.ToLower().Contains("uid:")) {
+                                string[] uidArr = paragraph.InnerText.Split("UID:");
+                                uidArr = uidArr[1].Split(" ");
+                                uid = uidArr[0];
+                            }
+                        }
                     }
                 }
                 if(uid == "") {
