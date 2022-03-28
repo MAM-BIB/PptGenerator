@@ -39,11 +39,9 @@ namespace PptGenerator.Modifier {
                     NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
                     if (notesSlidePart == null) {
                         notesSlidePart = slidePart.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
-                        Console.WriteLine("Created");
                     }
-                    Console.WriteLine("Test");
+
                     if (notesSlidePart.NotesSlide == null) {
-                        Console.WriteLine("NotesSlide is null");
                         notesSlidePart.NotesSlide = createNewNoteSlide(clArg);
                     } else {
                         Shape bestShape = notesSlidePart.NotesSlide.Descendants<Shape>().FirstOrDefault();
@@ -53,7 +51,6 @@ namespace PptGenerator.Modifier {
 
                         if (bestShape != null) {
                             if (bestShape.TextBody == null) {
-                                Console.WriteLine("bestShape.TextBody is null");
                                 bestShape.TextBody = new TextBody(new D.Paragraph(
                                     new D.Run(
                                         new D.RunProperties() { Language = "en-US", Dirty = false },
@@ -96,8 +93,6 @@ namespace PptGenerator.Modifier {
                                     ));
                                 }
                             }
-                        } else {
-                            Console.WriteLine("bestShape is null");
                         }
                     }
                 }
