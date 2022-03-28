@@ -11,6 +11,11 @@ using D = DocumentFormat.OpenXml.Drawing;
 namespace PptGenerator.Modifier {
     class UidModifier {
 
+        /// <summary>
+        /// If a slide has a uid repace it with a newly generated uid.
+        /// If it has no uid add one
+        /// </summary>
+        /// <param name="clArg">The commandline argument</param>
         public static void modifyUids(CommandLineArgument clArg) {
             string presentationPath = clArg.InPaths.FirstOrDefault();
             List<uint> slidePositions = clArg.SlidePos;
@@ -48,6 +53,7 @@ namespace PptGenerator.Modifier {
 
                         if (bestShape != null) {
                             if (bestShape.TextBody == null) {
+                                Console.WriteLine("bestShape.TextBody is null");
                                 bestShape.TextBody = new TextBody(new D.Paragraph(
                                     new D.Run(
                                         new D.RunProperties() { Language = "en-US", Dirty = false },
@@ -65,7 +71,7 @@ namespace PptGenerator.Modifier {
                                                 paragraph.Append(
                                                     new D.Run(
                                                         new D.RunProperties() { Language = "en-US", Dirty = false },
-                                                        new D.Text() { Text = "new " + GenerateUID(clArg.ExistingUids) }
+                                                        new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
                                                     ),
                                                     new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
                                                 );
@@ -80,8 +86,18 @@ namespace PptGenerator.Modifier {
                                            new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
                                        ));
                                     }
+                                } else {
+                                    bestShape.TextBody.Append(new D.Paragraph(
+                                       new D.Run(
+                                           new D.RunProperties() { Language = "en-US", Dirty = false },
+                                           new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
+                                       ),
+                                       new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
+                                    ));
                                 }
                             }
+                        } else {
+                            Console.WriteLine("bestShape is null");
                         }
                     }
                 }
