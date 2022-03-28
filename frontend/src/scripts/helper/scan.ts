@@ -146,17 +146,13 @@ export async function checkUids() {
                     }
                 }
             }
-            // call the core application to change the UIDs
+            // informs the user about a backup
+            await openPopup({ text: `Backup will be created at: ${getConfig().backupPath}`, heading: "Info" });
+
             try {
+                // calling a function to update all wrong UIDs
                 for (const slidesWithPath of wrongUidSlides) {
-                    call(getConfig().coreApplication, [
-                        "-inPath",
-                        slidesWithPath.path,
-                        "-slidePos",
-                        slidesWithPath.slides.map((slide) => slide.Position).join(","),
-                        "-existingUids",
-                        ...existingUids,
-                    ]);
+                    updateUIDs(slidesWithPath, existingUids);
                 }
             } catch (error) {
                 // popup if the core application failed
@@ -177,4 +173,25 @@ export async function checkUids() {
             uid: duplicatedUidSlides,
         });
     }
+}
+
+/**
+ * This function updates all necessary UIDs of a presentation. Before changing the UIDs
+ * a backup will be created in the backup path from the config.json.
+ * @param slidesWithPath The presentations and slides that need to get new UIDs.
+ * @param existingUids All the UIDs that already exist.
+ */
+async function updateUIDs(slidesWithPath: SlidesWithPath, existingUids: string[]) {
+    // creating a backup before changing the presentation
+    await fs.copyFile(slidesWithPath.path, path.join(getConfig().backupPath, path.basename(slidesWithPath.path)));
+
+    // calling the core application
+    call(getConfig().coreApplication, [
+        "-inPath",
+        slidesWithPath.path,
+        "-slidePos",
+        slidesWithPath.slides.map((slide) => slide.Position).join(","),
+        "-existingUids",
+        ...existingUids,
+    ]);
 }

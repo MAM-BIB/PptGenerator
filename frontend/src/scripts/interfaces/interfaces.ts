@@ -33,6 +33,7 @@ export interface Config {
     ignoreHiddenSlides: boolean;
     basePath: string;
     defaultExportPath: string;
+    backupPath: string;
     showTutorial: boolean;
 }
 
