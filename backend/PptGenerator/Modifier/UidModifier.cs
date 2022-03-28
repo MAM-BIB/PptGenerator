@@ -16,6 +16,7 @@ namespace PptGenerator.Modifier {
             List<uint> slidePositions = clArg.SlidePos;
 
             using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationPath, true)) {
+
                 PresentationPart presentationPart = presentationDocument.PresentationPart;
                 Presentation presentation = presentationPart.Presentation;
 
@@ -32,16 +33,12 @@ namespace PptGenerator.Modifier {
 
                     NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
                     if (notesSlidePart == null) {
-                        Console.WriteLine("notesSlidePart == null");
                         notesSlidePart = slidePart.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
-                        notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
+                        Console.WriteLine("Created");
                     }
-
-                    Console.WriteLine("notesSlidePart");
-                    Console.WriteLine(notesSlidePart);
-                    Console.WriteLine(notesSlidePart.NotesSlide);
-
+                    Console.WriteLine("Test");
                     if (notesSlidePart.NotesSlide == null) {
+                        Console.WriteLine("NotesSlide is null");
                         notesSlidePart.NotesSlide = createNewNoteSlide(clArg);
                     } else {
                         Shape bestShape = notesSlidePart.NotesSlide.Descendants<Shape>().FirstOrDefault();
@@ -87,10 +84,10 @@ namespace PptGenerator.Modifier {
                             }
                         }
                     }
-
-                    presentation.Save();
-                    presentationDocument.Close();
                 }
+
+                presentation.Save();
+                presentationDocument.Close();
             }
         }
 

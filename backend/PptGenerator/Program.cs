@@ -22,7 +22,7 @@ namespace PptGenerator {
 
             CommandLineArgument clArg = CommandLineArgumentParser.Parse(args);
 
-            Console.WriteLine("clArg.Mode: "+ clArg.Mode);
+            Console.WriteLine("Mode: "+ clArg.Mode);
 
             switch (clArg.Mode) {
                 case Mode.scan:
