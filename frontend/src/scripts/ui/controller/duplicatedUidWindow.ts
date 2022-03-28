@@ -1,15 +1,18 @@
 import { ipcRenderer } from "electron";
 import path from "path";
+import fsBase from "fs";
 import call from "../../helper/systemcall";
 
 import { DuplicatedUids, PathWithSlides } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
+import { getConfig } from "../../config";
 
 const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const changeUidsBtn = document.getElementById("change-uids-btn") as HTMLButtonElement;
 
 let options: DuplicatedUids;
+const fs = fsBase.promises;
 
 /**
  * This will be called when the window opens
@@ -30,19 +33,18 @@ ipcRenderer.on("data", (event, data) => {
 });
 
 /**
- * Adds the eventListener vor the cancel button
+ * Adds the eventListener for the cancel button
  */
 cancelBtn.addEventListener("click", async () => {
     await ipcRenderer.invoke("closeFocusedWindow");
 });
 
 /**
- * Adds the eventListener vor the change uid button
+ * Adds the eventListener for the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
-    // if(){
-    //     call();
-    // }
+    await replaceDuplicated();
+    await ipcRenderer.invoke("closeFocusedWindow");
 });
 
 /**
@@ -118,16 +120,17 @@ function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
 
     slideDiv.appendChild(slideName);
 
-    slideDiv.appendChild(createCheckbox());
+    slideDiv.appendChild(createCheckbox(slide));
 
     return slideDiv;
 }
 
+const checkboxary: { input: HTMLInputElement; slide: PathWithSlides }[] = [];
 /**
  * This function creates a checkbox to select a slide.
  * @returns The div in which the checkbox will be in
  */
-function createCheckbox(): HTMLDivElement {
+function createCheckbox(slide: PathWithSlides): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
 
@@ -143,6 +146,12 @@ function createCheckbox(): HTMLDivElement {
     inputCheckbox.addEventListener("change", () => {
         changeUidsBtn.disabled = false;
     });
+
+    checkboxary.push({
+        input: inputCheckbox,
+        slide,
+    });
+
     switchLbl.appendChild(inputCheckbox);
 
     const spanSlider = document.createElement("span");
@@ -157,4 +166,35 @@ function createCheckbox(): HTMLDivElement {
     return sectionToggleBtnDiv;
 }
 
-createCheckbox().addEventListener("change", () => {});
+/**
+ * This function replaces all uids from the selected slides
+ */
+async function replaceDuplicated() {
+    for (const item of checkboxary) {
+        if (item.input.checked) {
+            changeUid(item.slide, options.existingUids ?? []);
+        }
+    }
+}
+
+/**
+ * The function changes the uid for one slide
+ * @param pathWithSlides The slide with the path that gets a new uid
+ * @param existingUids All existings uids in the saved presentations
+ */
+async function changeUid(pathWithSlides: PathWithSlides, existingUids: string[]) {
+    // creating a backup before changing the presentation
+    await fs.copyFile(pathWithSlides.path, path.join(getConfig().backupPath, path.basename(pathWithSlides.path)));
+
+    // calling the core application
+    await call(getConfig().coreApplication, [
+        "-mode",
+        "addUid",
+        "-inPath",
+        pathWithSlides.path,
+        "-slidePos",
+        pathWithSlides.slide.Position.toString(),
+        "-existingUids",
+        ...existingUids,
+    ]);
+}

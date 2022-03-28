@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { Placeholder, PopupOptions, Presentation } from "../interfaces/interfaces";
+import { DuplicatedUids, Placeholder, PopupOptions, Presentation } from "../interfaces/interfaces";
 
 /**
  * This function is used to open any new Window
@@ -14,7 +14,7 @@ export default async function openWindow(
     browserWindow: BrowserWindow | null,
     htmlPath: string,
     options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[] | Placeholder[] | undefined,
+    data: PopupOptions | Presentation[] | Placeholder[] | DuplicatedUids | undefined,
 ) {
     const windowOptions = options;
     if (browserWindow && windowOptions?.modal) {
