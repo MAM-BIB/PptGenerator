@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace PptGenerator.CommandLine {
     class CommandLineArgumentParser {
+
+        /// <summary>
+        /// Get the matching CommandLineArgument for the given mode
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <returns>The matching CommandLineArgument for the given mode</returns>
         public static CommandLineArgument Parse(string[] args) {
             List<string> argList = new List<string>(args);
 
@@ -128,12 +134,24 @@ namespace PptGenerator.CommandLine {
             return new CommandLineArgument(Mode.undefined, "", null);
         }
 
+        /// <summary>
+        /// Get all CommandLineArguments for scan
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The CommandLineArgument for scan</returns>
         private static CommandLineArgument scanArgs(string[] args, List<string> argList) {
             string outPath = getOutPath(argList);
             List<string> inPaths = getInPath(argList);
             return new CommandLineArgument(Mode.scan, outPath, inPaths);
         }
 
+        /// <summary>
+        /// Get all CommandLineArguments for create
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The CommandLineArgument for create</returns>
         private static CommandLineArgument createArgs(string[] args, List<string> argList) {
             string outPath = getOutPath(argList);
             List<string> inPaths = getInPath(argList);
@@ -150,6 +168,12 @@ namespace PptGenerator.CommandLine {
             return new CommandLineArgument(Mode.create, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath, placeholders);
         }
 
+        /// <summary>
+        /// Get all CommandLineArguments for addUid
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The CommandLineArgument for addUid</returns>
         private static CommandLineArgument addUidArgs(string[] args, List<string> argList) {
             List<string> inPaths = getInPath(argList);
             List<string> existingUids = getArgument("-existingUids", args);
@@ -161,6 +185,11 @@ namespace PptGenerator.CommandLine {
             return new CommandLineArgument(Mode.addUid, inPaths, existingUids, slidePositions);
         }
 
+        /// <summary>
+        /// Parse -placeholders <name,value> (<name,value>? ...)
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <returns>The placeholders</returns>
         private static List<KeyValuePair<string, string>> getPlacehoders(string[] args) {
             List<KeyValuePair<string, string>> placeholders = new List<KeyValuePair<string, string>>();
             List<string> arguments = getArgument("-placeholders", args);
@@ -181,8 +210,8 @@ namespace PptGenerator.CommandLine {
         /// <summary>
         /// Parse -basePath <path>
         /// </summary>
-        /// <param name="argList"></param>
-        /// <returns></returns>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The basePath</returns>
         private static string getBasePath(List<string> argList) {
             string basePath = null;
             int basePathIndex = argList.IndexOf("-basePath");
@@ -201,8 +230,8 @@ namespace PptGenerator.CommandLine {
         /// <summary>
         /// Parse -slidePos <slidePos,slidePos,...>
         /// </summary>
-        /// <param name="argList"></param>
-        /// <returns></returns>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The slidePos</returns>
         private static List<uint> getSlidePositions(List<string> argList) {
             List<uint> slidePositions = new List<uint>();
 
@@ -228,8 +257,8 @@ namespace PptGenerator.CommandLine {
         /// <summary>
         /// Parse -inPath <path> (<path>? ...)
         /// </summary>
-        /// <param name="argList"></param>
-        /// <returns></returns>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The inPath</returns>
         private static List<string> getInPath(List<string> argList) {
             List<string> inPaths = new List<string>();
             int inIndex = argList.IndexOf("-inPath");
@@ -256,8 +285,8 @@ namespace PptGenerator.CommandLine {
         /// <summary>
         /// Parse the -outPath <path> argument
         /// </summary>
-        /// <param name="argList"></param>
-        /// <returns></returns>
+        /// <param name="argList">The args given to the program as List</param>
+        /// <returns>The outPath</returns>
         private static string getOutPath(List<string> argList) {
             string outPath = "";
             int outIndex = argList.IndexOf("-outPath");
@@ -274,11 +303,11 @@ namespace PptGenerator.CommandLine {
         }
 
         /// <summary>
-        /// Parse an argument and get the following argument that dont start with a dash
+        /// Parse an argument and get the following arguments that don't start with a dash
         /// </summary>
-        /// <param name="argument"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="argument">The argument name</param>
+        /// <param name="args">The args given to the program</param>
+        /// <returns>The following arguments that don't start with a dash</returns>
         public static List<string> getArgument(string argument, string[] args) {
             List<string> argList = new List<string>(args);
 
