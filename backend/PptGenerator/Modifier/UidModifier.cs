@@ -12,20 +12,10 @@ namespace PptGenerator.Modifier {
     class UidModifier {
 
         public static void modifyUids(CommandLineArgument clArg) {
-
-            for (int i = 0; i < 100; i++) {
-                Console.WriteLine(GenerateUID(clArg.ExistingUids));
-            }
-
-
-            Console.WriteLine(clArg);
-            Console.WriteLine(clArg.InPaths);
-            Console.WriteLine(clArg.InPaths.FirstOrDefault());
             string presentationPath = clArg.InPaths.FirstOrDefault();
             List<uint> slidePositions = clArg.SlidePos;
 
             using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationPath, true)) {
-
                 PresentationPart presentationPart = presentationDocument.PresentationPart;
                 Presentation presentation = presentationPart.Presentation;
 
@@ -42,45 +32,19 @@ namespace PptGenerator.Modifier {
 
                     NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
                     if (notesSlidePart == null) {
-
+                        Console.WriteLine("notesSlidePart == null");
                         notesSlidePart = slidePart.AddNewPart<NotesSlidePart>(slideId.RelationshipId);
-                        Console.WriteLine("Created");
+                        notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
                     }
-                    if (notesSlidePart.NotesSlide == null) {
-                        Console.WriteLine("NotesSlide is null");
 
-                        notesSlidePart.NotesSlide = new NotesSlide(
-                        new CommonSlideData(new ShapeTree(
-                          new NonVisualGroupShapeProperties(
-                            new NonVisualDrawingProperties() { Id = (UInt32Value)1U, Name = "" },
-                            new NonVisualGroupShapeDrawingProperties(),
-                            new ApplicationNonVisualDrawingProperties()),
-                            new GroupShapeProperties(new D.TransformGroup()),
-                            new Shape(
-                                new NonVisualShapeProperties(
-                                    new NonVisualDrawingProperties() { Id = (UInt32Value)2U, Name = "Slide Image Placeholder 1" },
-                                    new NonVisualShapeDrawingProperties(new D.ShapeLocks() { NoGrouping = true, NoRotation = true, NoChangeAspect = true }),
-                                    new ApplicationNonVisualDrawingProperties(new PlaceholderShape() { Type = PlaceholderValues.SlideImage })),
-                                new ShapeProperties()),
-                            new Shape(
-                                new NonVisualShapeProperties(
-                                    new NonVisualDrawingProperties() { Id = (UInt32Value)3U, Name = "Notes Placeholder 2" },
-                                    new NonVisualShapeDrawingProperties(new D.ShapeLocks() { NoGrouping = true }),
-                                    new ApplicationNonVisualDrawingProperties(new PlaceholderShape() { Type = PlaceholderValues.Body, Index = (UInt32Value)1U })),
-                                new ShapeProperties(),
-                                new TextBody(
-                                    new D.BodyProperties(),
-                                    new D.ListStyle(),
-                                    new D.Paragraph(
-                                        new D.Run(
-                                            new D.RunProperties() { Language = "en-US", Dirty = false },
-                                            new D.Text() { Text = GenerateUID(clArg.ExistingUids) }),
-                                        new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }))
-                                    ))),
-                        new ColorMapOverride(new D.MasterColorMapping())
-                        );
+                    Console.WriteLine("notesSlidePart");
+                    Console.WriteLine(notesSlidePart);
+                    Console.WriteLine(notesSlidePart.NotesSlide);
+
+                    if (notesSlidePart.NotesSlide == null) {
+                        notesSlidePart.NotesSlide = createNewNoteSlide(clArg);
                     } else {
-                        Shape bestShape = null;
+                        Shape bestShape = notesSlidePart.NotesSlide.Descendants<Shape>().FirstOrDefault();
                         foreach (Shape shape in notesSlidePart.NotesSlide.Descendants<Shape>()) {
                             if (shape.TextBody != null && (bestShape == null || bestShape.TextBody == null)) bestShape = shape;
                         }
@@ -95,105 +59,121 @@ namespace PptGenerator.Modifier {
                                     new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
                                 ));
                             } else {
-                                bestShape.TextBody.Append(new D.Paragraph(
-                                    new D.Run(
-                                        new D.RunProperties() { Language = "en-US", Dirty = false },
-                                        new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
-                                    ),
-                                    new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
-                                ));
+                                if (bestShape.TextBody.InnerText.ToLower().Contains("uid:")) {
+                                    if (bestShape.TextBody.InnerText.ToLower().Contains("uid:")) {
+                                        foreach (var paragraph in bestShape.TextBody.Descendants<D.Paragraph>()) {
+                                            int uidIndex = paragraph.InnerText.ToLower().IndexOf("uid:");
+                                            if (uidIndex >= 0) {
+                                                paragraph.RemoveAllChildren();
+                                                paragraph.Append(
+                                                    new D.Run(
+                                                        new D.RunProperties() { Language = "en-US", Dirty = false },
+                                                        new D.Text() { Text = "new " + GenerateUID(clArg.ExistingUids) }
+                                                    ),
+                                                    new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
+                                                );
+                                            }
+                                        }
+                                    } else {
+                                        bestShape.TextBody.Append(new D.Paragraph(
+                                           new D.Run(
+                                               new D.RunProperties() { Language = "en-US", Dirty = false },
+                                               new D.Text() { Text = GenerateUID(clArg.ExistingUids) }
+                                           ),
+                                           new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }
+                                       ));
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                presentation.Save();
-                presentationDocument.Close();
+                    presentation.Save();
+                    presentationDocument.Close();
+                }
             }
         }
 
-        private static D.Paragraph createParagraph(string uid) {
-            D.BodyProperties bodyProperties = new D.BodyProperties() { RightToLeftColumns = false, Anchor = D.TextAnchoringTypeValues.Center };
-            D.ListStyle listStyle = new D.ListStyle();
-
-            D.Paragraph paragraph = new D.Paragraph();
-
-            D.Text text = new D.Text();
-            text.Text = uid;
-            paragraph.Append(text);
-
-
-
-            D.ParagraphProperties paragraphProperties = new D.ParagraphProperties();
-            D.EndParagraphRunProperties endParagraphRunProperties = new D.EndParagraphRunProperties();
-
-            paragraph.Append(paragraphProperties);
-            paragraph.Append(endParagraphRunProperties);
-
-            return paragraph;
-
-            // textBody.Append(bodyProperties);
-            // textBody.Append(listStyle);
-        }
-
-
-        private void addNote(int index, string docName) {
-            string relId = "rId" + (index + 1);
-            using (PresentationDocument ppt = PresentationDocument.Open(docName, false)) {
-                PresentationPart part = ppt.PresentationPart;
-                OpenXmlElementList slideIds = part.Presentation.SlideIdList.ChildElements;
-
-                relId = (slideIds[index] as SlideId).RelationshipId;
-            }
-            using (PresentationDocument ppt = PresentationDocument.Open(docName, true)) {
-
-                PresentationPart presentationPart1 = ppt.PresentationPart;
-                SlidePart slidePart2 = (SlidePart)presentationPart1.GetPartById(relId);
-                NotesSlidePart notesSlidePart1;
-                string existingSlideNote = "";
-
-                if (slidePart2.NotesSlidePart != null) {
-                    //Appened new note to existing note.
-                    existingSlideNote = slidePart2.NotesSlidePart.NotesSlide.InnerText + "\n";
-                    var val = (NotesSlidePart)slidePart2.GetPartById(relId);
-                    notesSlidePart1 = slidePart2.AddPart<NotesSlidePart>(val, relId);
-                } else {
-                    //Add a new noteto a slide.                      
-                    notesSlidePart1 = slidePart2.AddNewPart<NotesSlidePart>(relId);
-                }
-
-                NotesSlide notesSlide = new NotesSlide(
-                    new CommonSlideData(new ShapeTree(
-                      new NonVisualGroupShapeProperties(
-                        new NonVisualDrawingProperties() { Id = (UInt32Value)1U, Name = "" },
-                        new NonVisualGroupShapeDrawingProperties(),
-                        new ApplicationNonVisualDrawingProperties()),
+        /// <summary>
+        /// Create a new NotesSlide with a new UID
+        /// </summary>
+        /// <param name="clArg">The commandline argument</param>
+        /// <returns>A new NotesSlide with a new UID</returns>
+        private static NotesSlide createNewNoteSlide(CommandLineArgument clArg) {
+            return new NotesSlide(
+                new CommonSlideData(
+                    new ShapeTree(
+                        new NonVisualGroupShapeProperties(
+                            new NonVisualDrawingProperties() {
+                                Id = (UInt32Value)1U,
+                                Name = ""
+                            },
+                            new NonVisualGroupShapeDrawingProperties(),
+                            new ApplicationNonVisualDrawingProperties()
+                        ),
                         new GroupShapeProperties(new D.TransformGroup()),
                         new Shape(
                             new NonVisualShapeProperties(
-                                new NonVisualDrawingProperties() { Id = (UInt32Value)2U, Name = "Slide Image Placeholder 1" },
-                                new NonVisualShapeDrawingProperties(new D.ShapeLocks() { NoGrouping = true, NoRotation = true, NoChangeAspect = true }),
-                                new ApplicationNonVisualDrawingProperties(new PlaceholderShape() { Type = PlaceholderValues.SlideImage })),
-                            new ShapeProperties()),
+                                new NonVisualDrawingProperties() {
+                                    Id = (UInt32Value)2U,
+                                    Name = "Slide Image Placeholder 1"
+                                },
+                                new NonVisualShapeDrawingProperties(
+                                    new D.ShapeLocks() {
+                                        NoGrouping = true,
+                                        NoRotation = true,
+                                        NoChangeAspect = true
+                                    }
+                                ),
+                                new ApplicationNonVisualDrawingProperties(
+                                    new PlaceholderShape() {
+                                        Type = PlaceholderValues.SlideImage
+                                    }
+                                )
+                            ),
+                            new ShapeProperties()
+                        ),
                         new Shape(
                             new NonVisualShapeProperties(
-                                new NonVisualDrawingProperties() { Id = (UInt32Value)3U, Name = "Notes Placeholder 2" },
-                                new NonVisualShapeDrawingProperties(new D.ShapeLocks() { NoGrouping = true }),
-                                new ApplicationNonVisualDrawingProperties(new PlaceholderShape() { Type = PlaceholderValues.Body, Index = (UInt32Value)1U })),
+                                new NonVisualDrawingProperties() {
+                                    Id = (UInt32Value)3U,
+                                    Name = "Notes Placeholder 2"
+                                },
+                                new NonVisualShapeDrawingProperties(
+                                    new D.ShapeLocks() { NoGrouping = true }
+                                ),
+                                new ApplicationNonVisualDrawingProperties(
+                                    new PlaceholderShape() {
+                                        Type = PlaceholderValues.Body,
+                                        Index = (UInt32Value)1U
+                                    }
+                                )
+                            ),
                             new ShapeProperties(),
                             new TextBody(
                                 new D.BodyProperties(),
                                 new D.ListStyle(),
                                 new D.Paragraph(
                                     new D.Run(
-                                        new D.RunProperties() { Language = "en-US", Dirty = false },
-                                        new D.Text() { Text = existingSlideNote + "Value Updated" }),
-                                    new D.EndParagraphRunProperties() { Language = "en-US", Dirty = false }))
-                                ))),
-                    new ColorMapOverride(new D.MasterColorMapping()));
-
-                notesSlidePart1.NotesSlide = notesSlide;
-            }
+                                        new D.RunProperties() {
+                                            Language = "en-US",
+                                            Dirty = false
+                                        },
+                                        new D.Text() {
+                                            Text = GenerateUID(clArg.ExistingUids)
+                                        }
+                                    ),
+                                    new D.EndParagraphRunProperties() {
+                                        Language = "en-US",
+                                        Dirty = false
+                                    }
+                                )
+                            )
+                        )
+                    )
+                ),
+                new ColorMapOverride(new D.MasterColorMapping())
+            );
         }
 
         /// <summary>
@@ -205,7 +185,7 @@ namespace PptGenerator.Modifier {
         private static string GenerateUID(List<string> existingUids, int iteration = 0) {
             string newUid = GenerateUrlSafeToken();
             if (existingUids.Contains(newUid)) {
-                if(iteration > 1000) {
+                if (iteration > 1000) {
                     throw new Exception("Could not generate a new uid!");
                 }
                 return GenerateUID(existingUids, ++iteration);
