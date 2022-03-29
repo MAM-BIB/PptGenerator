@@ -12,6 +12,7 @@ const saveBtn = document.querySelector(".save-btn") as HTMLButtonElement;
 const defaultExport = document.getElementById("default-export") as HTMLInputElement;
 const metaJson = document.getElementById("meta-json") as HTMLInputElement;
 const metaPics = document.getElementById("meta-pics") as HTMLInputElement;
+const backPath = document.getElementById("backup-path") as HTMLInputElement;
 const hiddenSlide = document.getElementById("ignore-hidden-slides-toggle-btn") as HTMLInputElement;
 const addBtn = document.getElementById("add-btn") as HTMLButtonElement;
 const newPresentationSection = document.getElementById("presentation-section") as HTMLDivElement;
@@ -47,7 +48,7 @@ deleteLanguageBtn.addEventListener("click", () => {
  * Adds event for add language button.
  */
 addLanguageBtn.addEventListener("click", () => {
-    addlanguage();
+    addLanguage();
 });
 
 /**
@@ -55,7 +56,7 @@ addLanguageBtn.addEventListener("click", () => {
  */
 languageInput.addEventListener("keydown", (e) => {
     if ((e as KeyboardEvent).key === "Enter") {
-        addlanguage();
+        addLanguage();
     }
 });
 
@@ -141,6 +142,14 @@ metaPics.addEventListener("change", () => {
 });
 
 /**
+ * Adds event to the backup input
+ */
+backPath.addEventListener("change", () => {
+    config.backupPath = backPath.value;
+    saveBtn.disabled = false;
+});
+
+/**
  * Adds event to the hidden slides toggle button
  */
 hiddenSlide.addEventListener("change", () => {
@@ -179,6 +188,7 @@ function fillInput() {
     defaultExport.value = config.defaultExportPath;
     metaJson.value = config.metaJsonPath;
     metaPics.value = config.metaPicsPath;
+    backPath.value = config.backupPath;
     hiddenSlide.checked = !config.ignoreHiddenSlides;
 }
 
@@ -260,7 +270,7 @@ function deleteLanguage() {
  * This function adds a new Language. The input gets validated by the program and then added to the config.
  * When a new language was added the input will be updated and the newly added language will be selected.
  */
-function addlanguage() {
+function addLanguage() {
     if (!languageInput.classList.contains("show")) {
         languageInput.classList.add("show");
         languageInput.focus();

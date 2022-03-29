@@ -22,6 +22,7 @@ async function bundleElectronApp(options) {
     fs.mkdirSync("../dist/pptgenerator-win32-x64/config/presets", { recursive: true });
     fs.mkdirSync("../dist/pptgenerator-win32-x64/config/assets");
     fs.mkdirSync("../dist/pptgenerator-win32-x64/export");
+    fs.mkdirSync("../dist/pptgenerator-win32-x64/backup");
     fs.mkdirSync("../dist/pptgenerator-win32-x64/meta/pics", { recursive: true });
 
     fs.copyFileSync("./packager/config.json", "../dist/pptgenerator-win32-x64/config/config.json");

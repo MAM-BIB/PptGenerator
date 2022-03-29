@@ -33,6 +33,7 @@ export interface Config {
     ignoreHiddenSlides: boolean;
     basePath: string;
     defaultExportPath: string;
+    backupPath: string;
     showTutorial: boolean;
 }
 
@@ -53,7 +54,9 @@ export interface PopupOptions {
     heading?: string;
     text?: string;
     primaryButton?: string;
+    primaryTooltip?: string;
     secondaryButton?: string;
+    secondaryTooltip?: string;
     answer?: boolean | string;
 }
 
