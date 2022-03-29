@@ -130,3 +130,38 @@ Since the UIDs are required and every slide from your collections needs to a uni
 ## Usage  
 
 <br />
+
+### Scanning a Presentation  
+When you start the program for the first time you don't have slides on the left side. When you added a presentation in your settings, you can Scan all the added pptx-files.
+When dong that all the necessary information will be saved in a meta.json. The location to that json is set in you options. The GUI only loads slides from that meta file
+so that you don't scan a presentation every time you start the program. However you should scan your presentation once a day when multiple people can edit your collection.  
+<br />
+While scanning your presentations the program will check the uids from all slides. If there is anything wrong with them the program will warn you and give you the options
+to fix the problem automatically by generating new UIDs for the slides or let you fix it manually.
+
+<br />
+
+### Create a Presentation  
+You can create a new presentation out of the slides from your collections. You simply click on one slide to toggle a selection.
+If a slide is selected they appear on the right side under the header New Presentation. After you selected all slides you want you can click on export.
+Then a new window will open where you need to enter a name for the presentation and set a location where it will be saved.
+
+<br />
+
+### Replace Placeholder  
+If one of the selected slides contains at least one Placeholder an other window will open before you get to the export window.
+There you can enter a value for all placeholders that are found in the slides you selected.
+It is important that a placeholder is formatted like this: `~$Placeholder$~`
+
+<br />
+
+### Create and Load Templates  
+While creating a new presentation you have the option to select that you want to create a preset of this presentation. That means while creating a pptx file,
+the program will also create a .json file with the name you entered for the presentation in the preset path that is set in the config (You can change this in the options).
+After you created this file, you have the ability to load this json, so the program will select all slides that were selected when creating this preset.
+
+
+<br />
+
+### Loading a Pptx File  
+When you didn't create a preset you have the ability to load a pptx file directly. When doing this the program will select all slides in that are in the pptx file based on the UID. When there are slides with UIDs that are not in your collections, the program will give you a warning with the slides. 

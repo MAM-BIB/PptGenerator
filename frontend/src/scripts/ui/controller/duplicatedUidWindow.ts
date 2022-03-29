@@ -154,6 +154,12 @@ function createCheckbox(slide: PathWithSlides): HTMLDivElement {
     inputCheckbox.addEventListener("change", () => {
         changeUidsBtn.disabled = false;
     });
+    inputCheckbox.addEventListener("keydown", (e) => {
+        if ((e as KeyboardEvent).key === "Enter") {
+            inputCheckbox.checked = !inputCheckbox.checked;
+            changeUidsBtn.disabled = false;
+        }
+    });
 
     inputsWithMatchingSlides.push({
         input: inputCheckbox,
