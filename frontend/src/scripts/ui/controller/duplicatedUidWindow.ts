@@ -1,26 +1,37 @@
 import { ipcRenderer } from "electron";
 import path from "path";
+import fsBase from "fs";
+import call from "../../helper/systemcall";
 
-import { DuplicatedUids, PathWithSlides } from "../../interfaces/interfaces";
+import { DuplicatedUids, PathWithSlides, Slide } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
+import { getConfig } from "../../config";
+import { startLoading } from "../components/loading";
+import openPopup from "../../helper/openPopup";
 
 const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const changeUidsBtn = document.getElementById("change-uids-btn") as HTMLButtonElement;
 
-let options: DuplicatedUids;
+const inputsWithMatchingSlides: { input: HTMLInputElement; slide: PathWithSlides }[] = [];
+
+let duplicatedUids: DuplicatedUids;
+const fs = fsBase.promises;
 
 /**
  * This will be called when the window opens
  */
 ipcRenderer.on("data", (event, data) => {
+    duplicatedUids = data;
+    const duplicatedUidSlides = duplicatedUids.uid;
+
     initTitlebar({
         resizable: false,
         menuHidden: true,
         title: "PptGenerator-duplicated Uids",
+        closeBtnMsg: duplicatedUids.answer as string,
     });
-    options = data;
-    const duplicatedUidSlides = options.uid;
+
     for (const uid in duplicatedUidSlides) {
         if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
             createMainDiv(uid, duplicatedUidSlides[uid]);
@@ -29,17 +40,19 @@ ipcRenderer.on("data", (event, data) => {
 });
 
 /**
- * Adds the eventListener vor the cancel button
+ * Adds the eventListener for the cancel button
  */
 cancelBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke("closeFocusedWindow");
+    ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", false);
 });
 
 /**
- * Adds the eventListener vor the change uid button
+ * Adds the eventListener for the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
-    // call();
+    startLoading();
+    await replaceDuplicated();
+    ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", true);
 });
 
 /**
@@ -59,7 +72,7 @@ function createMainDiv(uid: string, slides: PathWithSlides[]) {
     uidMainDiv.appendChild(duplicatedUidTitleContainer);
 
     for (const slide of slides) {
-        createDivPresentationName(slide, uidMainDiv);
+        uidMainDiv.appendChild(createDivPresentationName(slide));
     }
     const presentationNameContainer = document.createElement("div");
     presentationNameContainer.className = "presNameContainer";
@@ -84,9 +97,9 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
 /**
  * This Functions creates a div where the Name of the presentation and slides are in.
  * @param slide The slide that has a duplicated UID.
- * @param uidMainDiv The UID that is duplicated.
+ * @returns The div in which the PresentationName will be in.
  */
-function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivElement) {
+function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentationame";
 
@@ -95,17 +108,17 @@ function createDivPresentationName(slide: PathWithSlides, uidMainDiv: HTMLDivEle
     presentationName.textContent = `${path.parse(slide.path).name}`;
     presentationDiv.appendChild(presentationName);
 
-    createDivSlideName(slide, presentationDiv);
+    presentationDiv.appendChild(createDivSlideName(slide));
 
-    uidMainDiv.appendChild(presentationDiv);
+    return presentationDiv;
 }
 
 /**
  * This function creates the slide with the name and position of the slide.
  * @param slide The slide that has a duplicated UID.
- * @param presentationDiv The div in which the will be in.
+ * @returns The div in which the SlideName will be in.
  */
-function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivElement) {
+function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
     const slideDiv = document.createElement("div");
     slideDiv.className = "slidename-with-checkbox";
 
@@ -115,16 +128,16 @@ function createDivSlideName(slide: PathWithSlides, presentationDiv: HTMLDivEleme
 
     slideDiv.appendChild(slideName);
 
-    createCheckbox(slideDiv);
+    slideDiv.appendChild(createCheckbox(slide));
 
-    presentationDiv.appendChild(slideDiv);
+    return slideDiv;
 }
 
 /**
  * This function creates a checkbox to select a slide.
- * @param slideDiv The div where it will be in.
+ * @returns The div in which the checkbox will be in
  */
-function createCheckbox(slideDiv: HTMLDivElement) {
+function createCheckbox(slide: PathWithSlides): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
 
@@ -140,6 +153,12 @@ function createCheckbox(slideDiv: HTMLDivElement) {
     inputCheckbox.addEventListener("change", () => {
         changeUidsBtn.disabled = false;
     });
+
+    inputsWithMatchingSlides.push({
+        input: inputCheckbox,
+        slide,
+    });
+
     switchLbl.appendChild(inputCheckbox);
 
     const spanSlider = document.createElement("span");
@@ -150,5 +169,68 @@ function createCheckbox(slideDiv: HTMLDivElement) {
     checkboxDiv.appendChild(switchLbl);
 
     sectionToggleBtnDiv.appendChild(checkboxDiv);
-    slideDiv.appendChild(sectionToggleBtnDiv);
+
+    return sectionToggleBtnDiv;
+}
+
+/**
+ * This function replaces all uids from the selected slides
+ */
+async function replaceDuplicated() {
+    const uidChangeMap: { [path: string]: Slide[] } = {};
+
+    for (const inputWithMatchingSlide of inputsWithMatchingSlides) {
+        if (inputWithMatchingSlide.input.checked) {
+            const normalizedPath = path.normalize(inputWithMatchingSlide.slide.path);
+            if (!uidChangeMap[normalizedPath]) {
+                uidChangeMap[normalizedPath] = [];
+            }
+            uidChangeMap[normalizedPath].push(inputWithMatchingSlide.slide.slide);
+        }
+    }
+
+    // informs the user about a backup
+    await openPopup({
+        text: `Backup will be created at: ${getConfig().backupPath}`,
+        heading: "Info",
+        answer: true,
+    });
+
+    try {
+        for (const normalizedPath in uidChangeMap) {
+            if (Object.prototype.hasOwnProperty.call(uidChangeMap, normalizedPath)) {
+                // eslint-disable-next-line no-await-in-loop
+                await changeUid(normalizedPath, uidChangeMap[normalizedPath], duplicatedUids.existingUids ?? []);
+            }
+        }
+    } catch (error) {
+        // popup if the core application failed
+        await openPopup({
+            text: `The process exited with errors!\n${error}`,
+            heading: "Error",
+            answer: true,
+        });
+    }
+}
+
+/**
+ * The function changes the uid for one slide
+ * @param pathWithSlides The slide with the path that gets a new uid
+ * @param existingUids All existings uids in the saved presentations
+ */
+async function changeUid(normalizedPath: string, slides: Slide[], existingUids: string[]) {
+    // creating a backup before changing the presentation
+    await fs.copyFile(normalizedPath, path.join(getConfig().backupPath, path.basename(normalizedPath)));
+
+    // calling the core application
+    await call(getConfig().coreApplication, [
+        "-mode",
+        "addUid",
+        "-inPath",
+        normalizedPath,
+        "-slidePos",
+        slides.map((slide) => slide.Position).join(","),
+        "-existingUids",
+        ...existingUids,
+    ]);
 }
