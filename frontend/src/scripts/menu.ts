@@ -78,7 +78,18 @@ export default function initMenu(mainWindow: BrowserWindow) {
         const menu = Menu.buildFromTemplate([
             {
                 label: "File",
-                submenu: [],
+                submenu: [
+                    {
+                        label: "Open Dev tools",
+                        accelerator: "F12",
+                        click(item, focusedWindow) {
+                            focusedWindow?.webContents.openDevTools();
+                            if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
+                                focusedWindow.setSize(800, focusedWindow.getSize()[1]);
+                            }
+                        },
+                    },
+                ],
             },
         ]);
 
