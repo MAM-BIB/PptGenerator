@@ -176,13 +176,14 @@ export async function checkUids(): Promise<boolean> {
     const nrOfDuplicatedUidSlides = Object.keys(duplicatedUidSlides).length;
 
     if (nrOfDuplicatedUidSlides > 0) {
-        duplicatedUidWindow({
+        return !(await duplicatedUidWindow({
             uid: duplicatedUidSlides,
             existingUids: presentations
                 .flatMap((presentation) => presentation.Sections)
                 .flatMap((section) => section.Slides)
                 .map((slide) => slide.Uid),
-        });
+            answer: true,
+        }));
     }
 
     return true;

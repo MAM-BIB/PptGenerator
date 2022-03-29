@@ -6,6 +6,8 @@ import call from "../../helper/systemcall";
 import { DuplicatedUids, PathWithSlides, Slide } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
 import { getConfig } from "../../config";
+import { startLoading } from "../components/loading";
+import openPopup from "../../helper/openPopup";
 
 const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -20,13 +22,16 @@ const fs = fsBase.promises;
  * This will be called when the window opens
  */
 ipcRenderer.on("data", (event, data) => {
+    duplicatedUids = data;
+    const duplicatedUidSlides = duplicatedUids.uid;
+
     initTitlebar({
         resizable: false,
         menuHidden: true,
         title: "PptGenerator-duplicated Uids",
+        closeBtnMsg: duplicatedUids.answer as string,
     });
-    duplicatedUids = data;
-    const duplicatedUidSlides = duplicatedUids.uid;
+
     for (const uid in duplicatedUidSlides) {
         if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
             createMainDiv(uid, duplicatedUidSlides[uid]);
@@ -38,15 +43,16 @@ ipcRenderer.on("data", (event, data) => {
  * Adds the eventListener for the cancel button
  */
 cancelBtn.addEventListener("click", async () => {
-    await ipcRenderer.invoke("closeFocusedWindow");
+    ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", false);
 });
 
 /**
  * Adds the eventListener for the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
+    startLoading();
     await replaceDuplicated();
-    await ipcRenderer.invoke("closeFocusedWindow");
+    ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", true);
 });
 
 /**
@@ -183,10 +189,27 @@ async function replaceDuplicated() {
         }
     }
 
-    for (const normalizedPath in uidChangeMap) {
-        if (Object.prototype.hasOwnProperty.call(uidChangeMap, normalizedPath)) {
-            changeUid(path, uidChangeMap[normalizedPath], duplicatedUids.existingUids ?? []);
+    // informs the user about a backup
+    await openPopup({
+        text: `Backup will be created at: ${getConfig().backupPath}`,
+        heading: "Info",
+        answer: true,
+    });
+
+    try {
+        for (const normalizedPath in uidChangeMap) {
+            if (Object.prototype.hasOwnProperty.call(uidChangeMap, normalizedPath)) {
+                // eslint-disable-next-line no-await-in-loop
+                await changeUid(normalizedPath, uidChangeMap[normalizedPath], duplicatedUids.existingUids ?? []);
+            }
         }
+    } catch (error) {
+        // popup if the core application failed
+        await openPopup({
+            text: `The process exited with errors!\n${error}`,
+            heading: "Error",
+            answer: true,
+        });
     }
 }
 

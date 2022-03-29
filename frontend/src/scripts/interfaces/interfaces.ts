@@ -89,4 +89,5 @@ export interface SlidesWithPath {
 export interface DuplicatedUids {
     uid?: UidsWithSlides;
     existingUids?: string[];
+    answer?: boolean | string;
 }
