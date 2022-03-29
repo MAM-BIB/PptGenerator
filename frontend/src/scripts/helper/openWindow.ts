@@ -28,7 +28,11 @@ export default async function openWindow(
     window.loadFile(indexHTML);
 
     window?.on("close", () => {
-        browserWindow?.focus();
+        if (window.getParentWindow()) {
+            window.getParentWindow()?.focus();
+        } else {
+            browserWindow?.focus();
+        }
     });
 
     if (data) {
