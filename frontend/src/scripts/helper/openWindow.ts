@@ -18,7 +18,7 @@ export default async function openWindow(
 ) {
     const windowOptions = options;
     if (browserWindow && windowOptions?.modal) {
-        // windowOptions.parent = browserWindow;
+        windowOptions.parent = browserWindow;
     }
 
     const window = new BrowserWindow(windowOptions);
@@ -26,6 +26,10 @@ export default async function openWindow(
     const indexHTML = path.join(__dirname, "../views", htmlPath);
 
     window.loadFile(indexHTML);
+
+    window?.on("close", () => {
+        browserWindow?.focus();
+    });
 
     if (data) {
         if ((data as PopupOptions).answer) {
