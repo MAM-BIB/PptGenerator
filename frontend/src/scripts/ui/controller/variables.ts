@@ -28,18 +28,17 @@ ipcRenderer.on("data", (event, data) => {
 
     // if there are placeholders no placeholder objects it will create new objects and saves them the array
     if (placeholders.length === 0) {
-        for (const presentation of presentations) {
-            for (const section of presentation.Sections) {
-                for (const slide of section.Slides) {
-                    for (const placeholder of slide.Placeholders) {
-                        variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length));
-                        placeholders.push({
-                            name: placeholder,
-                            value: "",
-                        });
-                    }
-                }
-            }
+        for (const placeholder of new Set<string>(
+            presentations
+                .flatMap((presentation) => presentation.Sections)
+                .flatMap((section) => section.Slides)
+                .flatMap((slide) => slide.Placeholders),
+        )) {
+            variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length));
+            placeholders.push({
+                name: placeholder,
+                value: "",
+            });
         }
     } else {
         // if there are it will take these and save them
@@ -72,7 +71,7 @@ setBtn.addEventListener("click", async () => {
                     contextIsolation: false,
                 },
                 autoHideMenuBar: true,
-                modal: false,
+                modal: true,
             },
             {
                 presentations,
