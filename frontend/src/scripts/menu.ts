@@ -115,7 +115,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
 export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({
         width: 600,
-        height: 600,
+        height: 700,
         resizable: false,
         useContentSize: true,
         frame: false,
