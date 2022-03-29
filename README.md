@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-        ![logo](./pics/pptLogo128x128.png)
+        <img src="pics/pptLogo128x128.png" alt="Logo" width="80" height="80">
     <h3 align="center">PptGenerator</h3>
     <p align="center">
         A software to manage huge PowerPoint slide collections.
@@ -17,7 +17,7 @@
 <br />
   
 <div align="center">
-    ![window](./pics/ProgrammScreenshot.png)
+    <img src="pics/ProgrammScreenshot.png" alt="Logo" width="1000" height="563">
 </div>  
 
 <br />
