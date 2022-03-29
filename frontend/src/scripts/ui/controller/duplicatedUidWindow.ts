@@ -3,7 +3,7 @@ import path from "path";
 import fsBase from "fs";
 import call from "../../helper/systemcall";
 
-import { DuplicatedUids, PathWithSlides } from "../../interfaces/interfaces";
+import { DuplicatedUids, PathWithSlides, Slide } from "../../interfaces/interfaces";
 import initTitlebar from "../components/titlebar";
 import { getConfig } from "../../config";
 
@@ -11,7 +11,9 @@ const duplicatedUidSection = document.getElementById("duplicated-uid-section") a
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const changeUidsBtn = document.getElementById("change-uids-btn") as HTMLButtonElement;
 
-let options: DuplicatedUids;
+const inputsWithMatchingSlides: { input: HTMLInputElement; slide: PathWithSlides }[] = [];
+
+let duplicatedUids: DuplicatedUids;
 const fs = fsBase.promises;
 
 /**
@@ -23,8 +25,8 @@ ipcRenderer.on("data", (event, data) => {
         menuHidden: true,
         title: "PptGenerator-duplicated Uids",
     });
-    options = data;
-    const duplicatedUidSlides = options.uid;
+    duplicatedUids = data;
+    const duplicatedUidSlides = duplicatedUids.uid;
     for (const uid in duplicatedUidSlides) {
         if (Object.prototype.hasOwnProperty.call(duplicatedUidSlides, uid)) {
             createMainDiv(uid, duplicatedUidSlides[uid]);
@@ -125,7 +127,6 @@ function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
     return slideDiv;
 }
 
-const checkboxary: { input: HTMLInputElement; slide: PathWithSlides }[] = [];
 /**
  * This function creates a checkbox to select a slide.
  * @returns The div in which the checkbox will be in
@@ -147,7 +148,7 @@ function createCheckbox(slide: PathWithSlides): HTMLDivElement {
         changeUidsBtn.disabled = false;
     });
 
-    checkboxary.push({
+    inputsWithMatchingSlides.push({
         input: inputCheckbox,
         slide,
     });
@@ -170,9 +171,21 @@ function createCheckbox(slide: PathWithSlides): HTMLDivElement {
  * This function replaces all uids from the selected slides
  */
 async function replaceDuplicated() {
-    for (const item of checkboxary) {
-        if (item.input.checked) {
-            changeUid(item.slide, options.existingUids ?? []);
+    const uidChangeMap: { [path: string]: Slide[] } = {};
+
+    for (const inputWithMatchingSlide of inputsWithMatchingSlides) {
+        if (inputWithMatchingSlide.input.checked) {
+            const normalizedPath = path.normalize(inputWithMatchingSlide.slide.path);
+            if (!uidChangeMap[normalizedPath]) {
+                uidChangeMap[normalizedPath] = [];
+            }
+            uidChangeMap[normalizedPath].push(inputWithMatchingSlide.slide.slide);
+        }
+    }
+
+    for (const normalizedPath in uidChangeMap) {
+        if (Object.prototype.hasOwnProperty.call(uidChangeMap, normalizedPath)) {
+            changeUid(path, uidChangeMap[normalizedPath], duplicatedUids.existingUids ?? []);
         }
     }
 }
@@ -182,18 +195,18 @@ async function replaceDuplicated() {
  * @param pathWithSlides The slide with the path that gets a new uid
  * @param existingUids All existings uids in the saved presentations
  */
-async function changeUid(pathWithSlides: PathWithSlides, existingUids: string[]) {
+async function changeUid(normalizedPath: string, slides: Slide[], existingUids: string[]) {
     // creating a backup before changing the presentation
-    await fs.copyFile(pathWithSlides.path, path.join(getConfig().backupPath, path.basename(pathWithSlides.path)));
+    await fs.copyFile(normalizedPath, path.join(getConfig().backupPath, path.basename(normalizedPath)));
 
     // calling the core application
     await call(getConfig().coreApplication, [
         "-mode",
         "addUid",
         "-inPath",
-        pathWithSlides.path,
+        normalizedPath,
         "-slidePos",
-        pathWithSlides.slide.Position.toString(),
+        slides.map((slide) => slide.Position).join(","),
         "-existingUids",
         ...existingUids,
     ]);
