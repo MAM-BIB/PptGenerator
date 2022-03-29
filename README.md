@@ -1,9 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <a href="https://github.com/othneildrew/Best-README-Template">
-        <img src="./pics/pptLogo128x128.png" alt="Logo" width="80" height="80">
-    </a>
+        ![logo](./pics/pptLogo128x128.png)
     <h3 align="center">PptGenerator</h3>
     <p align="center">
         A software to manage huge PowerPoint slide collections.
@@ -19,7 +17,7 @@
 <br />
   
 <div align="center">
-    <img src="./pics/ProgrammScreenshot.png" alt="Logo" width="1000" height="563">
+    ![window](./pics/ProgrammScreenshot.png)
 </div>  
 
 <br />
