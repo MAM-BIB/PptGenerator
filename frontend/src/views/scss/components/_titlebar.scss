@@ -192,6 +192,12 @@
                         display: flex;
                     }
                 }
+
+                &:focus-within {
+                    ul {
+                        display: flex;
+                    }
+                }
             }
         }
     }
