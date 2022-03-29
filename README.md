@@ -17,7 +17,7 @@
 <br />
   
 <div align="center">
-    <img src="pics/ProgrammScreenshot.png" alt="Logo" width="1000" height="563">
+    <img src="pics/ProgrammScreenshot.png" alt="Main Window" width="1000" height="563">
 </div>  
 
 <br />
@@ -46,14 +46,12 @@ A UID is written in the notes a presentation and looks like this:
 Since the UIDs are required and every slide from your collections needs to a unique one, the program will check the UIDs and tells if the UIDs are missing or if there a duplicated ones. You will then have the ability to change them manually or let the program do it for you.
 
 <br />
-<br />
 
 ### Built With  
 
 * [Electron](https://www.electronjs.org/)
 * [Open XML SDK](https://docs.microsoft.com/de-de/office/open-xml/open-xml-sdk)
 
-<br />
 <br />
 
 <!-- GETTING STARTED -->
@@ -127,10 +125,8 @@ Since the UIDs are required and every slide from your collections needs to a uni
    ```
 
 <br />
-<br />
 
 <!-- USAGE -->
 ## Usage  
 
-<br />
 <br />
