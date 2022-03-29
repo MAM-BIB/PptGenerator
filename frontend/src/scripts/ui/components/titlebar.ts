@@ -1,4 +1,6 @@
 import { ipcRenderer } from "electron";
+import openPopup from "../../helper/openPopup";
+import isRunning, { killPpt, sleep } from "../../helper/processManager";
 import { TitlebarOptions } from "../../interfaces/interfaces";
 
 /**
@@ -187,8 +189,26 @@ function createFileMenu(mainFileLi: HTMLElement) {
     scanBtn.innerText = "Scan";
     scanBtn.appendChild(createHotkey("CTRL+I"));
 
-    scanBtn.addEventListener("click", () => {
-        ipcRenderer.invoke("ScanWindow");
+    scanBtn.addEventListener("click", async () => {
+        if (isRunning("POWERPNT")) {
+            const awnser = await openPopup({
+                text: "We detected that PowerPoint is open. Please close the process",
+                heading: "Warning",
+                primaryButton: "Kill PowerPoint",
+                secondaryButton: "Cancel",
+                answer: true,
+            });
+            if (awnser) {
+                killPpt();
+                while (isRunning("POWERPNT")) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await sleep(1000);
+                }
+                ipcRenderer.invoke("ScanWindow");
+            }
+        } else {
+            ipcRenderer.invoke("ScanWindow");
+        }
     });
     scanLi.appendChild(scanBtn);
     fileUl.appendChild(scanLi);
