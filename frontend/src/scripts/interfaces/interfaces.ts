@@ -88,9 +88,6 @@ export interface SlidesWithPath {
 
 export interface DuplicatedUids {
     uid?: UidsWithSlides;
-    uidTitle?: string;
-    pptTitle?: string;
-    slideName?: string;
-    primaryButton?: string;
-    secondaryButton?: string;
+    existingUids?: string[];
+    answer?: boolean | string;
 }

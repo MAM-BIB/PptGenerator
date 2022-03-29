@@ -10,7 +10,7 @@ import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
-import isRunning from "../../helper/processManager";
+import isRunning, { killPpt } from "../../helper/processManager";
 
 const fs = fsBase.promises;
 
@@ -141,7 +141,16 @@ function handleSelectionChange() {
 exportBtn.addEventListener("click", async () => {
     // warns if powerpoint is open
     if (isRunning("POWERPNT")) {
-        openPopup({ text: "We detected that PowerPoint is open. Please close the process", heading: "Warning" });
+        const awnser = await openPopup({
+            text: "We detected that PowerPoint is open. Please close the process",
+            heading: "Warning",
+            primaryButton: "Kill PowerPoint",
+            secondaryButton: "Cancel",
+            answer: true,
+        });
+        if (awnser) {
+            killPpt();
+        }
     } else if (foundVariables()) {
         // opens variables window if variables were found
         await ipcRenderer.invoke(
@@ -158,7 +167,7 @@ exportBtn.addEventListener("click", async () => {
                     contextIsolation: false,
                 },
                 autoHideMenuBar: true,
-                modal: false,
+                modal: true,
             },
             {
                 presentations,

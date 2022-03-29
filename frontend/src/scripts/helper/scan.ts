@@ -143,14 +143,10 @@ export async function checkUids(): Promise<boolean> {
         // if the user wants the program to generate UIDs for slides with wrong uids
         if (answer) {
             // get all existing UIDs
-            const existingUids: string[] = [];
-            for (const presentation of presentations) {
-                for (const section of presentation.Sections) {
-                    for (const slide of section.Slides) {
-                        existingUids.push(slide.Uid);
-                    }
-                }
-            }
+            const existingUids = presentations
+                .flatMap((presentation) => presentation.Sections)
+                .flatMap((section) => section.Slides)
+                .map((slide) => slide.Uid);
             // informs the user about a backup
             await openPopup({
                 text: `Backup will be created at: ${getConfig().backupPath}`,
@@ -180,9 +176,14 @@ export async function checkUids(): Promise<boolean> {
     const nrOfDuplicatedUidSlides = Object.keys(duplicatedUidSlides).length;
 
     if (nrOfDuplicatedUidSlides > 0) {
-        duplicatedUidWindow({
+        return !(await duplicatedUidWindow({
             uid: duplicatedUidSlides,
-        });
+            existingUids: presentations
+                .flatMap((presentation) => presentation.Sections)
+                .flatMap((section) => section.Slides)
+                .map((slide) => slide.Uid),
+            answer: true,
+        }));
     }
 
     return true;
