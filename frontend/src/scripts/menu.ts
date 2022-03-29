@@ -61,6 +61,8 @@ export default function initMenu(mainWindow: BrowserWindow) {
                                     }
                                     scanPresentations(focusedWindow);
                                 }
+                            } else {
+                                scanPresentations(focusedWindow);
                             }
                         },
                     },
