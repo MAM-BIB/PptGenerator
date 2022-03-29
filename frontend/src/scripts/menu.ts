@@ -3,7 +3,7 @@ import path from "path";
 
 import { getConfig } from "./config";
 import openPopup from "./helper/openPopup";
-import isRunning from "./helper/processManager";
+import isRunning, { killPpt, sleep } from "./helper/processManager";
 import reload from "./helper/reload";
 import scanPresentations from "./helper/scan";
 
@@ -46,12 +46,21 @@ export default function initMenu(mainWindow: BrowserWindow) {
                         accelerator: "CmdOrCtrl+I",
                         async click(item, focusedWindow) {
                             if (isRunning("POWERPNT")) {
-                                openPopup({
+                                const awnser = await openPopup({
                                     text: "We detected that PowerPoint is open. Please close the process",
                                     heading: "Warning",
+                                    primaryButton: "Kill PowerPoint",
+                                    secondaryButton: "Cancel",
+                                    answer: true,
                                 });
-                            } else {
-                                scanPresentations(focusedWindow);
+                                if (awnser) {
+                                    killPpt();
+                                    while (isRunning("POWERPNT")) {
+                                        // eslint-disable-next-line no-await-in-loop
+                                        await sleep(1000);
+                                    }
+                                    scanPresentations(focusedWindow);
+                                }
                             }
                         },
                     },
