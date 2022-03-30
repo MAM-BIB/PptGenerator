@@ -102,7 +102,7 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
  */
 function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
     const presentationDiv = document.createElement("div");
-    presentationDiv.className = "presentationame";
+    presentationDiv.className = "presentation-name";
 
     const presentationName = document.createElement("h3");
     presentationName.className = "";
@@ -121,7 +121,7 @@ function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
  */
 function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
     const slideDiv = document.createElement("div");
-    slideDiv.className = "slidename-with-checkbox";
+    slideDiv.className = "slide-name-with-checkbox";
 
     const slideName = document.createElement("label");
     slideName.className = "slide-name";
@@ -224,7 +224,7 @@ async function replaceDuplicated() {
 /**
  * The function changes the uid for one slide
  * @param pathWithSlides The slide with the path that gets a new uid
- * @param existingUids All existings uids in the saved presentations
+ * @param existingUids All existing uids in the saved presentations
  */
 async function changeUid(normalizedPath: string, slides: Slide[], existingUids: string[]) {
     // creating a backup before changing the presentation
