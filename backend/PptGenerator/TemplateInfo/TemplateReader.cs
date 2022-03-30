@@ -107,6 +107,7 @@ namespace PptGenerator.TemplateInfo {
         /// <returns>A Slide object created form the slidePart</returns>
         private static Slide getSlideFromPart(uint position, SlideId slideId, SlidePart slidePart) {
             string title = "";
+            Console.WriteLine("hash: " + slidePart.GetHashCode());
             try {
                 title = GetSlideTitle(slidePart);
             } catch (Exception) { }
@@ -177,7 +178,12 @@ namespace PptGenerator.TemplateInfo {
             });
         }
 
-        // Get the title string of the slide.
+        /// <summary>
+        /// Get the title string of the slide.
+        /// This is a method form the microsoft docs
+        /// </summary>
+        /// <param name="slidePart"></param>
+        /// <returns></returns>
         public static string GetSlideTitle(SlidePart slidePart) {
             if (slidePart == null) {
                 throw new ArgumentNullException("presentationDocument");
@@ -214,7 +220,12 @@ namespace PptGenerator.TemplateInfo {
             return string.Empty;
         }
 
-        // Determines whether the shape is a title shape.
+        /// <summary>
+        /// Determines whether the shape is a title shape.
+        /// This is a method form the microsoft docs
+        /// </summary>
+        /// <param name="shape">The shape</param>
+        /// <returns></returns>
         private static bool IsTitleShape(Shape shape) {
             var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
             if (placeholderShape != null && placeholderShape.Type != null && placeholderShape.Type.HasValue) {

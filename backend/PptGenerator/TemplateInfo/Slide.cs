@@ -18,6 +18,15 @@ namespace PptGenerator.TemplateInfo {
         public string Title { get => _title; set => _title = value; }
         public List<string> Placeholders { get => _placeholders; set => _placeholders = value; }
 
+        /// <summary>
+        /// Create an object of class Slide
+        /// </summary>
+        /// <param name="relationshipId">The relationshipId of the slide</param>
+        /// <param name="uid">The uid of the slide</param>
+        /// <param name="position">The position in it's presentation</param>
+        /// <param name="title">The title of the slide</param>
+        /// <param name="isHidden">If the slide is hidden in it's presentation</param>
+        /// <param name="placeholders">All placeholders of the slide</param>
         public Slide(string relationshipId, string uid, uint position, string title, bool isHidden = false, List<String> placeholders = null) {
             RelationshipId = relationshipId;
             Uid = uid;
