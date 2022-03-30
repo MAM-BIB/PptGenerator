@@ -151,8 +151,15 @@ function createCheckbox(slide: PathWithSlides): HTMLDivElement {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.type = "checkbox";
     inputCheckbox.id = "ignore-hidden-slides-toggle-btn";
+    inputCheckbox.checked = true;
     inputCheckbox.addEventListener("change", () => {
         changeUidsBtn.disabled = false;
+    });
+    inputCheckbox.addEventListener("keydown", (e) => {
+        if ((e as KeyboardEvent).key === "Enter") {
+            inputCheckbox.checked = !inputCheckbox.checked;
+            changeUidsBtn.disabled = false;
+        }
     });
 
     inputsWithMatchingSlides.push({

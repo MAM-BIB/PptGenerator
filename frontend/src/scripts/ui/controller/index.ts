@@ -142,14 +142,14 @@ function handleSelectionChange() {
 exportBtn.addEventListener("click", async () => {
     // warns if powerpoint is open
     if (isRunning("POWERPNT")) {
-        const awnser = await openPopup({
+        const answer = await openPopup({
             text: "We detected that PowerPoint is open. Please close the process",
             heading: "Warning",
             primaryButton: "Kill PowerPoint",
             secondaryButton: "Cancel",
             answer: true,
         });
-        if (awnser) {
+        if (answer) {
             killPpt();
         }
     } else if (foundVariables()) {
