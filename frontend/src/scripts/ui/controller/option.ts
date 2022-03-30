@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import fs from "fs";
 
-import { getConfig, setConfig } from "../../config";
+import { getConfig, setConfig } from "../../helper/config";
 import openPopup from "../../helper/openPopup";
 import { addAllBrowseHandler, addBrowseHandler } from "../components/browseButton";
 import initTitlebar from "../components/titlebar";

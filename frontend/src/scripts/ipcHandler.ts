@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import { refreshConfig } from "./config";
+import { refreshConfig } from "./helper/config";
 import openWindow from "./helper/openWindow";
 import reload from "./helper/reload";
 import scanPresentations from "./helper/scan";

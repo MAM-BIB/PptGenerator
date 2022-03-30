@@ -3,9 +3,10 @@ import path from "path";
 import fsBase from "fs";
 import call from "../../helper/systemcall";
 
-import { DuplicatedUids, PathWithSlides, Slide } from "../../interfaces/interfaces";
+import { Slide } from "../../interfaces/presentation";
+import { DuplicatedUids, PathWithSlides } from "../../interfaces/container";
 import initTitlebar from "../components/titlebar";
-import { getConfig } from "../../config";
+import { getConfig } from "../../helper/config";
 import { startLoading } from "../components/loading";
 import openPopup from "../../helper/openPopup";
 

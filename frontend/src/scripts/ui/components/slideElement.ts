@@ -1,4 +1,4 @@
-import { Slide } from "../../interfaces/interfaces";
+import { Slide } from "../../interfaces/presentation";
 
 /**
  * This class is used to display and add functionality to the slides inside the sections.

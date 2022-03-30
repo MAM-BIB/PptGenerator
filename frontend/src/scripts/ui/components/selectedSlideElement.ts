@@ -1,5 +1,5 @@
 import SlideElement from "./slideElement";
-import { Slide } from "../../interfaces/interfaces";
+import { Slide } from "../../interfaces/presentation";
 
 /**
  * This class is used to display and add functionality to the selected slides.

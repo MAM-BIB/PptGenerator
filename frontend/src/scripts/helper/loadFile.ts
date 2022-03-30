@@ -1,8 +1,9 @@
 import fsBase from "fs";
 import path from "path";
 
-import { getConfig } from "../config";
-import { Placeholder, Presentation, Preset } from "../interfaces/interfaces";
+import { getConfig } from "./config";
+import { Presentation } from "../interfaces/presentation";
+import { Placeholder, Preset } from "../interfaces/preset";
 import SectionElement from "../ui/components/sectionElement";
 import openPopup from "./openPopup";
 import { formatSlide } from "./scan";

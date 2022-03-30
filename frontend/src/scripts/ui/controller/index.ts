@@ -2,8 +2,9 @@ import fsBase from "fs";
 import path from "path";
 import { ipcRenderer, OpenDialogReturnValue } from "electron";
 
-import { Presentation, Placeholder } from "../../interfaces/interfaces";
-import { getConfig, setConfig } from "../../config";
+import { Presentation } from "../../interfaces/presentation";
+import { Placeholder } from "../../interfaces/preset";
+import { getConfig, setConfig } from "../../helper/config";
 import SectionElement from "../components/sectionElement";
 import createPresentationName from "../components/presentationName";
 import initTitlebar from "../components/titlebar";

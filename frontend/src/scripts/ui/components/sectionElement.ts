@@ -1,8 +1,8 @@
-import { Section } from "../../interfaces/interfaces";
+import { Section } from "../../interfaces/presentation";
 
 import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
-import { getConfig } from "../../config";
+import { getConfig } from "../../helper/config";
 import isShiftPressed from "../keyHandler";
 
 /**

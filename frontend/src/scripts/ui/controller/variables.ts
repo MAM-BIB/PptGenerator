@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 
-import { Placeholder, Presentation } from "../../interfaces/interfaces";
+import { Presentation } from "../../interfaces/presentation";
+import { Placeholder } from "../../interfaces/preset";
 import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 

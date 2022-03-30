@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import openPopup from "../../helper/openPopup";
 import isRunning, { killPpt, sleep } from "../../helper/processManager";
-import { TitlebarOptions } from "../../interfaces/interfaces";
+import { TitlebarOptions } from "../../interfaces/windows";
 
 /**
  * This function initializes the custom titlbar for the application.

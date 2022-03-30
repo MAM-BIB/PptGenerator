@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcRenderer } from "electron";
 
-import { DuplicatedUids } from "../interfaces/interfaces";
+import { DuplicatedUids } from "../interfaces/container";
 import openWindow from "./openWindow";
 
 /**

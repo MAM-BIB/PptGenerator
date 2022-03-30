@@ -1,6 +1,6 @@
 import path from "path";
 
-import { Presentation } from "../../interfaces/interfaces";
+import { Presentation } from "../../interfaces/presentation";
 
 /**
  * This function ist used to create an HtmlElement witch the name of a presentation to display the name

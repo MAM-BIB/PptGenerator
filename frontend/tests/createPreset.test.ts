@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { Placeholder, Presentation, Preset, PresetSection, Section, Slide } from "../src/scripts/interfaces/interfaces";
+
+import { Presentation, Section, Slide } from "../src/scripts/interfaces/presentation";
+import { Placeholder } from "../src/scripts/interfaces/preset";
 import createPreset from "../src/scripts/ui/components/createPreset";
 import { clearTmpFolder } from "./testHelper";
 

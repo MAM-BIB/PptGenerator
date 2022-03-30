@@ -3,7 +3,8 @@ import path from "path";
 
 import LoadFile from "../src/scripts/helper/loadFile";
 import SectionElement from "../src/scripts/ui/components/sectionElement";
-import { Slide, Section, Presentation, Preset, PresetSection, Placeholder } from "../src/scripts/interfaces/interfaces";
+import { Slide, Section, Presentation } from "../src/scripts/interfaces/presentation";
+import { Preset, PresetSection, Placeholder } from "../src/scripts/interfaces/preset";
 const meta2Path = "./tests/files/meta2.json";
 const tmpPath = "./tests/files/tmp";
 

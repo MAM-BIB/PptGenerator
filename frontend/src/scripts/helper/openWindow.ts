@@ -1,6 +1,10 @@
 import { BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { DuplicatedUids, Placeholder, PopupOptions, Presentation } from "../interfaces/interfaces";
+
+import { Presentation } from "../interfaces/presentation";
+import { Placeholder } from "../interfaces/preset";
+import { PopupOptions } from "../interfaces/windows";
+import { DuplicatedUids } from "../interfaces/container";
 
 /**
  * This function is used to open any new Window

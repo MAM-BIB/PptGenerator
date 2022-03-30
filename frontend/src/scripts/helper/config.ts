@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { Config } from "./interfaces/interfaces";
+import { Config } from "../interfaces/config";
 
 const configPath = "./config/config.json";
 let config: Config;

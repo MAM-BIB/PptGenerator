@@ -3,8 +3,9 @@ import { ipcRenderer } from "electron";
 import path from "path";
 import fsBase from "fs";
 
-import { getConfig } from "../../config";
-import { Placeholder, Presentation } from "../../interfaces/interfaces";
+import { getConfig } from "../../helper/config";
+import { Presentation } from "../../interfaces/presentation";
+import { Placeholder } from "../../interfaces/preset";
 import { addAllBrowseHandler } from "../components/browseButton";
 import { startLoading, stopLoading } from "../components/loading";
 import initTitlebar from "../components/titlebar";

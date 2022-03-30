@@ -1,9 +1,10 @@
 import path from "path";
 import fsBase from "fs";
 
-import { getConfig } from "../config";
+import { getConfig } from "./config";
 import openPopup from "./openPopup";
-import { Presentation, Slide, UidsWithSlides, SlidesWithPath } from "../interfaces/interfaces";
+import { Presentation, Slide } from "../interfaces/presentation";
+import { UidsWithSlides, SlidesWithPath } from "../interfaces/container";
 import call from "./systemcall";
 import reload from "./reload";
 import duplicatedUidWindow from "./openDuplicatedUidWindow";

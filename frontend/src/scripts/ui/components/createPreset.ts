@@ -1,6 +1,7 @@
 import fsBase from "fs";
 
-import { Presentation, Placeholder, Preset, PresetSection } from "../../interfaces/interfaces";
+import { Presentation } from "../../interfaces/presentation";
+import { Placeholder, Preset, PresetSection } from "../../interfaces/preset";
 
 const fs = fsBase.promises;
 

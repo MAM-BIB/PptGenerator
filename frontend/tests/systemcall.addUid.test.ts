@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { getConfig } from "../src/scripts/config";
+import { getConfig } from "../src/scripts/helper/config";
 import call from "../src/scripts/helper/systemcall";
-import { Presentation } from "../src/scripts/interfaces/interfaces";
+import { Presentation } from "../src/scripts/interfaces/presentation";
 import { clearTmpFolder, scan } from "./testHelper";
 
 const presentation1Path = "./tests/files/presentation1.pptx";

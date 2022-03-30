@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 
-import { PopupOptions } from "../../interfaces/interfaces";
+import { PopupOptions } from "../../interfaces/windows";
 import initTitlebar from "../components/titlebar";
 
 const okBtn = document.getElementById("ok-btn") as HTMLButtonElement;

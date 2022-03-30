@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { getConfig } from "../src/scripts/config";
+import { getConfig } from "../src/scripts/helper/config";
 import call from "../src/scripts/helper/systemcall";
 import { clearTmpFolder } from "./testHelper";
 

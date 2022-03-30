@@ -1,5 +1,5 @@
 import { formatSlide, getAllDuplicatedUidSlides, getAllWrongUidSlides } from "../src/scripts/helper/scan";
-import { Slide, Section, Presentation } from "../src/scripts/interfaces/interfaces";
+import { Slide, Section, Presentation } from "../src/scripts/interfaces/presentation";
 
 const slide1: Slide = {
     Title: "Test",

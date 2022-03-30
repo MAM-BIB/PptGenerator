@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
 
-import { getConfig } from "./config";
+import { getConfig } from "./helper/config";
 import openPopup from "./helper/openPopup";
 import isRunning, { killPpt, sleep } from "./helper/processManager";
 import reload from "./helper/reload";

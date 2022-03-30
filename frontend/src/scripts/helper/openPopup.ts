@@ -1,6 +1,6 @@
 import { BrowserWindow, ipcRenderer } from "electron";
 
-import { PopupOptions } from "../interfaces/interfaces";
+import { PopupOptions } from "../interfaces/windows";
 import openWindow from "./openWindow";
 
 /**
