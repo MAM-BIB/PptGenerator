@@ -22,33 +22,37 @@ initTitlebar({
 /**
  * This will be called when the window opens
  */
-ipcRenderer.on("data", (event, data) => {
-    presentations = data.presentations;
-    placeholders = data.placeholders;
+ipcRenderer.on(
+    "data",
+    (
+        event,
+        data: {
+            presentations: Presentation[];
+            placeholders: Placeholder[];
+        },
+    ) => {
+        presentations = data.presentations;
+        placeholders = [];
 
-    // if there are placeholders no placeholder objects it will create new objects and saves them the array
-    if (placeholders.length === 0) {
         for (const placeholder of new Set<string>(
             presentations
                 .flatMap((presentation) => presentation.Sections)
                 .flatMap((section) => section.Slides)
                 .flatMap((slide) => slide.Placeholders),
         )) {
-            variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length));
+            const value = data.placeholders.find((p) => p.name === placeholder)?.value ?? "";
+            variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length, value));
             placeholders.push({
                 name: placeholder,
-                value: "",
+                value,
             });
-        }
-    } else {
-        // if there are it will take these and save them
-        for (const placeholder of placeholders) {
-            variablesContainer.appendChild(
-                createPlaceholderInput(placeholder.name, placeholders.length, placeholder.value),
+            console.log(
+                "find",
+                data.placeholders.find((p) => p.name === placeholder),
             );
         }
-    }
-});
+    },
+);
 
 /**
  * Adds event to the save button
