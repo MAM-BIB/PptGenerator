@@ -47,10 +47,6 @@ ipcRenderer.on(
                 name: placeholder,
                 value,
             });
-            console.log(
-                "find",
-                data.placeholders.find((p) => p.name === placeholder),
-            );
         }
     },
 );
