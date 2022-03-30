@@ -22,7 +22,7 @@ export default async function openWindow(
 ) {
     const windowOptions = options;
 
-    if (windowOptions && (data as PopupOptions).text) {
+    if (windowOptions && (data as PopupOptions)?.text) {
         windowOptions.parent = browserWindow ?? undefined;
     } else if (browserWindow && windowOptions?.modal) {
         windowOptions.parent = browserWindow.getParentWindow() ?? browserWindow;
