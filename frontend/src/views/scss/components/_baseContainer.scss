@@ -4,6 +4,8 @@
     align-items: stretch;
     background-color: var(--background--light);
     height: $window--height;
+    border: $border-small;
+    border-top: none;
 
     .info-img {
         display: inline-block;
@@ -221,6 +223,10 @@
         button {
             margin: $size-2;
         }
+    }
+
+    .buttons.border {
+        border-bottom: $border-small;
     }
 }
 
