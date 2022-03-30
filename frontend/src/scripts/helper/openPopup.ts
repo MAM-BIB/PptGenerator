@@ -3,10 +3,13 @@ import { BrowserWindow, ipcRenderer } from "electron";
 import { PopupOptions } from "../interfaces/interfaces";
 import openWindow from "./openWindow";
 
+/**
+ * These are the default option for the window.
+ */
 const defaultWindowOptions = {
     width: 400,
     height: 250,
-    resizable: true,
+    resizable: false,
     useContentSize: true,
     frame: false,
     webPreferences: {
@@ -17,6 +20,11 @@ const defaultWindowOptions = {
     modal: true,
 };
 
+/**
+ * This function opens a window with the passed settings.
+ * @param options This is an object where the structure of the windows is saved.
+ * @returns A promise of the type boolean.
+ */
 export default async function openPopup(options: PopupOptions) {
     const windowOptions = { ...defaultWindowOptions };
     windowOptions.height += 20 * Math.min(options.text?.split("\n").length ?? 0, 10);

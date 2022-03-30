@@ -33,6 +33,7 @@ export interface Config {
     ignoreHiddenSlides: boolean;
     basePath: string;
     defaultExportPath: string;
+    backupPath: string;
     showTutorial: boolean;
 }
 
@@ -53,7 +54,9 @@ export interface PopupOptions {
     heading?: string;
     text?: string;
     primaryButton?: string;
+    primaryTooltip?: string;
     secondaryButton?: string;
+    secondaryTooltip?: string;
     answer?: boolean | string;
 }
 
@@ -67,4 +70,24 @@ export interface TitlebarOptions {
     menuHidden?: boolean;
     title?: string;
     closeBtnMsg?: string;
+}
+
+export interface PathWithSlides {
+    slide: Slide;
+    path: string;
+}
+
+export interface UidsWithSlides {
+    [uid: string]: PathWithSlides[];
+}
+
+export interface SlidesWithPath {
+    path: string;
+    slides: Slide[];
+}
+
+export interface DuplicatedUids {
+    uid?: UidsWithSlides;
+    existingUids?: string[];
+    answer?: boolean | string;
 }

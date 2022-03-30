@@ -21,8 +21,6 @@ namespace PptGenerator.Creator {
 
             if (basePath != null) {
                 try {
-                    Console.WriteLine("basePath " + basePath);
-                    Console.WriteLine("outPath " + outPath);
                     File.Copy(basePath, outPath, true);
                 } catch (IOException e) {
                     throw e;

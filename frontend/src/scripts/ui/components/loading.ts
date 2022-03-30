@@ -1,3 +1,6 @@
+/**
+ * This function is used to start a loading animation, to give the User feedback that something is happening.
+ */
 export function startLoading() {
     const loading = document.createElement("div");
     loading.id = "loading-container";
@@ -22,6 +25,9 @@ export function startLoading() {
     );
 }
 
+/**
+ * This function is used to stop the loading animation.
+ */
 export function stopLoading() {
     document.getElementById("loading-container")?.remove();
 }

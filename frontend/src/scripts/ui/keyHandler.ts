@@ -1,4 +1,4 @@
-// Shift pressed
+// Adds event listener if the shift key is pressend
 let shiftPressed = false;
 
 document.addEventListener("keydown", (event) => {
@@ -13,6 +13,10 @@ document.addEventListener("keyup", (event) => {
     }
 });
 
+/**
+ * This function checks if shift is pressed.
+ * @returns A boolean if shift is pressed
+ */
 export default function isShiftPressed(): boolean {
     return shiftPressed;
 }

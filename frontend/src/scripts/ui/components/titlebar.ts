@@ -1,17 +1,29 @@
 import { ipcRenderer } from "electron";
+import openPopup from "../../helper/openPopup";
+import isRunning, { killPpt, sleep } from "../../helper/processManager";
 import { TitlebarOptions } from "../../interfaces/interfaces";
 
+/**
+ * This function initializes the custom titlbar for the application.
+ * @param options An object of options for the titlebar.
+ */
 export default function initTitlebar(options?: TitlebarOptions) {
     createTitlebar(options);
 }
 
-// Create the Titlebar
+/**
+ * This functions creates the titlebar with all Buttons, Imgs and Texts.
+ * @param options An object of options for the titlebar.
+ */
 function createTitlebar(options?: TitlebarOptions) {
     const mainApp = document.createElement("div");
     mainApp.className = "main-app";
 
     const topBar = document.createElement("div");
     topBar.className = "top-bar";
+
+    // Create icon
+    topBar.appendChild(createIcon());
 
     // Create menu
     if (!(options?.menuHidden ?? false)) {
@@ -31,8 +43,37 @@ function createTitlebar(options?: TitlebarOptions) {
     document.body.insertAdjacentElement("afterbegin", mainApp);
 }
 
-// Create minimize button
-function createMinimizeBtn() {
+/**
+ * This Functions creates a div element for the icon of the app.
+ * @returns A html dic element.
+ */
+function createIcon(): HTMLDivElement {
+    const imgDiv = document.createElement("div");
+    imgDiv.classList.add("icon");
+
+    return imgDiv;
+}
+
+/**
+ * This function create all buttons of the titlebar.
+ * @param options An object of options for the titlebar.
+ * @returns A html div element with all the buttons.
+ */
+function createBtns(options?: TitlebarOptions): HTMLDivElement {
+    const titleBarBtns = document.createElement("div");
+    titleBarBtns.className = "title-bar-btns";
+    titleBarBtns.appendChild(createMinimizeBtn());
+    titleBarBtns.appendChild(createMaximizeBtn(options));
+    titleBarBtns.appendChild(createCloseBtn(options));
+
+    return titleBarBtns;
+}
+
+/**
+ * This function creates the minimize button.
+ * @returns A html button element.
+ */
+function createMinimizeBtn(): HTMLButtonElement {
     const minimizeBtn = document.createElement("button");
     minimizeBtn.title = "Minimize";
     minimizeBtn.className = "top-btn minimize-btn";
@@ -47,8 +88,12 @@ function createMinimizeBtn() {
     return minimizeBtn;
 }
 
-// Create maximize button
-function createMaximizeBtn(options?: TitlebarOptions) {
+/**
+ * This function creates the maximize button.
+ * @param options An object of options for the titlebar.
+ * @returns A html button element.
+ */
+function createMaximizeBtn(options?: TitlebarOptions): HTMLButtonElement {
     const maximizeBtn = document.createElement("button");
     maximizeBtn.title = "Maximize";
     maximizeBtn.disabled = !(options?.resizable ?? true);
@@ -69,8 +114,12 @@ function createMaximizeBtn(options?: TitlebarOptions) {
     return maximizeBtn;
 }
 
-// Create close button
-function createCloseBtn(options?: TitlebarOptions) {
+/**
+ * This functions creates the close button.
+ * @param options An object of options for the titlebar.
+ * @returns A html div element.
+ */
+function createCloseBtn(options?: TitlebarOptions): HTMLButtonElement {
     const closeBtn = document.createElement("button");
     closeBtn.title = "Close";
     closeBtn.className = "top-btn close-btn";
@@ -85,18 +134,11 @@ function createCloseBtn(options?: TitlebarOptions) {
     return closeBtn;
 }
 
-function createBtns(options?: TitlebarOptions) {
-    const titleBarBtns = document.createElement("div");
-    titleBarBtns.className = "title-bar-btns";
-    titleBarBtns.appendChild(createMinimizeBtn());
-    titleBarBtns.appendChild(createMaximizeBtn(options));
-    titleBarBtns.appendChild(createCloseBtn(options));
-
-    return titleBarBtns;
-}
-
-// Create the menu at the left
-function createMenu() {
+/**
+ * Create a menu with buttons for the application.
+ * @returns A html element
+ */
+function createMenu(): HTMLElement {
     const titleBarLeft = document.createElement("nav");
     titleBarLeft.className = "title-bar-left-btns";
 
@@ -119,7 +161,10 @@ function createMenu() {
     return titleBarLeft;
 }
 
-// Create The File Menu
+/**
+ * This function will create the File part of the menu.
+ * @param mainFileLi The element where the Button will be added.
+ */
 function createFileMenu(mainFileLi: HTMLElement) {
     const fileBtn = document.createElement("button");
     fileBtn.innerText = "File";
@@ -144,8 +189,26 @@ function createFileMenu(mainFileLi: HTMLElement) {
     scanBtn.innerText = "Scan";
     scanBtn.appendChild(createHotkey("CTRL+I"));
 
-    scanBtn.addEventListener("click", () => {
-        ipcRenderer.invoke("ScanWindow");
+    scanBtn.addEventListener("click", async () => {
+        if (isRunning("POWERPNT")) {
+            const awnser = await openPopup({
+                text: "We detected that PowerPoint is open. Please close the process",
+                heading: "Warning",
+                primaryButton: "Kill PowerPoint",
+                secondaryButton: "Cancel",
+                answer: true,
+            });
+            if (awnser) {
+                killPpt();
+                while (isRunning("POWERPNT")) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await sleep(1000);
+                }
+                ipcRenderer.invoke("ScanWindow");
+            }
+        } else {
+            ipcRenderer.invoke("ScanWindow");
+        }
     });
     scanLi.appendChild(scanBtn);
     fileUl.appendChild(scanLi);
@@ -163,7 +226,10 @@ function createFileMenu(mainFileLi: HTMLElement) {
     mainFileLi.appendChild(fileUl);
 }
 
-// Create The Option Menu
+/**
+ * This function will create the Option part of the menu.
+ * @param mainOptionLi The element where the Button will be added.
+ */
 function createOptionMenu(mainOptionLi: HTMLElement) {
     const optionBtn = document.createElement("button");
     optionBtn.innerText = "Option";
@@ -186,7 +252,10 @@ function createOptionMenu(mainOptionLi: HTMLElement) {
     mainOptionLi.appendChild(optionUl);
 }
 
-// Create The Help Menu
+/**
+ * This function will create the Help part of the menu.
+ * @param mainHelpLi The element where the Button will be added.
+ */
 function createHelpMenu(mainHelpLi: HTMLElement) {
     const helpBtn = document.createElement("button");
     helpBtn.innerText = "Help";
@@ -220,7 +289,12 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
     mainHelpLi.appendChild(helpUl);
 }
 
-function createHotkey(hotkey: string) {
+/**
+ * This function creates text that displays a hotkey for a specific function.
+ * @param hotkey The shortcut text for the hotkey.
+ * @returns A html span element.
+ */
+function createHotkey(hotkey: string): HTMLSpanElement {
     const span = document.createElement("span");
     span.className = "hotkey";
     span.textContent = hotkey;

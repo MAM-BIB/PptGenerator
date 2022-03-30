@@ -16,17 +16,18 @@ async function bundleElectronApp(options) {
     await bundleElectronApp({
         dir: "./build",
         out: "../dist",
+        icon: "./build/views/icons/pptLogo64x64.ico",
     });
 
     fs.mkdirSync("../dist/pptgenerator-win32-x64/config/presets", { recursive: true });
     fs.mkdirSync("../dist/pptgenerator-win32-x64/config/assets");
     fs.mkdirSync("../dist/pptgenerator-win32-x64/export");
+    fs.mkdirSync("../dist/pptgenerator-win32-x64/backup");
     fs.mkdirSync("../dist/pptgenerator-win32-x64/meta/pics", { recursive: true });
 
     fs.copyFileSync("./packager/config.json", "../dist/pptgenerator-win32-x64/config/config.json");
     fs.copyFileSync("./packager/meta.json", "../dist/pptgenerator-win32-x64/meta/meta.json");
     fs.copyFileSync("./packager/base.pptx", "../dist/pptgenerator-win32-x64/config/assets/base.pptx");
-    fs.copyFileSync("./packager/README.txt", "../dist/pptgenerator-win32-x64/README.txt");
 
     fs.cpSync("../backend/PptGenerator/bin/Release/netcoreapp3.1/", "../dist/pptgenerator-win32-x64/core/", {
         recursive: true,

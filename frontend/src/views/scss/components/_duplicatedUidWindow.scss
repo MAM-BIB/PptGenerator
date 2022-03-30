@@ -1,0 +1,21 @@
+.slidename-with-checkbox {
+    display: flex;
+
+    .slide-name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+}
+
+.main-div {
+    .presentationame {
+        padding-bottom: 10px;
+    }
+}
+
+.main-div + .main-div {
+    .uid-title-container {
+        margin-top: 15px;
+    }
+}

@@ -9,6 +9,7 @@ using System.Threading;
 using PptGenerator.TemplateInfo;
 using PptGenerator.CommandLine;
 using PptGenerator.Creator;
+using PptGenerator.Modifier;
 
 namespace PptGenerator {
     class Program {
@@ -21,6 +22,8 @@ namespace PptGenerator {
 
             CommandLineArgument clArg = CommandLineArgumentParser.Parse(args);
 
+            Console.WriteLine("Mode: "+ clArg.Mode);
+
             switch (clArg.Mode) {
                 case Mode.scan:
                     TemplateReader templateReader = new TemplateReader(clArg.InPaths);
@@ -29,8 +32,10 @@ namespace PptGenerator {
                 case Mode.create:
                     PresentationCreator.Create(clArg);
                     break;
+                case Mode.addUid:
+                    UidModifier.modifyUids(clArg);
+                    break;
                 case Mode.undefined:
-                    Console.WriteLine("mode is undefined");
                     break;
             }
         }
