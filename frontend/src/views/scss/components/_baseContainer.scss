@@ -224,6 +224,10 @@
             margin: $size-2;
         }
     }
+
+    .buttons.border {
+        border-bottom: $border-small;
+    }
 }
 
 .scroll {
