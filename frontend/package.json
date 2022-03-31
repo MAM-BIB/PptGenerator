@@ -57,6 +57,6 @@
         "uglify-js": "^3.15.3"
     },
     "dependencies": {
-        "electron": "^17.1.2"
+        "electron": "^18.0.0"
     }
 }

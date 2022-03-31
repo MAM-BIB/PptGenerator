@@ -46,7 +46,10 @@ export default class LoadFile {
                 for (const section of unknown.presentations.flatMap((pres) => pres.Sections)) {
                     text += `\n${formatSlide(section.Slides)}\n`;
                 }
-                openPopup({ text: `There are slides with uids, that are not known!\n${text}`, heading: "Warning" });
+                openPopup(
+                    { text: `There are slides with uids, that are not known!\n${text}`, heading: "Warning" },
+                    false,
+                );
             }
         }
     }

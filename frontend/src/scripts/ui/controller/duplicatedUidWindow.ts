@@ -72,8 +72,10 @@ function createMainDiv(uid: string, slides: PathWithSlides[]) {
 
     uidMainDiv.appendChild(duplicatedUidTitleContainer);
 
+    let isInputChecked = false;
     for (const slide of slides) {
-        uidMainDiv.appendChild(createDivPresentationName(slide));
+        uidMainDiv.appendChild(createDivPresentationName(slide, isInputChecked));
+        isInputChecked = true;
     }
     const presentationNameContainer = document.createElement("div");
     presentationNameContainer.className = "presNameContainer";
@@ -100,7 +102,7 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
  * @param slide The slide that has a duplicated UID.
  * @returns The div in which the PresentationName will be in.
  */
-function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
+function createDivPresentationName(slide: PathWithSlides, isInputChecked: boolean): HTMLDivElement {
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentation-name";
 
@@ -109,7 +111,7 @@ function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
     presentationName.textContent = `${path.parse(slide.path).name}`;
     presentationDiv.appendChild(presentationName);
 
-    presentationDiv.appendChild(createDivSlideName(slide));
+    presentationDiv.appendChild(createDivSlideName(slide, isInputChecked));
 
     return presentationDiv;
 }
@@ -119,7 +121,7 @@ function createDivPresentationName(slide: PathWithSlides): HTMLDivElement {
  * @param slide The slide that has a duplicated UID.
  * @returns The div in which the SlideName will be in.
  */
-function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
+function createDivSlideName(slide: PathWithSlides, isInputChecked: boolean): HTMLDivElement {
     const slideDiv = document.createElement("div");
     slideDiv.className = "slide-name-with-checkbox";
 
@@ -129,7 +131,7 @@ function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
 
     slideDiv.appendChild(slideName);
 
-    slideDiv.appendChild(createCheckbox(slide));
+    slideDiv.appendChild(createCheckbox(slide, isInputChecked));
 
     return slideDiv;
 }
@@ -138,7 +140,7 @@ function createDivSlideName(slide: PathWithSlides): HTMLDivElement {
  * This function creates a checkbox to select a slide.
  * @returns The div in which the checkbox will be in
  */
-function createCheckbox(slide: PathWithSlides): HTMLDivElement {
+function createCheckbox(slide: PathWithSlides, checked: boolean): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
 
@@ -151,10 +153,7 @@ function createCheckbox(slide: PathWithSlides): HTMLDivElement {
     const inputCheckbox = document.createElement("input");
     inputCheckbox.type = "checkbox";
     inputCheckbox.id = "ignore-hidden-slides-toggle-btn";
-    inputCheckbox.checked = true;
-    inputCheckbox.addEventListener("change", () => {
-        changeUidsBtn.disabled = false;
-    });
+    inputCheckbox.checked = checked;
     inputCheckbox.addEventListener("keydown", (e) => {
         if ((e as KeyboardEvent).key === "Enter") {
             inputCheckbox.checked = !inputCheckbox.checked;
