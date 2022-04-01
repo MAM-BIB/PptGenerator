@@ -1,9 +1,11 @@
-.option-container {
+.base-container {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     background-color: var(--background--light);
-    height: $window-height;
+    height: $window--height;
+    border: $border-small;
+    border-top: none;
 
     .info-img {
         display: inline-block;
@@ -22,9 +24,9 @@
         display: flex;
         flex-direction: column;
         padding: $size-4;
-        height: $window-height;
-        min-height: 0;
-        min-width: 0;
+        height: $window--height;
+        min-height: $min--size--small;
+        min-width: $min--size--small;
 
         .headline {
             text-align: center;
@@ -34,13 +36,13 @@
         .container-section {
             display: flex;
             flex-direction: column;
-            min-height: 0;
-            min-width: 0;
+            min-height: $min--size--small;
+            min-width: $min--size--small;
 
             .section {
                 display: flex;
-                min-height: 0;
-                min-width: 0;
+                min-height: $min--size--small;
+                min-width: $min--size--small;
 
                 .lbl {
                     flex: 1;
@@ -50,15 +52,15 @@
                 .browse-input {
                     flex: 1.2;
                     display: flex;
-                    min-height: 0;
-                    min-width: 0;
+                    min-height: $min--size--small;
+                    min-width: $min--size--small;
 
                     .input-path {
                         color: var(--font--primary);
                         flex: 1;
                         margin: 0 $size-1;
-                        min-height: 0;
-                        min-width: 0;
+                        min-height: $min--size--small;
+                        min-width: $min--size--small;
                     }
 
                     .browse-btn {
@@ -68,18 +70,42 @@
                 }
             }
         }
+
+        .content-nav {
+            margin: auto;
+            padding-bottom: $size-4;
+            ul {
+                display: flex;
+                list-style: none;
+
+                li {
+                    a {
+                        text-decoration: none;
+                        color: var(--btn--font);
+                    }
+                    button {
+                        padding: $size-1 $size-3;
+                    }
+                }
+
+                li + li {
+                    margin-left: $size-4;
+                }
+            }
+        }
     }
 
     .master-container {
         flex: 1;
         display: flex;
         flex-direction: column;
-        min-height: 0;
-        min-width: 0;
+        min-height: $min--size--small;
+        min-width: $min--size--small;
 
         .section {
             display: flex;
             min-width: 0;
+            min-height: 0;
 
             .lbl {
                 flex: 1;
@@ -90,7 +116,7 @@
                 flex: 1;
                 color: var(--font--primary);
                 margin: 0 $size-1;
-                min-width: 0;
+                min-width: $min--size--small;
             }
 
             .browse-btn {
@@ -103,7 +129,7 @@
             flex: 1.2;
             display: flex;
             align-items: center;
-            min-width: 0;
+            min-width: $min--size--small;
 
             .x-btn {
                 padding: 0;
@@ -132,7 +158,6 @@
                 &.show {
                     display: block;
                     flex-basis: $size-6;
-                    transition: flex-basis ss;
                     margin-left: $size-2;
                 }
             }

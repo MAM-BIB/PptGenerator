@@ -1,0 +1,32 @@
+[
+  {
+    "Path": "./tests/files/presentation3.pptx",
+    "Sections": [
+      {
+        "Name": "__defaultSection",
+        "Slides": [
+          {
+            "RelationshipId": "rId2",
+            "Uid": "Test1234Test1234Test42",
+            "Position": 0,
+            "IsHidden": false,
+            "Title": "TestSlide 1.5",
+            "Placeholders": [
+              "Name"
+            ],
+            "Hash": "BB70457FDEAB880AFD5B570580DC9ACCF5DB371579DFFE81EB9BC42CF0AA0637"
+          },
+          {
+            "RelationshipId": "rId3",
+            "Uid": "1234567890123456789012",
+            "Position": 1,
+            "IsHidden": false,
+            "Title": "TestSlide3",
+            "Placeholders": [],
+            "Hash": "B50D40CF4AF6922AE96BC430F899EDF082DDB299D3A979A72E3C48101149D589"
+          }
+        ]
+      }
+    ]
+  }
+]

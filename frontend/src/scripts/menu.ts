@@ -1,95 +1,121 @@
 import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
-import fsBase from "fs";
 
-import { getConfig } from "./config";
-import openPopup from "./helper/popup";
-import { Presentation, Slide } from "./interfaces/interfaces";
-import call from "./helper/systemcall";
+import { getConfig } from "./helper/config";
+import openPopup from "./helper/openPopup";
+import isRunning, { killPpt, sleep } from "./helper/processManager";
 import reload from "./helper/reload";
+import scanPresentations from "./helper/scan";
 
-const fs = fsBase.promises;
-
+/**
+ * This function creates a menu for shortcuts.
+ * @param mainWindow Window where the menu will exist
+ */
 export default function initMenu(mainWindow: BrowserWindow) {
-    const menu = Menu.buildFromTemplate([
-        {
-            label: "File",
-            submenu: [
-                {
-                    label: "Open Dev tools",
-                    accelerator: "F12",
-                    click(item, focusedWindow) {
-                        focusedWindow?.webContents.openDevTools();
-                        if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
-                            focusedWindow.setSize(800, focusedWindow.getSize()[1]);
-                        }
+    mainWindow.on("focus", () => {
+        const menu = Menu.buildFromTemplate([
+            {
+                label: "File",
+                submenu: [
+                    {
+                        label: "Open Dev tools",
+                        accelerator: "F12",
+                        click(item, focusedWindow) {
+                            focusedWindow?.webContents.openDevTools();
+                            if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
+                                focusedWindow.setSize(800, focusedWindow.getSize()[1]);
+                            }
+                        },
                     },
-                },
-                {
-                    label: "Reload",
-                    accelerator: "CmdOrCtrl+R",
-                    click(item, focusedWindow) {
-                        reload(focusedWindow);
+                    {
+                        label: "Reload",
+                        accelerator: "CmdOrCtrl+R",
+                        click(item, focusedWindow) {
+                            reload(focusedWindow);
+                        },
                     },
-                },
-                {
-                    label: "Exit",
-                    accelerator: "Alt+F4",
-                    click() {
-                        app.quit();
+                    {
+                        label: "Exit",
+                        accelerator: "Alt+F4",
+                        click() {
+                            app.quit();
+                        },
                     },
-                },
-                {
-                    label: "Scan Presentation",
-                    accelerator: "CmdOrCtrl+I",
-                    async click(item, focusedWindow) {
-                        // scanPresetations(focusedWindow);
-                        focusedWindow?.webContents.send("startLoading");
-                        try {
-                            await call(getConfig().coreApplication, [
-                                "-inPath",
-                                ...getConfig()
-                                    .presentationMasters.flatMap((master) => master.paths)
-                                    .map((elem) => path.normalize(elem))
-                                    .filter((elem, index, array) => array.indexOf(elem) === index),
-                                "-outPath",
-                                getConfig().metaJsonPath,
-                            ]);
-                        } catch (error) {
-                            await openPopup({
-                                text: `The process exited with errors!\n${error}`,
-                                heading: "Error",
-                                answer: true,
-                            });
-                        }
-                        reload(focusedWindow);
-                        checkUids();
+                    {
+                        label: "Scan Presentation",
+                        accelerator: "CmdOrCtrl+I",
+                        async click(item, focusedWindow) {
+                            if (isRunning("POWERPNT")) {
+                                const awnser = await openPopup({
+                                    text: "We detected that PowerPoint is open. Please close the process",
+                                    heading: "Warning",
+                                    primaryButton: "Kill PowerPoint",
+                                    secondaryButton: "Cancel",
+                                    answer: true,
+                                });
+                                if (awnser) {
+                                    killPpt();
+                                    while (isRunning("POWERPNT")) {
+                                        // eslint-disable-next-line no-await-in-loop
+                                        await sleep(1000);
+                                    }
+                                    scanPresentations(focusedWindow);
+                                }
+                            } else {
+                                scanPresentations(focusedWindow);
+                            }
+                        },
                     },
-                },
-                {
-                    label: "getConfig",
-                    click() {
-                        getConfig();
+                    {
+                        label: "getConfig",
+                        click() {
+                            getConfig();
+                        },
                     },
-                },
-                {
-                    label: "Option",
-                    accelerator: "CmdOrCtrl+O",
-                    click() {
-                        openOption(mainWindow);
+                    {
+                        label: "Option",
+                        accelerator: "CmdOrCtrl+O",
+                        click() {
+                            openOption(mainWindow);
+                        },
                     },
-                },
-            ],
-        },
-    ]);
+                ],
+            },
+        ]);
 
-    Menu.setApplicationMenu(menu);
+        Menu.setApplicationMenu(menu);
+    });
+    mainWindow.on("blur", () => {
+        const menu = Menu.buildFromTemplate([
+            {
+                label: "File",
+                submenu: [
+                    {
+                        label: "Open Dev tools",
+                        accelerator: "F12",
+                        click(item, focusedWindow) {
+                            focusedWindow?.webContents.openDevTools();
+                            if (focusedWindow !== undefined && focusedWindow.getSize()[0] < 800) {
+                                focusedWindow.setSize(800, focusedWindow.getSize()[1]);
+                            }
+                        },
+                    },
+                ],
+            },
+        ]);
+
+        Menu.setApplicationMenu(menu);
+    });
 }
 
-export function openOption(parent: BrowserWindow) {
+/**
+ * This functions opens the options
+ * @param parent Browserwindow or null for no window
+ */
+export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({
         width: 600,
-        height: 600,
+        height: 700,
         resizable: false,
         useContentSize: true,
         frame: false,
@@ -99,73 +125,12 @@ export function openOption(parent: BrowserWindow) {
         },
         autoHideMenuBar: true,
         modal: true,
-        parent,
+        parent: parent ?? undefined,
     });
     const indexHTML = path.join(__dirname, "views/option.html");
     optionWindow.loadFile(indexHTML);
+
+    optionWindow.on("close", () => {
+        parent?.focus();
+    });
 }
-
-function formatSlide(slides: Slide[]): string {
-    return slides
-        .map((slide) => `Slide ${slide.Position + 1}: ${slide.Title || "No Title"} (UID:${slide.Uid})`)
-        .join("\n");
-}
-
-async function checkUids() {
-    const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
-    const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
-    // const uids: string[] = [];
-    // const errors: string[] = [];
-    const allSlides = presentations.flatMap((pres) => pres.Sections.flatMap((section) => section.Slides));
-    const slidesHashMap: { [key: string]: Slide } = {};
-    const duplicatedUidSlides: Slide[][] = [];
-    const wrongUidSlides: Slide[] = [];
-
-    for (const slide of allSlides) {
-        if (slide.Uid.length < 5) {
-            wrongUidSlides.push(slide);
-        } else if (slidesHashMap[slide.Uid]) {
-            duplicatedUidSlides.push([slidesHashMap[slide.Uid], slide]);
-        }
-        slidesHashMap[slide.Uid] = slide;
-    }
-
-    if (duplicatedUidSlides.length > 0 || wrongUidSlides.length > 0) {
-        let text = "";
-        if (duplicatedUidSlides.length > 0) {
-            text += `Slides with duplicated Uid(${duplicatedUidSlides.length}):\n\n${duplicatedUidSlides
-                .map((elem) => formatSlide(elem))
-                .join("\n\n")}\n`;
-        }
-        if (wrongUidSlides.length > 0) {
-            text += `\nSlides with incorrect Uid(${wrongUidSlides.length}):\n\n${formatSlide(wrongUidSlides)}`;
-        }
-        openPopup({
-            text,
-            heading: "Error",
-        });
-    }
-}
-
-// export async function scanPresetations(focusedWindow: Electron.BrowserWindow | null | undefined) {
-//     focusedWindow?.webContents.send("startLoading");
-//     try {
-//         await call(getConfig().coreApplication, [
-//             "-inPath",
-//             ...getConfig()
-//                 .presentationMasters.flatMap((master) => master.paths)
-//                 .map((elem) => path.normalize(elem))
-//                 .filter((elem, index, array) => array.indexOf(elem) === index),
-//             "-outPath",
-//             getConfig().metaJsonPath,
-//         ]);
-//     } catch (error) {
-//         await openPopup({
-//             text: `The process exited with errors!\n${error}`,
-//             heading: "Error",
-//             answer: true,
-//         });
-//     }
-//     reload(focusedWindow);
-//     checkUids();
-// }

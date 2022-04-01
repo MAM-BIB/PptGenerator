@@ -7,10 +7,11 @@ using System.IO;
 
 namespace PptGenerator.Creator {
     class PresentationCreator {
-
-
+        /// <summary>
+        /// Creates a new presentation for a command-line argument
+        /// </summary>
+        /// <param name="clArg">A command-line argument</param>
         public static void Create(CommandLineArgument clArg) {
-
             string outPath = clArg.OutPath;
             string inPath = clArg.InPaths[0];
             List<uint> slidePos = clArg.SlidePos;
@@ -20,13 +21,7 @@ namespace PptGenerator.Creator {
             List<KeyValuePair<string, string>> placeholders = clArg.Placeholders;
 
             if (basePath != null) {
-                try {
-                    Console.WriteLine("basePath " + basePath);
-                    Console.WriteLine("outPath " + outPath);
-                    File.Copy(basePath, outPath, true);
-                } catch (IOException e) {
-                    throw e;
-                }
+                File.Copy(basePath, outPath, true);
             }
 
             PptFileManager.Copy(inPath, slidePos, outPath, placeholders);

@@ -10,6 +10,7 @@ namespace PptGenerator.TemplateInfo {
         private string _title;
         private bool _isHidden;
         private List<String> _placeholders;
+        private string _hash;
 
         public string RelationshipId { get => _relationshipId; set => _relationshipId = value; }
         public string Uid { get => _uid; set => _uid = value; }
@@ -17,14 +18,25 @@ namespace PptGenerator.TemplateInfo {
         public bool IsHidden { get => _isHidden; set => _isHidden = value; }
         public string Title { get => _title; set => _title = value; }
         public List<string> Placeholders { get => _placeholders; set => _placeholders = value; }
+        public string Hash { get => _hash; set => _hash = value; }
 
-        public Slide(string relationshipId, string uid, uint position, string title, bool isHidden = false, List<String> placeholders = null) {
+        /// <summary>
+        /// Create an object of class Slide
+        /// </summary>
+        /// <param name="relationshipId">The relationshipId of the slide</param>
+        /// <param name="uid">The uid of the slide</param>
+        /// <param name="position">The position in it's presentation</param>
+        /// <param name="title">The title of the slide</param>
+        /// <param name="isHidden">If the slide is hidden in it's presentation</param>
+        /// <param name="placeholders">All placeholders of the slide</param>
+        public Slide(string relationshipId, string uid, uint position, string title, string hash, bool isHidden = false, List<String> placeholders = null) {
             RelationshipId = relationshipId;
             Uid = uid;
             Position = position;
             Title = title;
             IsHidden = isHidden;
             Placeholders = placeholders == null ? new List<string>() : placeholders;
+            Hash = hash;
         }
 
         public override bool Equals(object obj) {

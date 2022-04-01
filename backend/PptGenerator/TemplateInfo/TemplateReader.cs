@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text;
 using D = DocumentFormat.OpenXml.Drawing;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace PptGenerator.TemplateInfo {
     class TemplateReader {
@@ -58,7 +59,7 @@ namespace PptGenerator.TemplateInfo {
                     var sectionLst = selectElementByTag(ext, "sectionLst");
                     if (sectionLst == null) continue;
                     foreach (var sectionElem in sectionLst) {
-                        if(sectionElem is DocumentFormat.OpenXml.Office2010.PowerPoint.Section of2010Section) {
+                        if (sectionElem is DocumentFormat.OpenXml.Office2010.PowerPoint.Section of2010Section) {
                             foundSections = true;
                             Section section = new Section(of2010Section.Name);
                             sections.Add(section);
@@ -82,7 +83,7 @@ namespace PptGenerator.TemplateInfo {
 
                 if (!foundSections) {
                     Section section = new Section("__defaultSection");
-                    sections.Add(section    );
+                    sections.Add(section);
                     uint position = 0;
                     foreach (SlideId slideId in presentation.SlideIdList) {
                         SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
@@ -98,17 +99,47 @@ namespace PptGenerator.TemplateInfo {
             }
         }
 
+        /// <summary>
+        /// Creates a Slide object from a slidePart and returns it.
+        /// </summary>
+        /// <param name="position">The position of the Slide in its presenbtation</param>
+        /// <param name="slideId">The slide id</param>
+        /// <param name="slidePart">The slidePart</param>
+        /// <returns>A Slide object created form the slidePart</returns>
         private static Slide getSlideFromPart(uint position, SlideId slideId, SlidePart slidePart) {
             string title = "";
             try {
                 title = GetSlideTitle(slidePart);
             } catch (Exception) { }
 
+            Console.WriteLine("");
+            Console.WriteLine("####################################################");
+            Console.WriteLine("");
+
+            string contentString = slidePart.Slide.CommonSlideData.ShapeTree.InnerXml;
+            // contentString = Regex.Replace(contentString, "xmlns:.*=\"http://schemas.microsoft.com/.*\"", "");
+            contentString = Regex.Replace(contentString, "xmlns:[^=]*=\"http://schemas.microsoft.com/[^\"]*\"", "");
+
+            string hash = GetHashString(contentString);
+
             NotesSlidePart notesSlidePart = slidePart.GetPartsOfType<NotesSlidePart>().FirstOrDefault();
             string uid = "";
             if (notesSlidePart != null) {
-                string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                foreach (Shape shape in notesSlidePart.NotesSlide.Descendants<Shape>()) {
+                    if (shape.TextBody != null && shape.TextBody.InnerText.ToLower().Contains("uid:")) {
+                        foreach (var paragraph in shape.TextBody.Descendants<D.Paragraph>()) {
+                            if (paragraph.InnerText.ToLower().Contains("uid:")) {
+                                string[] uidArr = paragraph.InnerText.Split("UID:");
+                                uidArr = uidArr[1].Split(" ");
+                                uid = uidArr[0];
+                            }
+                        }
+                    }
+                }
+                if (uid == "") {
+                    string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
+                    uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                }
             }
 
             // Match Placeholder
@@ -128,8 +159,33 @@ namespace PptGenerator.TemplateInfo {
                 isHidden = true;
             }
 
-            Slide slide = new Slide(slideId.RelationshipId, uid, position, title, isHidden, placeholders);
+            Slide slide = new Slide(slideId.RelationshipId, uid, position, title, hash, isHidden, placeholders);
             return slide;
+        }
+
+        /// <summary>
+        /// Hashes the inputString and returns a byte array
+        /// source: https://stackoverflow.com/questions/3984138/hash-string-in-c-sharp
+        /// </summary>
+        /// <param name="inputString">The string that will be hashed</param>
+        /// <returns>the hashed inputString as a byte array</returns>
+        public static byte[] GetHash(string inputString) {
+            using (HashAlgorithm algorithm = SHA256.Create())
+                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+        }
+
+        /// <summary>
+        /// Hashes the inputString and returns a string
+        /// source: https://stackoverflow.com/questions/3984138/hash-string-in-c-sharp
+        /// </summary>
+        /// <param name="inputString">The string that will be hashed</param>
+        /// <returns>the hashed inputString as a string</returns>
+        public static string GetHashString(string inputString) {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in GetHash(inputString))
+                sb.Append(b.ToString("X2"));
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -157,7 +213,12 @@ namespace PptGenerator.TemplateInfo {
             });
         }
 
-        // Get the title string of the slide.
+        /// <summary>
+        /// Get the title string of the slide.
+        /// This is a method form the microsoft docs
+        /// </summary>
+        /// <param name="slidePart"></param>
+        /// <returns></returns>
         public static string GetSlideTitle(SlidePart slidePart) {
             if (slidePart == null) {
                 throw new ArgumentNullException("presentationDocument");
@@ -194,7 +255,12 @@ namespace PptGenerator.TemplateInfo {
             return string.Empty;
         }
 
-        // Determines whether the shape is a title shape.
+        /// <summary>
+        /// Determines whether the shape is a title shape.
+        /// This is a method form the microsoft docs
+        /// </summary>
+        /// <param name="shape">The shape</param>
+        /// <returns></returns>
         private static bool IsTitleShape(Shape shape) {
             var placeholderShape = shape.NonVisualShapeProperties.ApplicationNonVisualDrawingProperties.GetFirstChild<PlaceholderShape>();
             if (placeholderShape != null && placeholderShape.Type != null && placeholderShape.Type.HasValue) {

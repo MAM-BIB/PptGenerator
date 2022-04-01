@@ -1,5 +1,8 @@
-import { Slide } from "../../interfaces/interfaces";
+import { Slide } from "../../interfaces/presentation";
 
+/**
+ * This class is used to display and add functionality to the slides inside the sections.
+ */
 export default class SlideElement {
     public slide: Slide;
     public element: HTMLDivElement;
@@ -11,6 +14,10 @@ export default class SlideElement {
         this.createSlide();
     }
 
+    /**
+     * This functions adds th selected class and calls the selected event
+     * @returns A boolean if the slide is selected.
+     */
     public select(): boolean {
         if (this.slide.IsSelected) {
             return false;
@@ -22,6 +29,10 @@ export default class SlideElement {
         return true;
     }
 
+    /**
+     * This function removes the class selected and calls the deselect event.
+     * @returns A boolean if the slide is selected.
+     */
     public deselect(): boolean {
         if (!this.slide.IsSelected) {
             return false;
@@ -33,6 +44,9 @@ export default class SlideElement {
         return true;
     }
 
+    /**
+     * This functions toggle the selection of a slide
+     */
     public toggleSelection() {
         this.slide.IsSelected = !this.slide.IsSelected;
         if (this.slide.IsSelected) {
@@ -44,6 +58,9 @@ export default class SlideElement {
         }
     }
 
+    /**
+     * This function creates a Slide that will be displayed in the GUI and has all functionalities
+     */
     private createSlide() {
         this.element.classList.add("slide");
         if (this.slide.IsHidden) this.element.classList.add("hidden-slide");
@@ -58,6 +75,9 @@ export default class SlideElement {
         this.addClickListener();
     }
 
+    /**
+     * Adds the functionality to click a slide
+     */
     protected addClickListener() {
         this.element.tabIndex = 0;
         this.element.addEventListener("click", () => {

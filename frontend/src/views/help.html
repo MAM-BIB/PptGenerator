@@ -9,90 +9,265 @@
     </head>
 
     <body>
-        <div class="option-container">
+        <div class="base-container">
             <div class="main-section">
                 <h1 class="headline" id="popup-heading">Information</h1>
+                <nav class="content-nav">
+                    <ul>
+                        <li>
+                            <a href="#information"><button>Important Information</button></a>
+                        </li>
+                        <li>
+                            <a href="#setup"><button>First Setup</button></a>
+                        </li>
+                        <li>
+                            <a href="#create"><button>Create Presentation</button></a>
+                        </li>
+                        <li>
+                            <a href="#load"><button>Load File</button></a>
+                        </li>
+                        <li>
+                            <a href="#options"><button>Options</button></a>
+                        </li>
+                    </ul>
+                </nav>
                 <div class="container-section">
                     <div class="section">
                         <div class="info-text scroll">
-                            <p>Beim ersten mal starten:</p>
-                            <p style="padding-left: 50px">- Optionen mit "Strg + O" öffnen</p>
-                            <p style="padding-left: 50px">
-                                - Eine Neue Sprache hinzufügen. Das Plus rechts neben dem Feld und eine Sprache angeben
-                                Beispiel: "de" oder "en" (s.u.)
+                            <h2 id="information">Important Informationen:</h2>
+                            <br />
+
+                            <h3 id="terms">Technical terms</h3>
+                            <br />
+                            <p class="tab-1"><b>PresentationMaster</b></p>
+                            <p class="tab-2">
+                                This a PowerPoint presentation (pptx file) from which slides will be copied.
+                            </p>
+                            <br />
+                            <p class="tab-1"><b>UID</b></p>
+                            <p class="tab-2">
+                                This a string of 22 random urlSafe ASCII-characters in the notes of a slide.
+                            </p>
+                            <br />
+                            <p class="tab-1"><b>Hidden Slides</b></p>
+                            <p class="tab-2">Those are slides wich are set to hidden in PowerPoint.</p>
+                            <br />
+                            <p class="tab-1"><b>Sections</b></p>
+                            <p class="tab-2">Those are sections created in PowerPoint which contain slides.</p>
+                            <br />
+                            <br />
+                            <h3 id="info">Information</h3>
+                            <p class="tab-1">
+                                When the program reads/write files on a cloud it could lead to some problems.
+                            </p>
+                            <br />
+                            <p class="tab-1">The PresentationMasters need to have UIDs in the notes.</p>
+                            <br />
+                            <p class="tab-2">A UID contains 22 random urlSafe ASCII-characters.</p>
+                            <br />
+                            <p class="tab-2">When the scan finds a slide without a UID the program will warn you.</p>
+                            <p class="tab-2">
+                                It will open a window where you see all the slides with a incorrect UID.
+                            </p>
+                            <p class="tab-2">
+                                You have the option fix it by yourself or let the program fiy it for you.
+                            </p>
+                            <p class="tab-2">The slides with incorrect uids will receive newly generated UIDs.</p>
+                            <br />
+                            <p class="tab-2">
+                                All UIDs need to be unique. The program will warn you if there are multiple ones.
+                            </p>
+                            <p class="tab-2">It will open a window where you see all the slides with the same UID.</p>
+                            <p class="tab-2">
+                                You are able to select one slide or both and tell the program to fix the problem.
+                            </p>
+                            <p class="tab-2">The selected slides will receive a newly generated UID.</p>
+                            <br />
+                            <p class="tab-1">If you want to user placeholders, you need to format them like this:</p>
+                            <p class="tab-2">~$Placeholder$~</p>
+                            <br />
+                            <br />
+                            <br />
+
+                            <h2 id="setup">First Setup</h2>
+                            <br />
+                            <p class="tab-1">Open the option in Menu > Option > Open Options or with "Ctrl/Cmd + O".</p>
+                            <p class="tab-1">Add a new language. Eg "en".</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_1.png" alt="Add Button" />
+
+                            <p class="tab-1">
+                                Select the newly added language and add a presentationMaster with the add button.
+                            </p>
+                            <p class="tab-1">
+                                On the right side of the input field click on the three dots to select a pptx-File.
                             </p>
 
-                            <img style="padding-left: 50px" src="./pics/help_1.png" alt="Add Button" />
+                            <img class="tab-1 tut-img" src="./pics/help_2.png" alt="Browse Button" />
 
-                            <p style="padding-left: 50px">
-                                - Wenn eine Sprache ausgewählt ist, muss man eine neue Präsentation mit dem Add Knopf
-                                hinzufügen.
+                            <p class="tab-1">After that close the options with the save Button.</p>
+                            <p class="tab-1">In the main window you can select a language next to presentations.</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_3.png" alt="Language select" />
+
+                            <p class="tab-1">
+                                When a language is selected, you can scan the presentationMasters from the selected
+                                language.
                             </p>
-                            <p style="padding-left: 50px">
-                                - Rechts neben dem neuen Textfeld auf die drei punkte klicken und eine PPTX-Datei
-                                Auswählen (s.u.)
+                            <p class="tab-1">You can scan in Menu > File > Scan or with "Ctrl/Cmd + I".</p>
+                            <br />
+                            <p class="tab-1">Now the setup is complete.</p>
+                            <br />
+                            <br />
+                            <br />
+
+                            <h2 id="create">Create Presentation</h2>
+                            <br />
+
+                            <p class="tab-1">
+                                When you successfully scanned a presentation you should see the sections of the
+                                presentation.
+                            </p>
+                            <p class="tab-1">You can open the section with the arrow button to see all the slides.</p>
+                            <p class="tab-1">With the plus or minus you can select or deselect all slides.</p>
+                            <p class="tab-2">Depending on your settings the hidden slides will be included or not.</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_4.png" alt="Section buttons" />
+                            <br />
+
+                            <p class="tab-1">All selected slides will appear on the right side of the GUI.</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_5.png" alt="New presentation" />
+                            <br />
+
+                            <p class="tab-1">
+                                When you're done selecting slides you can click on the export button in the bottom
+                                right.
+                            </p>
+                            <p class="tab-1">
+                                If you selected a slide with placeholders a window will open where you need to set
+                                values for them.
                             </p>
 
-                            <img style="padding-left: 50px" src="./pics/help_2.png" alt="Browse Button" />
+                            <img class="tab-1 tut-img" src="./pics/help_6.png" alt="Placeholder window" />
+                            <br />
 
-                            <p style="padding-left: 50px">Beispielsweise: Die Foliensammlung.</p>
-                            <p style="padding-left: 50px">
-                                <b
-                                    >!!WICHTIG!! Die Foliensammlung sollte für dieser Test-Version LOKAL auf dem
-                                    Computer sein
-                                </b>
+                            <p class="tab-1">
+                                When you filled out all inputs an click on the set values button the export window will
+                                open.
                             </p>
-                            <p style="padding-left: 50px">- Dann bei den Optionen auf Save drücken</p>
-                            <p style="padding-left: 50px">
-                                - Im Hauptfenster sicherstellen dass die nue erstellte Sprache oben links ausgewählt
-                                ist.
+                            <p class="tab-1">
+                                If you didn't select a slide with placeholders the export window will be opened
+                                immediately.
+                            </p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_7.png" alt="Export window" />
+                            <br />
+
+                            <p class="tab-1">Here you need to enter a name for your new presentation.</p>
+                            <p class="tab-1">You can change the folder where the new presentation will be saved.</p>
+                            <p class="tab-2">By default the program will pick the path from your settings.</p>
+                            <br />
+                            <p class="tab-1">You can then decide if you want to save this presentation as a preset.</p>
+                            <p class="tab-2">
+                                You can change the folder where the preset will be saved (Default from settings).
+                            </p>
+                            <p class="tab-2">The name of the Preset will be the name of the presentation.</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_8.png" alt="Export window create preset" />
+                            <br />
+                            <p class="tab-1">
+                                When you click export the Programm will copy all selected slides into a new
+                                Presentation.
+                            </p>
+                            <br />
+                            <br />
+                            <br />
+
+                            <h2 id="load">Load File</h2>
+                            <br />
+
+                            <p class="tab-1">
+                                You can load presets or presentation with slides from the presentationMaser to edit this
+                                presentation.
+                            </p>
+                            <p class="tab-1">
+                                To load a file you need to click on the load file button and select a .json or .pptx
+                                file.
+                            </p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_9.png" alt="Load file button" />
+                            <br />
+
+                            <p class="tab-1">
+                                When the file you chose is valid the slides in that preset or presentation will be
+                                automatically selected.
+                            </p>
+                            <p class="tab-1">
+                                Values for the placeholders will already be filled when you need to set the values.
                             </p>
 
                             <img
-                                style="padding-left: 50px; width: 700px"
-                                src="./pics/help_3.png"
-                                alt="Language select"
+                                class="tab-1 tut-img"
+                                src="./pics/help_10.png"
+                                alt="Placeholder window filled values"
                             />
+                            <br />
 
-                            <p style="padding-left: 50px">- Dann die Präsentation scannen mit "Strg + I"</p>
-                            <br />
-                            <p style="padding-left: 50px">Jetzt ist das Setup abgeschlossen</p>
+                            <p class="tab-2"></p>
                             <br />
                             <br />
-                            <p>Informationen:</p>
                             <br />
-                            <p style="padding-left: 50px">Standard Speicherpfade</p>
-                            <p style="padding-left: 100px">Presets: Im Ordner der exe unter config/presets/</p>
-                            <p style="padding-left: 100px">Exports: Im Ordner der exe unter exports/</p>
 
+                            <h2 id="options">Options</h2>
                             <br />
-                            <p style="padding-left: 50px">
-                                - Beim exportieren lassen sich Presets erstellen. Diese lassen sich über Load file
-                                wieder laden
-                            </p>
-                            <p style="padding-left: 50px">- Über load File lassen sich auch PPTX Dateien laden.</p>
-                            <p style="padding-left: 50px">
-                                <b
-                                    >!!WICHTIG!! Bei dieser Testversion sollten die PPTX-Dateien NUR Folien aus der
-                                    Foliensammlung enthalten
-                                </b>
-                            </p>
-                            <p style="padding-left: 50px">
-                                - Platzhalter müssen in der Foliensammlung folgendermaßen formatiert sein:
-                                ~$Platzhalter$~
-                            </p>
-                            <p style="padding-left: 50px">
-                                <b>
-                                    !!WICHTIG!! In der aktuellen Test-Version können nur Folien aus einer Präsentation
-                                    kopiert werden
-                                </b>
+
+                            <img class="tab-1 tut-img" src="./pics/help_11.png" alt="Single line options" />
+                            <br />
+
+                            <p class="tab-1">Default export location</p>
+                            <p class="tab-2">
+                                Here you can set the default location where your created presentations will be saved.
                             </p>
                             <br />
-                            <br />
-                            <p>
-                                Alles Informationen lassen sich auch in der README.txt oder im "Menü>Help>Open info"
-                                finden
+                            <p class="tab-1">Default export location</p>
+                            <p class="tab-2">
+                                Here you can set the default location where your created presentations will be saved.
                             </p>
+                            <br />
+                            <p class="tab-1">Meta-Json location</p>
+                            <p class="tab-2">In this json all the necessary information from a scan will be saved.</p>
+                            <p class="tab-2">You can change where this file will be created and saved.</p>
+                            <br />
+                            <p class="tab-1">Meta-pics location</p>
+                            <p class="tab-2">
+                                The pictures that will be created from the slides will be saved in this folder.
+                            </p>
+                            <p class="tab-2">You can change where the pictures will be created and saved.</p>
+                            <br />
+                            <p class="tab-1">IncludeHiddenSlides</p>
+                            <p class="tab-2">
+                                You can toggle if the hidden slides should be included in the selection of the whole
+                                section.
+                            </p>
+                            <br />
+                            <p class="tab-1">Language</p>
+
+                            <img class="tab-1 tut-img" src="./pics/help_12.png" alt="Language options" />
+                            <br />
+
+                            <p class="tab-2">
+                                You can select for wich language you want to edit the presentationMasters or add a new
+                                language.
+                            </p>
+                            <p class="tab-2">
+                                The presentationMasters of the selected language will be displayed in the container
+                                below language.
+                            </p>
+                            <p class="tab-2">You can select a pptx-File as a presentationMaser.</p>
+                            <br />
+                            <br />
+                            <br />
                         </div>
                     </div>
                 </div>

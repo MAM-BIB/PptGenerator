@@ -1,8 +1,9 @@
 import { ipcRenderer } from "electron";
 
-import { Placeholder, Presentation } from "../../interfaces/interfaces";
+import { Presentation } from "../../interfaces/presentation";
+import { Placeholder } from "../../interfaces/preset";
 import initTitlebar from "../components/titlebar";
-import openPopup from "../../helper/popup";
+import openPopup from "../../helper/openPopup";
 
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
 const setBtn = document.getElementById("set-btn") as HTMLDivElement;
@@ -12,41 +13,50 @@ let presentations: Presentation[];
 let placeholders: Placeholder[];
 let firstInput = true;
 
+// Initialization of the custom titlebar.
 initTitlebar({
     resizable: false,
     menuHidden: true,
     title: "PptGenerator-Variables",
 });
 
-ipcRenderer.on("data", (event, data) => {
-    presentations = data.presentations;
-    placeholders = data.placeholders;
-
-    if (!placeholders) {
+/**
+ * This will be called when the window opens
+ */
+ipcRenderer.on(
+    "data",
+    (
+        event,
+        data: {
+            presentations: Presentation[];
+            placeholders: Placeholder[];
+        },
+    ) => {
+        presentations = data.presentations;
         placeholders = [];
-        for (const presentation of presentations) {
-            for (const section of presentation.Sections) {
-                for (const slide of section.Slides) {
-                    for (const placeholder of slide.Placeholders) {
-                        variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length));
-                        placeholders.push({
-                            name: placeholder,
-                            value: "",
-                        });
-                    }
-                }
-            }
-        }
-    } else {
-        for (const placeholder of placeholders) {
-            variablesContainer.appendChild(
-                createPlaceholderInput(placeholder.name, placeholders.length, placeholder.value),
-            );
-        }
-    }
-});
 
+        for (const placeholder of new Set<string>(
+            presentations
+                .flatMap((presentation) => presentation.Sections)
+                .flatMap((section) => section.Slides)
+                .flatMap((slide) => slide.Placeholders),
+        )) {
+            const value = data.placeholders.find((p) => p.name === placeholder)?.value ?? "";
+            variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length, value));
+            placeholders.push({
+                name: placeholder,
+                value,
+            });
+        }
+    },
+);
+
+/**
+ * Adds event to the save button
+ */
 setBtn.addEventListener("click", async () => {
+    // if inputs have been filled open the export windows and pass placeholders on
+    // and close window.
     if (filledAllPlaceholders()) {
         await ipcRenderer.invoke(
             "openWindow",
@@ -62,7 +72,7 @@ setBtn.addEventListener("click", async () => {
                     contextIsolation: false,
                 },
                 autoHideMenuBar: true,
-                modal: false,
+                modal: true,
             },
             {
                 presentations,
@@ -71,14 +81,25 @@ setBtn.addEventListener("click", async () => {
         );
         window.close();
     } else {
+        // if not filled ope popup with warning
         openPopup({ text: "Please fill out all inputs!", heading: "Error" });
     }
 });
 
+/**
+ * Adds event for the cancel button
+ */
 cancelBtn.addEventListener("click", async () => {
     await ipcRenderer.invoke("closeFocusedWindow");
 });
 
+/**
+ * This function creates a div element with input fields for all placeholders.
+ * @param varName Name of the Placeholder.
+ * @param index index of the placeholder in the array.
+ * @param defaultValue default value for the input field.
+ * @returns A html div element.
+ */
 function createPlaceholderInput(varName: string, index: number, defaultValue = ""): HTMLDivElement {
     const variableContainer = document.createElement("div") as HTMLDivElement;
     variableContainer.classList.add("section");
@@ -129,6 +150,10 @@ function createPlaceholderInput(varName: string, index: number, defaultValue = "
     return variableContainer;
 }
 
+/**
+ * This function checks if all input fields have been filled with values.
+ * @returns A boolean if all inputs have been filled out.
+ */
 function filledAllPlaceholders(): boolean {
     for (const placeholder of placeholders) {
         if (placeholder.value === "") {

@@ -5,3 +5,5 @@ config
 !.vscode/settings.json
 src/views/css
 *.map
+tests/files/tmp
+tests/files/~$*.pptx

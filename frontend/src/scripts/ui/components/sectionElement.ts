@@ -1,14 +1,21 @@
-import { Section } from "../../interfaces/interfaces";
+import { Section } from "../../interfaces/presentation";
 
 import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
-import { getConfig } from "../../config";
+import { getConfig } from "../../helper/config";
 import isShiftPressed from "../keyHandler";
 
+/**
+ * This enum saves the possible states of a SectionElement
+ */
 enum SectionType {
     "normal",
     "selected",
 }
+
+/**
+ * This class is used to display and add functionality to the sections in the GUI
+ */
 export default class SectionElement {
     public element: HTMLDivElement;
     public section: Section;
@@ -21,6 +28,10 @@ export default class SectionElement {
     public selectedElement: HTMLDivElement;
     public selectedElementHeader: HTMLHeadingElement;
 
+    /**
+     * This constructor creates a SectionElement
+     * @param section The Section from wich the element will be created
+     */
     constructor(section: Section) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.selectedElement = document.createElement("div") as HTMLDivElement;
@@ -34,6 +45,12 @@ export default class SectionElement {
         this.selectedElement.hidden = true;
     }
 
+    /**
+     * This function creates a section that Contains the name of the section, the button to open
+     * or close this and a button to select or deselect all slides inside this section.
+     * @param element The HtmlElement that will be used to contain all the information.
+     * @param sectionType The State of the Section.
+     */
     private createSection(element: HTMLDivElement, sectionType: SectionType = SectionType.normal) {
         const header = document.createElement("div");
         const headerText = document.createElement("h2");
@@ -86,6 +103,11 @@ export default class SectionElement {
         }
     }
 
+    /**
+     * This function adds the function to select or deselect multiple slides while pressing shift.
+     * @param select A boolean to select or deselect
+     * @param event The event to select or deselect multiple slides
+     */
     private multiSelect(select: boolean, event: Event) {
         const curSelectedIndex = Array.prototype.indexOf.call(this.element.children, event.target) - 1;
         if (isShiftPressed()) {
@@ -110,6 +132,9 @@ export default class SectionElement {
         this.lastSelectedIndex = curSelectedIndex;
     }
 
+    /**
+     * This function controls the change of selection of the section and slides
+     */
     private handleSelectionChange() {
         const nr = this.slides.filter((elem) => elem.slide.IsSelected).length;
 
@@ -130,6 +155,11 @@ export default class SectionElement {
         }
     }
 
+    /**
+     * This function creates a collapseBtn to a section to open or close the section
+     * @param element The div element where the button will be located inside
+     * @returns A Html button element
+     */
     private createCollapseBtn(element: HTMLDivElement): HTMLButtonElement {
         const buttonCollapse = document.createElement("button");
 
@@ -151,6 +181,10 @@ export default class SectionElement {
         return buttonCollapse;
     }
 
+    /**
+     * This function creates a button to select all slides inside the corresponding section
+     * @returns A html button element
+     */
     private createSelectBtn(/* element: HTMLDivElement */): HTMLButtonElement {
         const buttonSelect = document.createElement("button");
 

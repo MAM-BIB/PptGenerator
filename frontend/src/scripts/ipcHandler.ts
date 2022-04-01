@@ -1,22 +1,26 @@
 import { BrowserWindow, ipcMain, dialog } from "electron";
-import path from "path";
-import { refreshConfig } from "./config";
+import { refreshConfig } from "./helper/config";
+import openWindow from "./helper/openWindow";
 import reload from "./helper/reload";
-import { PopupOptions, Presentation } from "./interfaces/interfaces";
-// import { openOption } from "./menu";
-// import { scanPresetations } from "./menu";
+import scanPresentations from "./helper/scan";
+import { openOption } from "./menu";
 
+/**
+ * This function handels ipcRendere messages.
+ */
 export default function initIpcHandlers() {
-    // ipcMain.handle("openOptionWindow", (event) => {
-    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
-    //     openOption(focusWindow);
-    // });
+    // Open the option window
+    ipcMain.handle("openOptionWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        openOption(focusWindow);
+    });
 
     // Close the window, sending the ipc-message
     ipcMain.handle("closeFocusedWindow", (event) => {
         BrowserWindow.fromWebContents(event.sender)?.close();
     });
 
+    // Maximize and restore the window
     ipcMain.handle("maxAndRestoreWindow", (event) => {
         const focusWindow = BrowserWindow.fromWebContents(event.sender);
         if (focusWindow?.isMaximized()) {
@@ -26,10 +30,12 @@ export default function initIpcHandlers() {
         }
     });
 
+    // Minimize the window
     ipcMain.handle("minimizeWindow", (event) => {
         BrowserWindow.fromWebContents(event.sender)?.minimize();
     });
 
+    // Open a dialog window
     ipcMain.handle("openDialog", async (event, options: Electron.OpenDialogOptions) => {
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
         if (browserWindow) {
@@ -38,6 +44,7 @@ export default function initIpcHandlers() {
         return Promise.reject(new Error("Could not open dialog"));
     });
 
+    // Open a new window
     ipcMain.handle(
         "openWindow",
         async (event, htmlPath: string, options: Electron.BrowserWindowConstructorOptions | undefined, data) => {
@@ -46,62 +53,22 @@ export default function initIpcHandlers() {
         },
     );
 
+    // Save the options
     ipcMain.handle("saveOptions", (event) => {
         refreshConfig();
         BrowserWindow.fromWebContents(event.sender)?.close();
         reload(null);
     });
 
+    // Reload the window
     ipcMain.handle("ReloadWindow", (event) => {
         const focusWindow = BrowserWindow.fromWebContents(event.sender);
         reload(focusWindow);
     });
 
-    // ipcMain.handle("ScanWindow", (event) => {
-    //     const focusWindow = BrowserWindow.fromWebContents(event.sender);
-    //     scanPresetations(focusWindow);
-    // });
-}
-
-export async function openWindow(
-    browserWindow: BrowserWindow | null,
-    htmlPath: string,
-    options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[], // TODO: add missing types
-) {
-    const windowOptions = options;
-    if (browserWindow && windowOptions?.modal) {
-        windowOptions.parent = browserWindow;
-    }
-
-    const window = new BrowserWindow(windowOptions);
-
-    const indexHTML = path.join(__dirname, "views", htmlPath);
-
-    window.loadFile(indexHTML);
-
-    if (data) {
-        if ((data as PopupOptions).answer) {
-            const popupOptions = data as PopupOptions;
-            popupOptions.answer = `answer${Math.random() * 1000}`;
-
-            window.webContents.once("dom-ready", () => {
-                window.webContents.send("data", data);
-            });
-
-            return new Promise<boolean>((resolve) => {
-                ipcMain.handle(popupOptions.answer as string, (event, answer: boolean) => {
-                    BrowserWindow.fromWebContents(event.sender)?.close();
-                    resolve(answer);
-                });
-            });
-        }
-        window.webContents.once("dom-ready", () => {
-            window.webContents.send("data", data);
-        });
-    }
-
-    return new Promise((resolve) => {
-        resolve(false);
+    // Scans presentations on the window
+    ipcMain.handle("ScanWindow", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        scanPresentations(focusWindow);
     });
 }

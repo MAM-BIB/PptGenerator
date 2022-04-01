@@ -5,16 +5,16 @@
     align-items: stretch;
     margin: 0 auto;
     padding: $size-1;
-    max-width: $window-width;
-    height: $window-height;
+    max-width: $window--width--size;
+    height: $window--height;
 
     .container-item {
         display: flex;
         flex-direction: column;
         flex: 1;
         margin: $size-1;
-        min-height: $min--height--small;
-        min-width: 0;
+        min-height: $min--size--small;
+        min-width: $min--size--small;
 
         .headline {
             text-align: center;
@@ -25,7 +25,7 @@
             flex-direction: column;
             flex: 1;
             border: none;
-            min-height: $min--height--small;
+            min-height: $min--size--small;
             background-color: var(--background--light);
             margin: $size-1;
             min-width: 0;
