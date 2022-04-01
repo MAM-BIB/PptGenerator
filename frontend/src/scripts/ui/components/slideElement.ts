@@ -67,10 +67,10 @@ export default class SlideElement {
         this.element.textContent = `${this.slide.Title === "" ? "No Title" : this.slide.Title}`;
         this.element.title = `slide:
             title: ${this.slide.Title},
-            UID: ${this.slide.Uid},
-            pos: ${this.slide.Position},
-            rlid: ${this.slide.RelationshipId},
-            isHidden: ${this.slide.IsHidden}`;
+            uid: ${this.slide.Uid},
+            position: ${this.slide.Position},
+            isHidden: ${this.slide.IsHidden},
+            hash: ${this.slide.Hash.substring(0, 19)}...`;
 
         this.addClickListener();
     }
