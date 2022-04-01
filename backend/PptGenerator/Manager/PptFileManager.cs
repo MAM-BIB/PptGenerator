@@ -21,7 +21,13 @@ namespace PptGenerator.Manager {
         /// <param name="copiedSlidePositions">A list of slide indexes that will be copied</param>
         /// <param name="destPresentationStream">The destination presentation path that will be used as a stream</param>
         /// <param name="placeholders">A list of placeholders tha will be replaced</param>
-        public static void Copy(string sourcePresentationStream, List<uint> copiedSlidePositions, string destPresentationStream, List<KeyValuePair<string, string>> placeholders) {
+        public static void Copy(
+            string sourcePresentationStream, 
+            List<uint> copiedSlidePositions, 
+            List<uint> replaceSlidePositions, 
+            string destPresentationStream, 
+            List<KeyValuePair<string, string>> placeholders
+        ) {
             using (PresentationDocument destDoc = PresentationDocument.Open(destPresentationStream, true)) {
                 PresentationDocument sourceDoc = PresentationDocument.Open(sourcePresentationStream, false);
 
@@ -31,9 +37,17 @@ namespace PptGenerator.Manager {
                 PresentationPart sourcePresentationPart = sourceDoc.PresentationPart;
                 Presentation sourcePresentation = sourcePresentationPart.Presentation;
 
-                foreach (uint copiedSlidePosition in copiedSlidePositions) {
-                    copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation, placeholders);
-                }
+                for (int i = 0; i < copiedSlidePositions.Count; i++) {
+                    uint copiedSlidePosition = copiedSlidePositions[i];
+                    if (i < replaceSlidePositions.Count) {
+                        int insertIndex = (int)replaceSlidePositions[i] + 1;
+                        copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation, placeholders, insertIndex);
+                        DeleteOneSlide(destDoc, (int)replaceSlidePositions[i]);
+                    } else {
+                        copyOneSlide(copiedSlidePosition, destPresentationPart, destPresentation, sourcePresentationPart, sourcePresentation, placeholders);
+                    }
+
+                    }
 
                 destDoc.PresentationPart.Presentation.Save();
                 destDoc.Close();
@@ -85,7 +99,8 @@ namespace PptGenerator.Manager {
             Presentation destPresentation, 
             PresentationPart sourcePresentationPart, 
             Presentation sourcePresentation, 
-            List<KeyValuePair<string, string>> placeholders
+            List<KeyValuePair<string, string>> placeholders,
+            int position = -1
         ) {
             // Check if index is out of range
             int countSlidesInSourcePresentation = sourcePresentation.SlideIdList.Count();
@@ -137,7 +152,13 @@ namespace PptGenerator.Manager {
             if (destPresentation.SlideIdList == null) {
                 destPresentation.SlideIdList = new SlideIdList();
             }
-            destPresentation.SlideIdList.Append(slideId);
+
+            // Set position
+            if (position < 0) {
+                destPresentation.SlideIdList.Append(slideId);
+            } else {
+                destPresentation.SlideIdList.InsertAt<SlideId>(slideId, position);
+            }
 
             // Added back notes
             if (notes != null) {

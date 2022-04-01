@@ -24,6 +24,7 @@ namespace PptGenerator.CommandLine {
         private string _basePath;
         private List<KeyValuePair<string, string>> _placeholders;
         private List<string> _existingUids;
+        private List<uint> _replacePositions;
 
         public Mode Mode { get => _mode; }
         public string OutPath { get => _outPath; }
@@ -34,6 +35,7 @@ namespace PptGenerator.CommandLine {
         public string BasePath { get => _basePath; }
         public List<KeyValuePair<string, string>> Placeholders { get => _placeholders; }
         public List<string> ExistingUids { get => _existingUids; }
+        public List<uint> ReplacePositions { get => _replacePositions; }
 
         /// <summary>
         /// Creates an object of the contianer class CommandLineArgument
@@ -72,7 +74,8 @@ namespace PptGenerator.CommandLine {
             bool ignoreTheme,
             bool deletFirstSlide,
             string basePath,
-            List<KeyValuePair<string, string>> placeholders
+            List<KeyValuePair<string, string>> placeholders,
+            List<uint> replacePositions
          ) {
             _mode = mode;
             _outPath = outPath;
@@ -82,6 +85,7 @@ namespace PptGenerator.CommandLine {
             _deleteFirstSlide = deletFirstSlide;
             _basePath = basePath;
             _placeholders = placeholders;
+            _replacePositions = replacePositions;
         }
 
         /// <summary>
