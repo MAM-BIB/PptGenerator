@@ -112,13 +112,10 @@ namespace PptGenerator.TemplateInfo {
                 title = GetSlideTitle(slidePart);
             } catch (Exception) { }
 
-            Console.WriteLine("");
-            Console.WriteLine("####################################################");
-            Console.WriteLine("");
-
+            // Replace PowerPoint jank
             string contentString = slidePart.Slide.CommonSlideData.ShapeTree.InnerXml;
-            // contentString = Regex.Replace(contentString, "xmlns:.*=\"http://schemas.microsoft.com/.*\"", "");
             contentString = Regex.Replace(contentString, "xmlns:[^=]*=\"http://schemas.microsoft.com/[^\"]*\"", "");
+            contentString = Regex.Replace(contentString, "<a:t>[0-9]+</a:t>", "");
 
             string hash = GetHashString(contentString);
 
