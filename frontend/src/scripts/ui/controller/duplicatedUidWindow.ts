@@ -73,12 +73,26 @@ function createMainDiv(uid: string, slides: PathWithSlides[]) {
     uidMainDiv.appendChild(duplicatedUidTitleContainer);
 
     let isInputChecked = false;
+    const sameHashes: { [hash: string]: Slide[] } = {};
     for (const slide of slides) {
         uidMainDiv.appendChild(createDivPresentationName(slide, isInputChecked));
         isInputChecked = true;
+
+        if (!sameHashes[slide.slide.Hash]) sameHashes[slide.slide.Hash] = [];
+        sameHashes[slide.slide.Hash].push(slide.slide);
     }
     const presentationNameContainer = document.createElement("div");
     presentationNameContainer.className = "presNameContainer";
+
+    for (const hash in sameHashes) {
+        if (Object.prototype.hasOwnProperty.call(sameHashes, hash)) {
+            const s = sameHashes[hash];
+            if (s.length > 1) {
+                const slideNames = s.flatMap((item) => `'${item.Title || "No Title"}'`).join(" and ");
+                uidMainDiv.append(document.createTextNode(`${slideNames} seem to be the same!`));
+            }
+        }
+    }
 
     duplicatedUidSection.appendChild(uidMainDiv);
 }
