@@ -9,6 +9,7 @@ const slide1: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 const slideWithNoTitle: Slide = {
@@ -19,6 +20,7 @@ const slideWithNoTitle: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 const slideWithNoUid: Slide = {
@@ -29,6 +31,7 @@ const slideWithNoUid: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 // formatSlide

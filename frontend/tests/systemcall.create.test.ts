@@ -244,10 +244,12 @@ test("call create with placeholders in title then check pptx", async () => {
     expectedSlides[0].Position = 0;
     expectedSlides[0].Title = "Test Slide 3.5";
     expectedSlides[0].Placeholders = [];
+    expectedSlides[0].Hash = "";
 
     const actualSlides = outMetaJson[0].Sections[0].Slides;
     for (const slide of actualSlides) {
         slide.RelationshipId = "";
+        slide.Hash = "";
     }
 
     expect(actualSlides).toEqual(expectedSlides);

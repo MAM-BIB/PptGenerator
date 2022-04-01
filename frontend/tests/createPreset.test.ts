@@ -17,6 +17,7 @@ const slide1: Slide = {
     IsHidden: false,
     IsSelected: true,
     Placeholders: [],
+    Hash: "",
 };
 
 const slide2: Slide = {
@@ -27,6 +28,7 @@ const slide2: Slide = {
     IsHidden: true,
     IsSelected: false,
     Placeholders: ["Name"],
+    Hash: "",
 };
 
 const slide3: Slide = {
@@ -37,6 +39,7 @@ const slide3: Slide = {
     IsHidden: true,
     IsSelected: true,
     Placeholders: [],
+    Hash: "",
 };
 
 const slide4: Slide = {
@@ -47,6 +50,7 @@ const slide4: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 const slide5: Slide = {
@@ -57,6 +61,7 @@ const slide5: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 const section1: Section = {

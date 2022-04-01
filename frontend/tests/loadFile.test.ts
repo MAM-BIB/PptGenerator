@@ -16,6 +16,7 @@ const slide1: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: [],
+    Hash: "",
 };
 
 const slide2: Slide = {
@@ -26,6 +27,7 @@ const slide2: Slide = {
     IsHidden: false,
     IsSelected: false,
     Placeholders: ["name"],
+    Hash: "BB70457FDEAB880AFD5B570580DC9ACCF5DB371579DFFE81EB9BC42CF0AA0637",
 };
 
 const section4: Section = {
@@ -66,6 +68,7 @@ const slide3: Slide = {
     IsSelected: false,
     Title: "TestSlide 1.5",
     Placeholders: ["Name"],
+    Hash: "BB70457FDEAB880AFD5B570580DC9ACCF5DB371579DFFE81EB9BC42CF0AA0637",
 };
 
 const slide4: Slide = {
@@ -76,6 +79,7 @@ const slide4: Slide = {
     IsSelected: false,
     Title: "TestSlide 2.5",
     Placeholders: [],
+    Hash: "",
 };
 
 const slide5: Slide = {
@@ -86,6 +90,7 @@ const slide5: Slide = {
     IsSelected: false,
     Title: "Test~$Space$~Slide 3.5",
     Placeholders: ["Space"],
+    Hash: "74042EE40BA683CC76850851922F39654D23B247A07F120667A33B11A9312A9C",
 };
 
 const section1: Section = {
@@ -166,4 +171,27 @@ test("selected pptx only select all slides", async () => {
     const expectedSectionElements = sectionElements;
     await file.loadPresetFromMeta(path.join(tmpPath, "meta2.json"));
     expect(file.sectionElements).toEqual(expectedSectionElements);
+});
+
+test("no unknown uid in file-loading", async () => {
+    fs.copyFileSync(meta2Path, path.join(tmpPath, "meta2.json"));
+
+    const sectionElements = sectionElements2;
+    const file = new LoadFile(sectionElements);
+
+    const unknown = await file.loadPresetFromMeta(path.join(tmpPath, "meta2.json"));
+    expect(unknown?.presentations).toEqual([]);
+    expect(unknown?.jsonPath).toEqual("tests\\files\\tmp\\meta2.json");
+    expect(unknown?.hashChangedList).toEqual([
+        {
+            Hash: "BB70457FDEAB880AFD5B570580DC9ACCF5DB371579DFFE81EB9BC42CF0AA0637",
+            IsHidden: false,
+            IsSelected: true,
+            Placeholders: ["Name"],
+            Position: 0,
+            RelationshipId: "rId2",
+            Title: "TestSlide 1.5",
+            Uid: "Test1234Test1234Test42",
+        },
+    ]);
 });

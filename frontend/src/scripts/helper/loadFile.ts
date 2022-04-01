@@ -2,7 +2,7 @@ import fsBase from "fs";
 import path from "path";
 
 import { getConfig } from "./config";
-import { Presentation } from "../interfaces/presentation";
+import { Presentation, Slide } from "../interfaces/presentation";
 import { Placeholder, Preset } from "../interfaces/preset";
 import SectionElement from "../ui/components/sectionElement";
 import openPopup from "./openPopup";
@@ -44,8 +44,10 @@ export default class LoadFile {
             if (unknown) {
                 let text = "";
                 for (const section of unknown.presentations.flatMap((pres) => pres.Sections)) {
-                    text += `\n${formatSlide(section.Slides)}\n`;
+                    if (section.Slides.length > 0) text += `\n${formatSlide(section.Slides)}\n`;
                 }
+                text += `\nThere are ${unknown.hashChangedList.length ?? 0} slides with different content:`;
+                text += `\n${formatSlide(unknown.hashChangedList)}\n`;
                 openPopup(
                     { text: `There are slides with uids, that are not known!\n${text}`, heading: "Warning" },
                     false,
@@ -96,15 +98,19 @@ export default class LoadFile {
      */
     public async loadPresetFromMeta(
         jsonPath: string,
-    ): Promise<{ jsonPath: string; presentations: Presentation[] } | undefined> {
+    ): Promise<{ jsonPath: string; presentations: Presentation[]; hashChangedList: Slide[] } | undefined> {
         const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
-        const presentations = JSON.parse(PresMetaJson) as Presentation[];
+        let presentations = JSON.parse(PresMetaJson) as Presentation[];
         const allSelectedSlides = presentations.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
+        const hashChangedList: Slide[] = [];
 
         for (const slideELement of this.sectionElements.flatMap((elem) => elem.slides)) {
             if (
                 allSelectedSlides.some((slide) => {
                     if (slide.Uid === slideELement.slide.Uid) {
+                        if (slide.Hash !== slideELement.slide.Hash) {
+                            hashChangedList.push(slide);
+                        }
                         // eslint-disable-next-line no-param-reassign
                         slide.IsSelected = true;
                         return true;
@@ -118,16 +124,21 @@ export default class LoadFile {
             }
         }
 
-        for (const presentation of presentations) {
-            for (const section of presentation.Sections) {
+        presentations = presentations.filter((presentation) => {
+            // eslint-disable-next-line no-param-reassign
+            presentation.Sections = presentation.Sections.filter((section) => {
+                // eslint-disable-next-line no-param-reassign
                 section.Slides = section.Slides.filter((slide) => !slide.IsSelected);
-            }
-        }
+                return section.Slides.length === 0;
+            });
+            return presentation.Sections.length === 0;
+        });
 
-        if (allSelectedSlides.some((slide) => !slide.IsSelected)) {
+        if (allSelectedSlides.some((slide) => !slide.IsSelected) || hashChangedList.length) {
             return {
                 jsonPath,
                 presentations,
+                hashChangedList,
             };
         }
         await fs.rm(jsonPath);
