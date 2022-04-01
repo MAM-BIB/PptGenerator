@@ -1,5 +1,5 @@
 param($inputFile, $maxSlides, $savePath);
-# call: .\picsText.ps1 C:\Users\bib\GIT\PptGenerator\backend\slides\All_slides_EN_small.pptx 41 C:\Users\bib\GIT\PptGenerator\backend\slides\pics\
+# call: .\picsText.ps1 C:\Users\bib\GIT\PptGenerator\backend\slides\All_slides_EN_small.pptx 41 C:\Users\bib\GIT\PptGenerator\meta\pics\
 
 # Source: https://gist.github.com/ap0llo/5c5f5aadb885fe918000b248e5dd6e36
 
