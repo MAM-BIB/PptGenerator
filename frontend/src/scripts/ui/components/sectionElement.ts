@@ -20,7 +20,7 @@ export default class SectionElement {
     public element: HTMLDivElement;
     public section: Section;
     public slides: SlideElement[];
-    public selectedSlides: SlideElement[];
+    public selectedSlides: SelectedSlideElement[];
 
     public lastSelectedIndex = -1;
     public isSelected = false;
