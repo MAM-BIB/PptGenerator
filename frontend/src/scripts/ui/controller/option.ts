@@ -271,6 +271,15 @@ function deleteLanguage() {
  * When a new language was added the input will be updated and the newly added language will be selected.
  */
 function addLanguage() {
+    for (const master of config.presentationMasters) {
+        if (master.lang === languageInput.value.trim()) {
+            openPopup({
+                text: "This Language already exist! ",
+                heading: "Error",
+            });
+            return;
+        }
+    }
     if (!languageInput.classList.contains("show")) {
         languageInput.classList.add("show");
         languageInput.focus();
