@@ -106,7 +106,7 @@ export default class SlideElement {
                 // eslint-disable-next-line no-promise-executor-return
                 new Promise((r) => setTimeout(r, 1000)).then(() => {
                     // eslint-disable-next-line no-param-reassign
-                    img.src = src;
+                    img.src = path.resolve(src);
                 });
             }
         }
