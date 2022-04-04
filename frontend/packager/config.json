@@ -2,6 +2,7 @@
     "metaJsonPath": "./meta/meta.json",
     "metaPicsPath": "./meta/pics",
     "coreApplication": "./core/PptGenerator.exe",
+    "picsApplication": "./core/powershell/pics.ps1",
     "presetPath": "./config/presets",
     "basePath": "./config/assets/base.pptx",
     "defaultExportPath": "./export",

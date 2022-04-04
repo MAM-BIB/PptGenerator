@@ -33,6 +33,10 @@ async function bundleElectronApp(options) {
         recursive: true,
     });
 
+    fs.cpSync("../backend/powershell/", "../dist/pptgenerator-win32-x64/core/powershell/", {
+        recursive: true,
+    });
+
     minify("../dist/");
 
     const output = fs.createWriteStream("../dist/PptGenerator.zip");
