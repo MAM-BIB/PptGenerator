@@ -47,9 +47,6 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
     if (scanAgain) {
         scanPresentations(focusedWindow);
     } else {
-        // call: .\picsText.ps1 C:\Users\bib\GIT\PptGenerator\backend\slides\All_slides_EN_small.pptx 41
-        // C:\Users\bib\GIT\PptGenerator\meta\pics\
-
         try {
             const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
             const presentations = JSON.parse(presentationsJson) as Presentation[];
@@ -97,12 +94,6 @@ async function generatePics(presentation: Presentation, folder: string): Promise
                 }
             });
         });
-
-        // await call(path.normalize(getConfig().picsApplication), [
-        //     path.normalize(presentation.Path),
-        //     nrOfSlides.toString(),
-        //     path.normalize(destPath),
-        // ]);
     }
     return new Promise<void>((resolve) => {
         resolve();
