@@ -2,6 +2,7 @@
 import { ipcRenderer } from "electron";
 import path from "path";
 import fsBase from "fs";
+import { exec } from "child_process";
 
 import { getConfig } from "../../helper/config";
 import { Presentation } from "../../interfaces/presentation";
@@ -20,6 +21,7 @@ const pathInput = document.getElementById("path-input") as HTMLInputElement;
 const savePresetToggleBtn = document.getElementById("save-preset-toggle-btn") as HTMLInputElement;
 const presetPathSection = document.getElementById("preset-path") as HTMLDivElement;
 const presetPathInput = document.getElementById("preset-path-input") as HTMLInputElement;
+const createPdfToggleBtn = document.getElementById("create-pdf-toggle-btn") as HTMLInputElement;
 
 let placeholders: Placeholder[];
 let presentations: Presentation[];
@@ -77,7 +79,7 @@ savePresetToggleBtn.addEventListener("keydown", (e) => {
 /**
  * Add the event to the export button for the preset creation.
  */
-exportBtn.addEventListener("click", () => {
+exportBtn.addEventListener("click", async () => {
     startLoading();
 
     let name = nameInput.value;
@@ -116,8 +118,35 @@ exportBtn.addEventListener("click", () => {
         createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
     }
 
+    // creates pdf if checked
+    if (createPdfToggleBtn.checked) {
+        const pdfPath = pathInput.value;
+        if (!fsBase.existsSync(pdfPath)) {
+            openPopup({ text: "The selected pdf directory does not exist!", heading: "Error" });
+            stopLoading();
+            return;
+        }
+    }
+
     // creates the pptx-file
-    exportToPptx(path.join(outPath, `${name}.pptx`));
+    await exportToPptx(path.join(outPath, `${name}.pptx`));
+
+    // creates pdf if checked
+    if (createPdfToggleBtn.checked) {
+        const pdfPath = pathInput.value;
+        if (!fsBase.existsSync(pdfPath)) {
+            openPopup({ text: "The selected pdf directory does not exist!", heading: "Error" });
+            stopLoading();
+        }
+        try {
+            await createPdf(path.join(outPath, `${name}.pptx`), path.join(outPath, `${name}.pdf`));
+        } catch (error) {
+            await openPopup({ text: `Error while creating a pdf:\n ${error}`, heading: "Error", answer: true });
+        }
+    }
+
+    // closes the window after completion
+    ipcRenderer.invoke("closeFocusedWindow");
 });
 
 /**
@@ -170,9 +199,6 @@ async function exportToPptx(outPath: string) {
             firstPresentation = false;
         }
     }
-
-    // closes the window after completion
-    ipcRenderer.invoke("closeFocusedWindow");
 }
 
 /**
@@ -218,5 +244,25 @@ async function copyPresentation(
 
     return new Promise((resolve) => {
         resolve(true);
+    });
+}
+
+async function createPdf(presentationPath: string, destPath: string): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/quotes
+    const appPath = path.normalize(getConfig().pdfApplication).replaceAll(" ", '" "');
+    return new Promise<void>((resolve, reject) => {
+        exec(
+            `${appPath} "${path.normalize(presentationPath)}" "${path.normalize(destPath)}"`,
+            { shell: "powershell.exe" },
+            (error) => {
+                if (error) reject(error.message);
+            },
+        ).on("exit", (code) => {
+            if (code === 0) {
+                resolve();
+            } else {
+                reject("Program exited with unknown errors");
+            }
+        });
     });
 }
