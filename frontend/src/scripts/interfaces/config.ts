@@ -16,4 +16,5 @@ export interface Config {
     defaultExportPath: string;
     backupPath: string;
     showTutorial: boolean;
+    imgZoom: number;
 }
