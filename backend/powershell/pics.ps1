@@ -1,6 +1,6 @@
 param($inputFile, $maxSlides, $savePath);
 
-. .\powerPoint.ps1
+. $PSScriptRoot\powerPoint.ps1
 
 $array = openPowerpoint $inputFile
 $application = $array[0]
