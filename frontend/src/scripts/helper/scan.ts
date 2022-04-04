@@ -83,9 +83,9 @@ async function generatePics(presentation: Presentation, folder: string): Promise
 
         return new Promise<void>((resolve, reject) => {
             exec(
-                `${path.normalize(getConfig().picsApplication)} "${path.normalize(
+                `${path.resolve(getConfig().picsApplication)} "${path.resolve(
                     presentation.Path,
-                )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
+                )}" ${nrOfSlides.toString()} "${path.resolve(destPath)}"`,
                 { shell: "powershell.exe" },
                 (error) => {
                     if (error) reject(error.message);
