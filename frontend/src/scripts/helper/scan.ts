@@ -81,11 +81,10 @@ async function generatePics(presentation: Presentation, folder: string): Promise
 
         await fs.mkdir(destPath);
 
+        const appPath = path.resolve(getConfig().picsApplication).replaceAll(" ", "` ");
         return new Promise<void>((resolve, reject) => {
             exec(
-                `${path.normalize(getConfig().picsApplication)} "${path.normalize(
-                    presentation.Path,
-                )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
+                `${appPath} "${path.resolve(presentation.Path)}" ${nrOfSlides.toString()} "${path.resolve(destPath)}"`,
                 { shell: "powershell.exe" },
                 (error) => {
                     if (error) reject(error.message);
