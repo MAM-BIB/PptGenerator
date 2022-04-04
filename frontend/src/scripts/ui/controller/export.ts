@@ -248,8 +248,7 @@ async function copyPresentation(
 }
 
 async function createPdf(presentationPath: string, destPath: string): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/quotes
-    const appPath = path.normalize(getConfig().pdfApplication).replaceAll(" ", '" "');
+    const appPath = path.normalize(getConfig().pdfApplication).replaceAll(" ", "` ");
     return new Promise<void>((resolve, reject) => {
         exec(
             `${appPath} "${path.normalize(presentationPath)}" "${path.normalize(destPath)}"`,
