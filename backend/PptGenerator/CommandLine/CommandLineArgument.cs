@@ -66,6 +66,7 @@ namespace PptGenerator.CommandLine {
         /// <param name="deletFirstSlide">A boolean if the first slide of the created presentation will be delted</param>
         /// <param name="basePath">The basePath where slides slides will be copied to</param>
         /// <param name="placeholders">A Collection of placeholders that will be replaced</param>
+        /// <param name="replacePositions">The positions of the slides that will be replaced</param>
         public CommandLineArgument(
             Mode mode,
             string outPath,
