@@ -12,6 +12,7 @@ import openPopup from "../../helper/openPopup";
 import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
 import isRunning, { killPpt } from "../../helper/processManager";
+import { addZoomListener } from "../keyHandler";
 
 const fs = fsBase.promises;
 
@@ -35,6 +36,8 @@ fillPresentationMasterSelect();
 read();
 // Shows the help window.
 showTutorial();
+// Change Images size on zoom.
+addZoomListener();
 
 /**
  * This function will show you the tutorial automatically if you start the program for the first time
