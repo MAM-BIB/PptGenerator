@@ -191,14 +191,14 @@ function createFileMenu(mainFileLi: HTMLElement) {
 
     scanBtn.addEventListener("click", async () => {
         if (isRunning("POWERPNT")) {
-            const awnser = await openPopup({
+            const answer = await openPopup({
                 text: "We detected that PowerPoint is open. Please close the process",
                 heading: "Warning",
                 primaryButton: "Kill PowerPoint",
                 secondaryButton: "Cancel",
                 answer: true,
             });
-            if (awnser) {
+            if (answer) {
                 killPpt();
                 while (isRunning("POWERPNT")) {
                     // eslint-disable-next-line no-await-in-loop
@@ -212,6 +212,17 @@ function createFileMenu(mainFileLi: HTMLElement) {
     });
     scanLi.appendChild(scanBtn);
     fileUl.appendChild(scanLi);
+
+    const scanFolderLi = document.createElement("li");
+    const scanFolderBtn = document.createElement("button");
+    scanFolderBtn.appendChild(createHotkey(""));
+
+    scanFolderBtn.innerText = "Scan folder";
+    scanFolderBtn.addEventListener("click", async () => {
+        ipcRenderer.invoke("scanFolder");
+    });
+    scanFolderLi.appendChild(scanFolderBtn);
+    fileUl.appendChild(scanFolderLi);
 
     const exitLi = document.createElement("li");
     const exitBtn = document.createElement("button");
