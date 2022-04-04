@@ -19,3 +19,8 @@ export interface DuplicatedUids {
     existingUids?: string[];
     answer?: boolean | string;
 }
+
+export interface ScanData {
+    newSlides: SlideWithPath[];
+    updateUids: { [uid: string]: SlideWithPath[] };
+}
