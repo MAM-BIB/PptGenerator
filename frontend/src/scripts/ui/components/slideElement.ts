@@ -1,3 +1,5 @@
+import path from "path";
+import { getConfig } from "../../helper/config";
 import { Slide } from "../../interfaces/presentation";
 
 /**
@@ -7,11 +9,15 @@ export default class SlideElement {
     public slide: Slide;
     public element: HTMLDivElement;
 
-    constructor(slide: Slide) {
+    constructor(slide: Slide, imgPath?: string) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.slide = slide;
         this.slide.IsSelected = false;
-        this.createSlide();
+        if (imgPath) {
+            this.createSlide(path.join(getConfig().metaPicsPath, imgPath, `${slide.Position + 1}.jpg`));
+        } else {
+            this.createSlide();
+        }
     }
 
     /**
@@ -61,7 +67,7 @@ export default class SlideElement {
     /**
      * This function creates a Slide that will be displayed in the GUI and has all functionalities
      */
-    private createSlide() {
+    private createSlide(imgSrc?: string) {
         this.element.classList.add("slide");
         if (this.slide.IsHidden) this.element.classList.add("hidden-slide");
         this.element.textContent = `${this.slide.Title === "" ? "No Title" : this.slide.Title}`;
@@ -73,6 +79,24 @@ export default class SlideElement {
             hash: ${this.slide.Hash.substring(0, 19)}...`;
 
         this.addClickListener();
+
+        if (imgSrc) {
+            const img = document.createElement("img");
+            img.alt = "";
+            img.style.display = "none";
+            img.loading = "lazy";
+            img.src = imgSrc;
+            img.addEventListener("error", async (errorEvent) => {
+                errorEvent.preventDefault();
+                // eslint-disable-next-line no-promise-executor-return
+                await new Promise((r) => setTimeout(r, 1000));
+                img.src = imgSrc;
+            });
+            img.addEventListener("load", () => {
+                img.style.display = "";
+            });
+            this.element.append(img);
+        }
     }
 
     /**

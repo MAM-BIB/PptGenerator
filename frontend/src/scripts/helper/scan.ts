@@ -1,5 +1,6 @@
 import path from "path";
 import fsBase from "fs";
+import { exec } from "child_process";
 
 import { getConfig } from "./config";
 import openPopup from "./openPopup";
@@ -18,6 +19,7 @@ const fs = fsBase.promises;
 export default async function scanPresentations(focusedWindow: Electron.BrowserWindow | null | undefined) {
     // start the loading animation.
     focusedWindow?.webContents.send("startLoading");
+
     // call the core application to scan the .pptx files.
     try {
         await call(getConfig().coreApplication, [
@@ -44,7 +46,73 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
     const scanAgain = !(await checkUids());
     if (scanAgain) {
         scanPresentations(focusedWindow);
+    } else {
+        // call: .\picsText.ps1 C:\Users\bib\GIT\PptGenerator\backend\slides\All_slides_EN_small.pptx 41
+        // C:\Users\bib\GIT\PptGenerator\meta\pics\
+
+        try {
+            const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+            const presentations = JSON.parse(presentationsJson) as Presentation[];
+
+            for (let index = 0; index < presentations.length; index++) {
+                const presentation = presentations[index];
+                // eslint-disable-next-line no-await-in-loop
+                await generatePics(presentation, index.toString());
+            }
+        } catch (error) {
+            await openPopup({ text: `Could not create images!\n ${error}`, heading: "Error", answer: true });
+        }
     }
+}
+
+/**
+ * Generates pics for a presentation in the meta pic folder
+ * @param presentation The presentation
+ * @param folder The destination folder in the meta pics folder
+ */
+async function generatePics(presentation: Presentation, folder: string): Promise<void> {
+    const nrOfSlides = presentation.Sections.reduce((sum, sec) => sum + sec.Slides.length, 0);
+    if (nrOfSlides > 0) {
+        const destPath = path.join(getConfig().metaPicsPath, folder);
+        if (fsBase.existsSync(destPath)) {
+            await fs.rm(destPath, { recursive: true });
+        }
+        await fs.mkdir(destPath);
+        console.log(
+            `"${path.normalize(getConfig().picsApplication)}" "${path.normalize(
+                presentation.Path,
+            )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
+        );
+
+        return new Promise<void>((resolve, reject) => {
+            exec(
+                `${path.normalize(getConfig().picsApplication)} "${path.normalize(
+                    presentation.Path,
+                )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
+                { shell: "powershell.exe" },
+                (error, out, eout) => {
+                    console.log(error, out, eout);
+
+                    if (error) reject(error.message);
+                },
+            ).on("exit", (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject("Program exited with unknown errors");
+                }
+            });
+        });
+
+        // await call(path.normalize(getConfig().picsApplication), [
+        //     path.normalize(presentation.Path),
+        //     nrOfSlides.toString(),
+        //     path.normalize(destPath),
+        // ]);
+    }
+    return new Promise<void>((resolve) => {
+        resolve();
+    });
 }
 
 /**

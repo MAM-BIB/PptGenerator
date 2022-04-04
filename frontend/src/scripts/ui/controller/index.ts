@@ -113,11 +113,12 @@ function loadSections() {
     if (!selectedPresentationMaster) {
         openPopup({ heading: "Error", text: "Could not find the selected master presentation!" });
     }
-    for (const presentation of presentations) {
+    for (let index = 0; index < presentations.length; index++) {
+        const presentation = presentations[index];
         if (selectedPresentationMaster?.paths.some((p) => path.normalize(p) === path.normalize(presentation.Path))) {
             sectionContainer.appendChild(createPresentationName(presentation));
             for (const section of presentation.Sections) {
-                const sectionElement = new SectionElement(section);
+                const sectionElement = new SectionElement(section, index.toString());
                 sectionContainer.appendChild(sectionElement.element);
                 selectedSectionContainer.appendChild(sectionElement.selectedElement);
                 sectionElement.element.addEventListener("selectionChanged", () => {

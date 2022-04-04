@@ -7,6 +7,7 @@ export interface Config {
     metaJsonPath: string;
     metaPicsPath: string;
     coreApplication: string;
+    picsApplication: string;
     presetPath: string;
     presentationMasters: PresentationMaster[];
     ignoreHiddenSlides: boolean;

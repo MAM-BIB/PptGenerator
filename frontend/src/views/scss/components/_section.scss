@@ -41,6 +41,11 @@
         text-overflow: ellipsis;
         cursor: pointer;
 
+        img{
+            width: calc(100% - $size-1);
+            margin: $size-1;
+        }
+
         &.selected {
             background: var(--btn--background);
             color: var(--btn--font);

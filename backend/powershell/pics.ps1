@@ -26,9 +26,8 @@ function Export-Slide($slideNumber, $outputFile) {
 
 # Loop all slides
 for ($i = 1; $i -lt $maxSlides + 1; $i++) {
-    $outputPath = $savePath
-    $outputPath += $i
-    $outputPath += ".jpg"
+    $outputPath = "$savePath\$i.jpg"
+    echo $outputPath
     Export-Slide $i $outputPath
     $outputPath = ""
 }
