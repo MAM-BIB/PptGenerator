@@ -74,15 +74,12 @@ async function generatePics(presentation: Presentation, folder: string): Promise
     const nrOfSlides = presentation.Sections.reduce((sum, sec) => sum + sec.Slides.length, 0);
     if (nrOfSlides > 0) {
         const destPath = path.join(getConfig().metaPicsPath, folder);
+
         if (fsBase.existsSync(destPath)) {
             await fs.rm(destPath, { recursive: true });
         }
+
         await fs.mkdir(destPath);
-        console.log(
-            `"${path.normalize(getConfig().picsApplication)}" "${path.normalize(
-                presentation.Path,
-            )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
-        );
 
         return new Promise<void>((resolve, reject) => {
             exec(
@@ -90,9 +87,7 @@ async function generatePics(presentation: Presentation, folder: string): Promise
                     presentation.Path,
                 )}" ${nrOfSlides.toString()} "${path.normalize(destPath)}"`,
                 { shell: "powershell.exe" },
-                (error, out, eout) => {
-                    console.log(error, out, eout);
-
+                (error) => {
                     if (error) reject(error.message);
                 },
             ).on("exit", (code) => {

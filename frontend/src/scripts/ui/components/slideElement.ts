@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import { getConfig } from "../../helper/config";
 import { Slide } from "../../interfaces/presentation";
@@ -85,17 +86,29 @@ export default class SlideElement {
             img.alt = "";
             img.style.display = "none";
             img.loading = "lazy";
-            img.src = imgSrc;
-            img.addEventListener("error", async (errorEvent) => {
-                errorEvent.preventDefault();
-                // eslint-disable-next-line no-promise-executor-return
-                await new Promise((r) => setTimeout(r, 1000));
-                img.src = imgSrc;
+            img.addEventListener("error", () => {
+                checkForImg(img, imgSrc, true);
             });
             img.addEventListener("load", () => {
                 img.style.display = "";
             });
+            checkForImg(img, imgSrc);
             this.element.append(img);
+        }
+
+        function checkForImg(img: HTMLImageElement, src: string, wait = false) {
+            if (wait || !fs.existsSync(src)) {
+                // eslint-disable-next-line no-promise-executor-return
+                new Promise((r) => setTimeout(r, 2000)).then(() => {
+                    checkForImg(img, src);
+                });
+            } else {
+                // eslint-disable-next-line no-promise-executor-return
+                new Promise((r) => setTimeout(r, 1000)).then(() => {
+                    // eslint-disable-next-line no-param-reassign
+                    img.src = src;
+                });
+            }
         }
     }
 
