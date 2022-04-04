@@ -1,12 +1,12 @@
 import { Slide } from "./presentation";
 
-export interface PathWithSlides {
+export interface SlideWithPath {
     slide: Slide;
     path: string;
 }
 
 export interface UidsWithSlides {
-    [uid: string]: PathWithSlides[];
+    [uid: string]: SlideWithPath[];
 }
 
 export interface SlidesWithPath {
