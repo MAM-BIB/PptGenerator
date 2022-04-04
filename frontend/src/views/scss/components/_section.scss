@@ -1,5 +1,6 @@
 :root {
     --zoom: 100%;
+    --hide: block;
 }
 .section {
     margin: $size-2 0;
@@ -47,7 +48,7 @@
         img {
             width: calc(var(--zoom) - $size-1);
             margin: $size-1;
-            display: block;
+            display: var(--hide);
         }
 
         &.selected {

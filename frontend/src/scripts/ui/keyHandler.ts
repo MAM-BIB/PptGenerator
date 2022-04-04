@@ -38,6 +38,11 @@ document.addEventListener("wheel", (event) => {
     const root = document.documentElement;
     if (ctrlPressed) {
         zoom = Math.min(Math.max(zoom + event.deltaY * 0.1, 0), 100);
+        if (zoom === 0) {
+            root.style.setProperty("--hide", "none");
+        } else {
+            root.style.setProperty("--hide", "block");
+        }
         root.style.setProperty("--zoom", `${zoom}%`);
     }
 });
