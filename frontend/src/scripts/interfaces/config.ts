@@ -8,6 +8,7 @@ export interface Config {
     metaPicsPath: string;
     coreApplication: string;
     picsApplication: string;
+    specificPicsApplication: string;
     pdfApplication: string;
     presetPath: string;
     presentationMasters: PresentationMaster[];
