@@ -61,6 +61,8 @@ export default function initIpcHandlers() {
         };
 
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
+        browserWindow?.webContents.send("startLoading");
+
         if (browserWindow) {
             const openDialogReturnValue = await dialog.showOpenDialog(browserWindow, options);
             if (!openDialogReturnValue.canceled) {
