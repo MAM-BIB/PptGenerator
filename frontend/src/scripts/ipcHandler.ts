@@ -238,11 +238,6 @@ function getAllFiles(folder: string, type: string): string[] {
 async function generateImg(srcPath: string, positions: number[], destPath: string) {
     const appPath = path.resolve(getConfig().specificPicsApplication).replaceAll(" ", "` ");
 
-    console.log(
-        "powershell:",
-        `${appPath} "${path.resolve(srcPath)}" ${positions.join(",")} "${path.resolve(destPath)}"`,
-    );
-
     return new Promise<void>((resolve, reject) => {
         exec(
             `${appPath} "${path.resolve(srcPath)}" ${positions.join(",")} "${path.resolve(destPath)}"`,
