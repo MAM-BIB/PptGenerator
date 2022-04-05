@@ -6,13 +6,14 @@ import { SlideWithPathAndImg } from "../../interfaces/container";
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
 const updateButton = document.getElementById("update-btn");
+const imgs = document.querySelectorAll("img");
 
 let updateUids: { [uid: string]: SlideWithPathAndImg[] };
 let newSlides: SlideWithPathAndImg[];
 
 // Initialization of the custom titlebar.
 initTitlebar({
-    resizable: false,
+    resizable: true,
     menuHidden: true,
     title: "PptGenerator-Update",
 });
@@ -27,18 +28,27 @@ ipcRenderer.on("data", (event, data) => {
 });
 
 /**
- * Add the event to the cancel button for the preset creation.
+ * Add the event to the cancel button
  */
 cancelButton?.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
 /**
- * Add the event to the cancel button for the preset creation.
+ * Add the event to the update button
  */
 updateButton?.addEventListener("click", () => {
     // code...
 });
+
+/**
+ * Add the event to all imgs
+ */
+for (const img of imgs) {
+    img.addEventListener("click", () => {
+        // code...
+    });
+}
 
 /**
  * This function loads creates the content for the window.
@@ -50,20 +60,30 @@ function loadContent() {
     for (const uid in updateUids) {
         if (Object.prototype.hasOwnProperty.call(updateUids, uid)) {
             const uidWithSlides = updateUids[uid];
-            const slides: SlideWithPathAndImg[] = [];
-            for (const slide of uidWithSlides) {
-                if (slide !== uidWithSlides[0]) {
-                    slides.push(slide);
-                }
-            }
             // adds the slides to the window
-            selectionContainer?.appendChild(createSection(slides, uid));
+            selectionContainer?.appendChild(createSection(uidWithSlides, uid));
         }
     }
     // checks is there are unknown slides and adds them to window.
     if (newSlides.length > 0) {
         selectionContainer?.appendChild(createNewSlideSection(newSlides));
     }
+}
+
+/**
+ * This function creates a div with a header in it
+ * @param text The text that is displayed in the header
+ * @returns A HtmlDivElement
+ */
+function createStatusTitle(text: string): HTMLDivElement {
+    const container = document.createElement("div");
+    container.classList.add("status-container");
+
+    const header = document.createElement("h3");
+    header.innerText = text;
+    container.appendChild(header);
+
+    return container;
 }
 
 /**
@@ -78,8 +98,16 @@ function createSection(uidWithSlides: SlideWithPathAndImg[], uid: string): HTMLD
 
     section.appendChild(createUidTitleElement(uid));
 
+    let counter = 0;
     for (const slide of uidWithSlides) {
-        section.appendChild(createSelectionSlideElement(uid, slide.imgPath));
+        if (slide === uidWithSlides[0]) {
+            section.appendChild(createStatusTitle("Original:"));
+            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, true));
+            section.appendChild(createStatusTitle("Versions:"));
+        } else {
+            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, false));
+        }
+        counter++;
     }
 
     return section;
@@ -108,22 +136,28 @@ function createUidTitleElement(uid: string): HTMLDivElement {
  * This function creates a Label that contains a img and a radio Button so you can select it.
  * @param uid The UID to group the labels.
  * @param imgPath The path to the img source.
- * @returns A HtmlLabel that can be selected like a radio Button.
+ * @returns A HtmlDivElement.
  */
-function createSelectionSlideElement(uid: string, imgPath: string): HTMLLabelElement {
-    const slideLabel = document.createElement("label");
-    slideLabel.classList.add("selection-slide");
-
-    const slideImg = document.createElement("img");
-    slideImg.src = imgPath;
-    slideLabel.appendChild(slideImg);
+function createSelectionSlideElement(uid: string, imgPath: string, id: string, select: boolean): HTMLDivElement {
+    const div = document.createElement("div");
+    div.classList.add("selection-slide");
 
     const radioInput = document.createElement("input");
     radioInput.type = "radio";
     radioInput.name = uid;
-    slideLabel.appendChild(radioInput);
+    radioInput.id = id;
+    radioInput.checked = select;
+    div.appendChild(radioInput);
 
-    return slideLabel;
+    const slideLabel = document.createElement("label");
+
+    const slideImg = document.createElement("img");
+    slideImg.src = imgPath;
+    slideLabel.appendChild(slideImg);
+    slideLabel.htmlFor = id;
+    div.appendChild(slideLabel);
+
+    return div;
 }
 
 /**
@@ -142,10 +176,12 @@ function createNewSlideSection(slides: SlideWithPathAndImg[]): HTMLDivElement {
     const line = document.createElement("hr");
     section.appendChild(line);
 
+    let counter = 0;
     for (const slide of slides) {
-        const slideLabel = createNewSlideSelection(slide.imgPath);
+        const slideLabel = createNewSlideSelection(slide.imgPath, slide.slide.Uid + counter);
         slideLabel.classList.add("new-slide");
         section.appendChild(slideLabel);
+        counter++;
     }
 
     return section;
@@ -154,19 +190,24 @@ function createNewSlideSection(slides: SlideWithPathAndImg[]): HTMLDivElement {
 /**
  * This function creates a Label that contains a img and a checkbox so you can select it.
  * @param imgPath The path to the img source.
- * @returns A HtmlLabel that can be selected like a checkbox.
+ * @returns A HtmlDivElement
  */
-function createNewSlideSelection(imgPath: string): HTMLLabelElement {
+function createNewSlideSelection(imgPath: string, id: string): HTMLDivElement {
+    const div = document.createElement("div");
+    div.classList.add("selection-slide");
+
+    const radioInput = document.createElement("input");
+    radioInput.type = "checkbox";
+    radioInput.id = id;
+    div.appendChild(radioInput);
+
     const slideLabel = document.createElement("label");
-    slideLabel.classList.add("new-slide-label");
 
     const slideImg = document.createElement("img");
     slideImg.src = imgPath;
     slideLabel.appendChild(slideImg);
+    slideLabel.htmlFor = id;
+    div.appendChild(slideLabel);
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    slideLabel.appendChild(checkbox);
-
-    return slideLabel;
+    return div;
 }

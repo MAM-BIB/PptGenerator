@@ -171,7 +171,7 @@ export default function initIpcHandlers() {
                         "updateSlideMaster.html",
                         {
                             width: 800,
-                            height: 650,
+                            height: 800,
                             minWidth: 500,
                             minHeight: 400,
                             frame: false,
