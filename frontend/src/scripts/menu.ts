@@ -103,7 +103,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
 
 /**
  * This functions opens the options
- * @param parent Browserwindow or null for no window
+ * @param parent BrowserWindow or null for no window
  */
 export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({

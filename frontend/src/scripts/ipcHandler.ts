@@ -13,7 +13,7 @@ import { Presentation } from "./interfaces/presentation";
 import { openOption } from "./menu";
 
 /**
- * This function handels ipcRendere messages.
+ * This function handles ipcRenderer messages.
  */
 export default function initIpcHandlers() {
     // Open the option window

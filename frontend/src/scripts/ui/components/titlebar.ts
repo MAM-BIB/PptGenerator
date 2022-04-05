@@ -4,7 +4,7 @@ import isRunning, { killPpt, sleep } from "../../helper/processManager";
 import { TitlebarOptions } from "../../interfaces/windows";
 
 /**
- * This function initializes the custom titlbar for the application.
+ * This function initializes the custom titlebar for the application.
  * @param options An object of options for the titlebar.
  */
 export default function initTitlebar(options?: TitlebarOptions) {
