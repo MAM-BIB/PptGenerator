@@ -9,6 +9,7 @@ import initTitlebar from "../components/titlebar";
 import { getConfig } from "../../helper/config";
 import { startLoading } from "../components/loading";
 import openPopup from "../../helper/openPopup";
+import checkForImg from "./imageLoader";
 
 const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -139,15 +140,52 @@ function createDivSlideName(slide: PathWithSlides, isInputChecked: boolean): HTM
     const slideDiv = document.createElement("div");
     slideDiv.className = "slide-name-with-checkbox";
 
+    const lblWithImgDiv = document.createElement("div");
+    lblWithImgDiv.className = "lbl-with-img";
     const slideName = document.createElement("label");
     slideName.className = "slide-name";
     slideName.textContent = `Slide ${[slide.slide.Position + 1]} : ${[slide.slide.Title || "No Title"]}`;
 
-    slideDiv.appendChild(slideName);
+    lblWithImgDiv.appendChild(slideName);
 
+    lblWithImgDiv.appendChild(createImgToSlide(slide));
+
+    slideDiv.appendChild(lblWithImgDiv);
     slideDiv.appendChild(createCheckbox(slide, isInputChecked));
-
     return slideDiv;
+}
+
+/**
+ * This function creates the Image of the slide.
+ * @param slide The slide that has a duplicated UID.
+ * @returns The Image in which the img will be.
+ */
+function createImgToSlide(slide: PathWithSlides) {
+    const presentationPaths = getConfig()
+        .presentationMasters.flatMap((master) => master.paths)
+        .map((elem) => path.normalize(elem))
+        .filter((elem, index, array) => array.indexOf(elem) === index);
+
+    const imgFolder = presentationPaths.indexOf(slide.path);
+    const imgPath = path.resolve(getConfig().metaPicsPath, imgFolder.toString(), `${slide.slide.Position + 1}.jpg`);
+
+    const img = document.createElement("img");
+    img.alt = "";
+    img.style.display = "none";
+    img.loading = "lazy";
+    img.addEventListener("error", () => {
+        checkForImg(img, imgPath, true);
+    });
+    img.addEventListener("load", () => {
+        img.style.display = "";
+    });
+    checkForImg(img, imgPath);
+
+    return img;
+}
+
+function onImgClick(img: HTMLImageElement) {
+    img.addEventListener("click", () => {});
 }
 
 /**

@@ -1,7 +1,7 @@
-import fs from "fs";
 import path from "path";
 import { getConfig } from "../../helper/config";
 import { Slide } from "../../interfaces/presentation";
+import checkForImg from "../controller/imageLoader";
 
 /**
  * This class is used to display and add functionality to the slides inside the sections.
@@ -96,20 +96,20 @@ export default class SlideElement {
             this.element.append(img);
         }
 
-        function checkForImg(img: HTMLImageElement, src: string, wait = false) {
-            if (wait || !fs.existsSync(src)) {
-                // eslint-disable-next-line no-promise-executor-return
-                new Promise((r) => setTimeout(r, 2000)).then(() => {
-                    checkForImg(img, src);
-                });
-            } else {
-                // eslint-disable-next-line no-promise-executor-return
-                new Promise((r) => setTimeout(r, 1000)).then(() => {
-                    // eslint-disable-next-line no-param-reassign
-                    img.src = path.resolve(src);
-                });
-            }
-        }
+        // function checkForImg(img: HTMLImageElement, src: string, wait = false) {
+        //     if (wait || !fs.existsSync(src)) {
+        //         // eslint-disable-next-line no-promise-executor-return
+        //         new Promise((r) => setTimeout(r, 2000)).then(() => {
+        //             checkForImg(img, src);
+        //         });
+        //     } else {
+        //         // eslint-disable-next-line no-promise-executor-return
+        //         new Promise((r) => setTimeout(r, 1000)).then(() => {
+        //             // eslint-disable-next-line no-param-reassign
+        //             img.src = path.resolve(src);
+        //         });
+        //     }
+        // }
     }
 
     /**
