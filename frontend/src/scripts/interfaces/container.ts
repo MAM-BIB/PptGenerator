@@ -5,6 +5,12 @@ export interface SlideWithPath {
     path: string;
 }
 
+export interface SlideWithPathAndImg {
+    slide: Slide;
+    path: string;
+    imgPath: string;
+}
+
 export interface UidsWithSlides {
     [uid: string]: SlideWithPath[];
 }
