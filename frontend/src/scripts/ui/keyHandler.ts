@@ -1,4 +1,4 @@
-// Adds event listener if the shift key is pressend
+// Adds event listener if the shift key is pressed
 let shiftPressed = false;
 let ctrlPressed = false;
 let zoom = 100;

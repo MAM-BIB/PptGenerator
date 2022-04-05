@@ -4,7 +4,7 @@ import path from "path";
 import { Presentation } from "../interfaces/presentation";
 import { Placeholder } from "../interfaces/preset";
 import { PopupOptions } from "../interfaces/windows";
-import { DuplicatedUids } from "../interfaces/container";
+import { DuplicatedUids, ScanData } from "../interfaces/container";
 
 /**
  * This function is used to open any new Window
@@ -18,7 +18,7 @@ export default async function openWindow(
     browserWindow: BrowserWindow | null,
     htmlPath: string,
     options: Electron.BrowserWindowConstructorOptions | undefined,
-    data: PopupOptions | Presentation[] | Placeholder[] | DuplicatedUids | undefined,
+    data: PopupOptions | Presentation[] | Placeholder[] | DuplicatedUids | ScanData | undefined,
 ) {
     const windowOptions = options;
 
