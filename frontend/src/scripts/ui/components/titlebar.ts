@@ -219,7 +219,25 @@ function createFileMenu(mainFileLi: HTMLElement) {
 
     scanFolderBtn.innerText = "Scan folder";
     scanFolderBtn.addEventListener("click", async () => {
-        ipcRenderer.invoke("scanFolder");
+        if (isRunning("POWERPNT")) {
+            const answer = await openPopup({
+                text: "We detected that PowerPoint is open. Please close the process",
+                heading: "Warning",
+                primaryButton: "Kill PowerPoint",
+                secondaryButton: "Cancel",
+                answer: true,
+            });
+            if (answer) {
+                killPpt();
+                while (isRunning("POWERPNT")) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await sleep(1000);
+                }
+                ipcRenderer.invoke("scanFolder");
+            }
+        } else {
+            ipcRenderer.invoke("scanFolder");
+        }
     });
     scanFolderLi.appendChild(scanFolderBtn);
     fileUl.appendChild(scanFolderLi);

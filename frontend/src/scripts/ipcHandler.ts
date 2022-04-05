@@ -187,7 +187,10 @@ export default function initIpcHandlers() {
                             updateUids: uids,
                         },
                     );
+                    browserWindow?.webContents.send("stopLoading");
                 }
+            } else {
+                browserWindow?.webContents.send("stopLoading");
             }
         }
     });

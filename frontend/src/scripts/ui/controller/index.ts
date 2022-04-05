@@ -65,6 +65,11 @@ ipcRenderer.on("startLoading", () => {
     startLoading();
 });
 
+// used to stop the loading animation.
+ipcRenderer.on("stopLoading", () => {
+    stopLoading();
+});
+
 /**
  * Function to only show the Presentation date from the selected language.
  */
