@@ -180,12 +180,31 @@ function createImgToSlide(slide: PathWithSlides) {
         img.style.display = "";
     });
     checkForImg(img, imgPath);
-
+    onImgClick(img, imgPath);
     return img;
 }
 
-function onImgClick(img: HTMLImageElement) {
-    img.addEventListener("click", () => {});
+function onImgClick(img: HTMLImageElement, imgPath: string) {
+    img.addEventListener("click", async () => {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "openImg.html",
+            {
+                width: 500,
+                height: 300,
+                minWidth: 500,
+                minHeight: 300,
+                frame: false,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: false,
+            },
+            imgPath,
+        );
+    });
 }
 
 /**
