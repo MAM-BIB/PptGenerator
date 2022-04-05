@@ -27,6 +27,6 @@ export interface DuplicatedUids {
 }
 
 export interface ScanData {
-    newSlides: SlideWithPath[];
-    updateUids: { [uid: string]: SlideWithPath[] };
+    newSlides: SlideWithPathAndImg[];
+    updateUids: { [uid: string]: SlideWithPathAndImg[] };
 }

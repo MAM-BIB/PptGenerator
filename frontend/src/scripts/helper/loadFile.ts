@@ -1,5 +1,6 @@
 import fsBase from "fs";
 import path from "path";
+import os from "os";
 
 import { getConfig } from "./config";
 import { Presentation, Slide } from "../interfaces/presentation";
@@ -38,7 +39,7 @@ export default class LoadFile {
             this.loadedPreset = JSON.parse(presetJson) as Preset;
             this.loadPresetFromJson();
         } else if (fileType === ".pptx") {
-            const outPath = `${path.join(getConfig().presetPath, path.basename(pathOfFile, ".pptx"))}.TMP.json`;
+            const outPath = path.join(os.tmpdir(), `${path.basename(pathOfFile, ".pptx")}.tmp.json`);
             await call(getConfig().coreApplication, ["-inPath", pathOfFile, "-outPath", outPath]);
             const unknown = await this.loadPresetFromMeta(outPath);
             if (unknown) {

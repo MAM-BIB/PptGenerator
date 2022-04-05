@@ -1,16 +1,19 @@
+/* eslint-disable no-await-in-loop */
 import { BrowserWindow, ipcMain, dialog } from "electron";
 import fs from "fs";
 import path from "path";
 import os from "os";
+import { exec } from "child_process";
 
 import { getConfig, refreshConfig } from "./helper/config";
 import openWindow from "./helper/openWindow";
 import reload from "./helper/reload";
 import scanPresentations from "./helper/scan";
 import call from "./helper/systemcall";
-import { SlideWithPath } from "./interfaces/container";
-import { Presentation } from "./interfaces/presentation";
+import { SlideWithPathAndImg } from "./interfaces/container";
+import { Presentation, Slide } from "./interfaces/presentation";
 import { openOption } from "./menu";
+import openPopup from "./helper/openPopup";
 
 /**
  * This function handles ipcRenderer messages.
@@ -64,17 +67,25 @@ export default function initIpcHandlers() {
                 const folder = openDialogReturnValue.filePaths[0];
                 const pptxFiles = getAllFiles(folder, ".pptx");
 
-                const uids: { [uid: string]: SlideWithPath[] } = {};
+                const uids: { [uid: string]: SlideWithPathAndImg[] } = {};
 
                 const presentationsJson = await fs.promises.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
                 const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
                 for (const presentation of presentations) {
                     for (const slide of presentation.Sections.flatMap((section) => section.Slides)) {
-                        uids[slide.Uid] = [{ path: presentation.Path, slide }];
+                        uids[slide.Uid] = [{ path: presentation.Path, slide, imgPath: "" }];
                     }
                 }
 
-                const newSlides: SlideWithPath[] = [];
+                // Clear/create tmp folder
+                const tmpFolder = path.resolve(os.tmpdir(), "pptGenImgs");
+                if (fs.existsSync(tmpFolder)) {
+                    fs.rmSync(tmpFolder, { recursive: true });
+                }
+                fs.mkdirSync(tmpFolder);
+
+                const newSlides: SlideWithPathAndImg[] = [];
+                let folderId = 0;
                 for (const pptxFile of pptxFiles) {
                     const tmpPath = path.join(os.tmpdir(), `pptGen.${Math.random()}.json`);
                     // eslint-disable-next-line no-await-in-loop
@@ -82,14 +93,48 @@ export default function initIpcHandlers() {
                     const fileJson = fs.readFileSync(tmpPath, { encoding: "utf-8" });
                     const filePresentations: Presentation[] = JSON.parse(fileJson) as Presentation[];
                     for (const presentation of filePresentations) {
+                        const slides: { slide: Slide; isNew: boolean }[] = [];
                         for (const slide of presentation.Sections.flatMap((section) => section.Slides)) {
                             if (uids[slide.Uid]) {
                                 if (uids[slide.Uid][0].slide.Hash !== slide.Hash) {
-                                    uids[slide.Uid].push({ path: presentation.Path, slide });
+                                    slides.push({ slide, isNew: false });
                                 }
                             } else {
-                                newSlides.push({ path: presentation.Path, slide });
+                                slides.push({ slide, isNew: true });
                             }
+                        }
+                        if (slides.length > 0) {
+                            try {
+                                const tmpFolderPath = path.resolve(tmpFolder, folderId.toString());
+                                fs.mkdirSync(tmpFolderPath);
+                                await generateImg(
+                                    presentation.Path,
+                                    slides.map((slide) => slide.slide.Position + 1),
+                                    tmpFolderPath,
+                                );
+
+                                // Add SlideWithPathAndImgs
+                                for (const slide of slides) {
+                                    const slideWithPathAndImg: SlideWithPathAndImg = {
+                                        path: presentation.Path,
+                                        slide: slide.slide,
+                                        imgPath: path.resolve(tmpFolderPath, `${slide.slide.Position + 1}.jpg`),
+                                    };
+
+                                    if (slide.isNew) {
+                                        newSlides.push(slideWithPathAndImg);
+                                    } else {
+                                        uids[slide.slide.Uid].push(slideWithPathAndImg);
+                                    }
+                                }
+                            } catch (error) {
+                                await openPopup({
+                                    text: `Could not create images!\n ${error}`,
+                                    heading: "Error",
+                                    answer: true,
+                                });
+                            }
+                            folderId++;
                         }
                     }
                     fs.rmSync(tmpPath);
@@ -108,10 +153,27 @@ export default function initIpcHandlers() {
                 }
 
                 if (hasKeys || newSlides.length > 0) {
-                    openWindow(BrowserWindow.fromWebContents(event.sender), "updateSlideMaster.html", options, {
-                        newSlides,
-                        updateUids: uids,
-                    });
+                    openWindow(
+                        BrowserWindow.fromWebContents(event.sender),
+                        "updateSlideMaster.html",
+                        {
+                            width: 800,
+                            height: 650,
+                            minWidth: 500,
+                            minHeight: 400,
+                            frame: false,
+                            webPreferences: {
+                                nodeIntegration: true,
+                                contextIsolation: false,
+                            },
+                            autoHideMenuBar: true,
+                            modal: true,
+                        },
+                        {
+                            newSlides,
+                            updateUids: uids,
+                        },
+                    );
                 }
             }
         }
@@ -164,4 +226,36 @@ function getAllFiles(folder: string, type: string): string[] {
         }
     }
     return files;
+}
+
+/**
+ * Generate slide images for specific slides
+ * @param srcPath the presentation path of the slides
+ * @param positions the position in the presentation
+ * @param destPath the path where the images will be saved
+ * @returns a Promise that resolves when the images was created
+ */
+async function generateImg(srcPath: string, positions: number[], destPath: string) {
+    const appPath = path.resolve(getConfig().specificPicsApplication).replaceAll(" ", "` ");
+
+    console.log(
+        "powershell:",
+        `${appPath} "${path.resolve(srcPath)}" ${positions.join(",")} "${path.resolve(destPath)}"`,
+    );
+
+    return new Promise<void>((resolve, reject) => {
+        exec(
+            `${appPath} "${path.resolve(srcPath)}" ${positions.join(",")} "${path.resolve(destPath)}"`,
+            { shell: "powershell.exe" },
+            (error) => {
+                if (error) reject(error.message);
+            },
+        ).on("exit", (code) => {
+            if (code === 0) {
+                resolve();
+            } else {
+                reject("Program exited with unknown errors");
+            }
+        });
+    });
 }
