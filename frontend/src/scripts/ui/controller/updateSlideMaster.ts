@@ -1,11 +1,16 @@
 import { ipcRenderer } from "electron";
 
 import initTitlebar from "../components/titlebar";
-import { SlideWithPathAndImg } from "../../interfaces/container";
+import { SlideWithPath, SlideWithPathAndImg } from "../../interfaces/container";
+import call from "../../helper/systemcall";
 
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
 const updateButton = document.getElementById("update-btn");
+const selectedUpdateSlidesInputs: HTMLInputElement[] = [];
+const selectedNewSlidesInputs: HTMLInputElement[] = [];
+const selectedUpdateSlides: SlideWithPath[] = [];
+const selectedNewSlides: SlideWithPath[] = [];
 
 let updateUids: { [uid: string]: SlideWithPathAndImg[] };
 let newSlides: SlideWithPathAndImg[];
@@ -37,7 +42,23 @@ cancelButton?.addEventListener("click", () => {
  * Add the event to the update button
  */
 updateButton?.addEventListener("click", () => {
-    // code...
+    // -mode create -inPath "test.pptx" -outPath "test1.pptx" -slidePos "5,5,5" -replace "0,1,40"
+    const updateSlides: SlideWithPath[] = [];
+    const slidesNew: SlideWithPath[] = [];
+
+    for (let index = 0; index < selectedUpdateSlidesInputs.length; index++) {
+        const radioButton = selectedUpdateSlidesInputs[index];
+        if (radioButton.checked) {
+            updateSlides.push(selectedUpdateSlides[index]);
+        }
+    }
+    for (let index = 0; index < selectedNewSlidesInputs.length; index++) {
+        const checkbox = selectedNewSlidesInputs[index];
+        if (checkbox.checked) {
+            slidesNew.push(selectedNewSlides[index]);
+        }
+    }
+    // TODO: Marc pls help!
 });
 
 /**
@@ -92,10 +113,10 @@ function createSection(uidWithSlides: SlideWithPathAndImg[], uid: string): HTMLD
     for (const slide of uidWithSlides) {
         if (slide === uidWithSlides[0]) {
             section.appendChild(createStatusTitle("Original:"));
-            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, true));
+            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, true, slide));
             section.appendChild(createStatusTitle("Versions:"));
         } else {
-            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, false));
+            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, false, slide));
         }
         counter++;
     }
@@ -128,7 +149,13 @@ function createUidTitleElement(uid: string): HTMLDivElement {
  * @param imgPath The path to the img source.
  * @returns A HtmlDivElement.
  */
-function createSelectionSlideElement(uid: string, imgPath: string, id: string, select: boolean): HTMLDivElement {
+function createSelectionSlideElement(
+    uid: string,
+    imgPath: string,
+    id: string,
+    select: boolean,
+    slideWithPath: SlideWithPath,
+): HTMLDivElement {
     const div = document.createElement("div");
     div.classList.add("selection-slide");
 
@@ -137,6 +164,8 @@ function createSelectionSlideElement(uid: string, imgPath: string, id: string, s
     radioInput.name = uid;
     radioInput.id = id;
     radioInput.checked = select;
+    selectedUpdateSlidesInputs.push(radioInput);
+    selectedUpdateSlides.push(slideWithPath);
     div.appendChild(radioInput);
 
     const slideLabel = document.createElement("label");
@@ -168,7 +197,7 @@ function createNewSlideSection(slides: SlideWithPathAndImg[]): HTMLDivElement {
 
     let counter = 0;
     for (const slide of slides) {
-        const slideLabel = createNewSlideSelection(slide.imgPath, slide.slide.Uid + counter);
+        const slideLabel = createNewSlideSelection(slide.imgPath, slide.slide.Uid + counter, slide);
         slideLabel.classList.add("new-slide");
         section.appendChild(slideLabel);
         counter++;
@@ -182,14 +211,16 @@ function createNewSlideSection(slides: SlideWithPathAndImg[]): HTMLDivElement {
  * @param imgPath The path to the img source.
  * @returns A HtmlDivElement
  */
-function createNewSlideSelection(imgPath: string, id: string): HTMLDivElement {
+function createNewSlideSelection(imgPath: string, id: string, slideWithPath: SlideWithPath): HTMLDivElement {
     const div = document.createElement("div");
     div.classList.add("selection-slide");
 
-    const radioInput = document.createElement("input");
-    radioInput.type = "checkbox";
-    radioInput.id = id;
-    div.appendChild(radioInput);
+    const checkboxInput = document.createElement("input");
+    checkboxInput.type = "checkbox";
+    checkboxInput.id = id;
+    selectedNewSlidesInputs.push(checkboxInput);
+    selectedNewSlides.push(slideWithPath);
+    div.appendChild(checkboxInput);
 
     const slideLabel = document.createElement("label");
 
