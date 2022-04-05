@@ -67,6 +67,7 @@ export default class SlideElement {
 
     /**
      * This function creates a Slide that will be displayed in the GUI and has all functionalities
+     * @param imgSrc The ImgSrc is the Source of the Image
      */
     private createSlide(imgSrc?: string) {
         this.element.classList.add("slide");

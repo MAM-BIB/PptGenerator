@@ -184,6 +184,11 @@ function createImgToSlide(slide: PathWithSlides) {
     return img;
 }
 
+/**
+ * This function opens a new window and passes the path
+ * @param img The Image of the Slide
+ * @param imgPath The Path from the Image
+ */
 function onImgClick(img: HTMLImageElement, imgPath: string) {
     img.addEventListener("click", async () => {
         await ipcRenderer.invoke(

@@ -9,10 +9,17 @@ initTitlebar({
     menuHidden: true,
 });
 
+/**
+ * This will be called when the window opens
+ */
 ipcRenderer.on("data", (event, data) => {
     createImg(data);
 });
 
+/**
+ * This function create the Image
+ * @param imgSrc The ImgSrc is the Source of the Image
+ */
 function createImg(imgSrc: string) {
     const img = document.createElement("img");
     img.alt = "";
