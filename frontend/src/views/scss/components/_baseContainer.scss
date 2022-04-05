@@ -205,21 +205,24 @@
                 }
             }
 
-            img{
-                width: 75%;
+            .selection-slide{
+                img{
+                    width: 75%;
+                }
+                
+                label{
+                    display: block;
+                }
+    
+                input{
+                    display: none;
+                }
+    
+                input:checked + label{
+                    background-color: $accent--color;
+                }
             }
             
-            label{
-                display: block;
-            }
-
-            input{
-                display: none;
-            }
-
-            input:checked + label{
-                background-color: $accent--color;
-            }
 
             .uid-section-element{
                 h3{
