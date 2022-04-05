@@ -73,9 +73,20 @@ export default function initIpcHandlers() {
 
                 const presentationsJson = await fs.promises.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
                 const presentations: Presentation[] = JSON.parse(presentationsJson) as Presentation[];
-                for (const presentation of presentations) {
+                for (let index = 0; index < presentations.length; index++) {
+                    const presentation = presentations[index];
                     for (const slide of presentation.Sections.flatMap((section) => section.Slides)) {
-                        uids[slide.Uid] = [{ path: presentation.Path, slide, imgPath: "" }];
+                        uids[slide.Uid] = [
+                            {
+                                path: presentation.Path,
+                                slide,
+                                imgPath: path.resolve(
+                                    getConfig().metaPicsPath,
+                                    index.toString(),
+                                    `${slide.Position + 1}.jpg`,
+                                ),
+                            },
+                        ];
                     }
                 }
 
