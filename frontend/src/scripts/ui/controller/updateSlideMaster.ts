@@ -6,7 +6,6 @@ import { SlideWithPathAndImg } from "../../interfaces/container";
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
 const updateButton = document.getElementById("update-btn");
-const imgs = document.querySelectorAll("img");
 
 let updateUids: { [uid: string]: SlideWithPathAndImg[] };
 let newSlides: SlideWithPathAndImg[];
@@ -40,15 +39,6 @@ cancelButton?.addEventListener("click", () => {
 updateButton?.addEventListener("click", () => {
     // code...
 });
-
-/**
- * Add the event to all imgs
- */
-for (const img of imgs) {
-    img.addEventListener("click", () => {
-        // code...
-    });
-}
 
 /**
  * This function loads creates the content for the window.
