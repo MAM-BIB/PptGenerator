@@ -86,7 +86,10 @@ saveBtn.addEventListener("click", () => {
                     config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
                     pathIndex--;
                 } else if (!fs.existsSync(pathString)) {
-                    openPopup({ text: `"${pathString}" does not exist!`, heading: "Error" });
+                    openPopup({
+                        text: `"${pathString}" does not exist in ${config.presentationMasters[masterIndex].lang}!`,
+                        heading: "Error",
+                    });
                     selectLanguage.dispatchEvent(new Event("change"));
                     return;
                 }
