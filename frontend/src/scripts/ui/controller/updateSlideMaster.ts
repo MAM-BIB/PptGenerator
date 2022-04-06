@@ -1,17 +1,23 @@
 import { ipcRenderer } from "electron";
+import fs from "fs";
 
 import initTitlebar from "../components/titlebar";
 import { ScanData, SlidesMap, SlidesMapMap, SlideWithPath, SlideWithPathAndImg } from "../../interfaces/container";
 import call from "../../helper/systemcall";
 import { getConfig } from "../../helper/config";
+import { Presentation } from "../../interfaces/presentation";
 
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
+const historyToggleBtn = document.getElementById("add-to-history-toggle-btn") as HTMLInputElement;
 const updateButton = document.getElementById("update-btn");
 const selectedUpdateSlidesInputs: HTMLInputElement[] = [];
 const selectedNewSlidesInputs: HTMLInputElement[] = [];
 const selectedUpdateSlides: SlideWithPath[] = [];
 const selectedNewSlides: SlideWithPath[] = [];
+
+const metaJson = fs.readFileSync(getConfig().metaJsonPath, { encoding: "utf-8" });
+const meta = JSON.parse(metaJson) as Presentation[];
 
 // Initialization of the custom titlebar.
 initTitlebar({
@@ -62,7 +68,12 @@ ipcRenderer.on("data", (event, { updateUids, newSlides }: ScanData) => {
             const checkbox = selectedNewSlidesInputs[index];
             if (checkbox.checked) {
                 slidesNew.push(selectedNewSlides[index]);
+            } else if (historyToggleBtn.checked) {
+                addHashToHistory(selectedNewSlides[index]);
             }
+        }
+        if (historyToggleBtn.checked) {
+            fs.writeFileSync(getConfig().metaJsonPath, JSON.stringify(meta, null, "\t"));
         }
 
         // prepare to call the program
@@ -275,4 +286,20 @@ function createNewSlideSelection(imgPath: string, id: string, slideWithPath: Sli
     div.appendChild(slideLabel);
 
     return div;
+}
+
+/**
+ * Add a hash to the hash history
+ * @param slideWithPath the object with the hash to add
+ */
+function addHashToHistory(slideWithPath: SlideWithPath) {
+    const targetSlide = meta
+        .flatMap((pres) => pres.Sections)
+        .flatMap((section) => section.Slides)
+        .find((slide) => slide.Uid === slideWithPath.slide.Uid);
+    if (targetSlide?.History) {
+        targetSlide.History.push(slideWithPath.slide.Hash);
+    } else if (targetSlide) {
+        targetSlide.History = [slideWithPath.slide.Hash];
+    }
 }
