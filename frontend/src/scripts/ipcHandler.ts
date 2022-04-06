@@ -196,6 +196,9 @@ export default function initIpcHandlers() {
                         },
                     );
                     browserWindow?.webContents.send("stopLoading");
+                } else {
+                    await openPopup({ heading: "Info", text: "No new slides were found!", answer: true });
+                    browserWindow?.webContents.send("stopLoading");
                 }
             } else {
                 browserWindow?.webContents.send("stopLoading");
