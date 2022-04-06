@@ -57,7 +57,7 @@ updateButton?.addEventListener("click", () => {
             slidesNew.push(selectedNewSlides[index]);
         }
     }
-    // TODO: Marc pls help!
+    // TODO: Marc pls help! HashMap
 });
 
 /**
@@ -185,7 +185,7 @@ function createSelectionSlideElement(
  */
 function createNewSlideSection(slides: SlideWithPathAndImg[]): HTMLDivElement {
     const section = document.createElement("div");
-    section.classList.add("new-slide-section");
+    section.classList.add("slide-section");
 
     const title = document.createElement("h2");
     title.textContent = "New Slides:";
