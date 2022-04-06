@@ -19,12 +19,13 @@ namespace PptGenerator.Creator {
             bool deleteFirstSlide = clArg.DeleteFirstSlide;
             string basePath = clArg.BasePath;
             List<KeyValuePair<string, string>> placeholders = clArg.Placeholders;
+            List<uint> replaceSlidePositions = clArg.ReplacePositions;
 
             if (basePath != null) {
                 File.Copy(basePath, outPath, true);
             }
 
-            PptFileManager.Copy(inPath, slidePos, outPath, placeholders);
+            PptFileManager.Copy(inPath, slidePos, replaceSlidePositions, outPath, placeholders);
 
             if (deleteFirstSlide) {
                 PptFileManager.DeleteOneSlide(outPath, 0);

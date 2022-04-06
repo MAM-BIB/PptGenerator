@@ -78,6 +78,9 @@ namespace PptGenerator.CommandLine {
                 Console.WriteLine("-existingUids <uid> (<uid>? ...)");
                 Console.WriteLine("  In addUid mode: The uids that are currently in use will be ignored so that there are no duplicated uids.");
 
+                Console.WriteLine("");
+                Console.WriteLine("-replace <slidePos,slidePos,...>");
+                Console.WriteLine("  In create mode: Slides will not be appended, but replaced");
 
 
                 Console.WriteLine("");
@@ -156,6 +159,7 @@ namespace PptGenerator.CommandLine {
             string outPath = getOutPath(argList);
             List<string> inPaths = getInPath(argList);
             List<uint> slidePositions = getSlidePositions(argList);
+            List<uint> replacePositions = getReplacePositions(args);
             string basePath = getBasePath(argList);
             List<KeyValuePair<string, string>> placeholders = getPlacehoders(args);
 
@@ -165,7 +169,26 @@ namespace PptGenerator.CommandLine {
             // Parse -deleteFirstSlide
             bool deleteFirstSlide = argList.Contains("-deleteFirstSlide");
 
-            return new CommandLineArgument(Mode.create, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath, placeholders);
+            return new CommandLineArgument(Mode.create, outPath, inPaths, slidePositions, ignoreTheme, deleteFirstSlide, basePath, placeholders, replacePositions);
+        }
+
+        /// <summary>
+        /// Get all CommandLineArguments for replace
+        /// </summary>
+        /// <param name="args">The args given to the program</param>
+        /// <returns>The CommandLineArgument for replace</returns>
+        private static List<uint> getReplacePositions(string[] args) {
+            List<uint> replacePos = new List<uint>();
+            List<string> arguments = getArgument("-replace", args);
+            if (arguments != null && arguments.Count > 0) {
+                foreach (var item in arguments[0].Split(",")) {
+                    uint result;
+                    if(uint.TryParse(item, out result)) {
+                        replacePos.Add(result);
+                    }
+                }
+            }
+            return replacePos;
         }
 
         /// <summary>
