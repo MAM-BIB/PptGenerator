@@ -60,6 +60,8 @@ ipcRenderer.on("data", (event, { updateUids, newSlides }: ScanData) => {
                     // Pushes slide in Array
                     updateSlides[slideWithPath.path][outPath].push(slideWithPath.slide);
                 }
+            } else if (historyToggleBtn.checked) {
+                addHashToHistory(selectedUpdateSlides[index]);
             }
         }
 
@@ -68,10 +70,9 @@ ipcRenderer.on("data", (event, { updateUids, newSlides }: ScanData) => {
             const checkbox = selectedNewSlidesInputs[index];
             if (checkbox.checked) {
                 slidesNew.push(selectedNewSlides[index]);
-            } else if (historyToggleBtn.checked) {
-                addHashToHistory(selectedNewSlides[index]);
             }
         }
+
         if (historyToggleBtn.checked) {
             fs.writeFileSync(getConfig().metaJsonPath, JSON.stringify(meta, null, "\t"));
         }
@@ -297,6 +298,7 @@ function addHashToHistory(slideWithPath: SlideWithPath) {
         .flatMap((pres) => pres.Sections)
         .flatMap((section) => section.Slides)
         .find((slide) => slide.Uid === slideWithPath.slide.Uid);
+
     if (targetSlide?.History) {
         targetSlide.History.push(slideWithPath.slide.Hash);
     } else if (targetSlide) {
