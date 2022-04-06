@@ -8,7 +8,7 @@ import { Presentation, Slide } from "../interfaces/presentation";
 import { UidsWithSlides, SlidesWithPath } from "../interfaces/container";
 import call from "./systemcall";
 import reload from "./reload";
-import duplicatedUidWindow from "./openDuplicatedUidWindow";
+import duplicatedUidWindow from "./openDuplicatedUid";
 
 const fs = fsBase.promises;
 
