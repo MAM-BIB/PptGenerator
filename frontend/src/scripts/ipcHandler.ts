@@ -60,6 +60,8 @@ export default function initIpcHandlers() {
             properties: ["openDirectory"],
         };
 
+        const useHistory = true;
+
         const browserWindow = BrowserWindow.fromWebContents(event.sender);
         browserWindow?.webContents.send("startLoading");
 
@@ -110,9 +112,15 @@ export default function initIpcHandlers() {
                         for (const slide of presentation.Sections.flatMap((section) => section.Slides)) {
                             if (uids[slide.Uid]) {
                                 if (uids[slide.Uid][0].slide.Hash !== slide.Hash) {
-                                    slides.push({ slide, isNew: false });
+                                    if (useHistory) {
+                                        if (!uids[slide.Uid][0].slide.History?.some((hash) => hash === slide.Hash)) {
+                                            slides.push({ slide, isNew: false });
+                                        }
+                                    } else {
+                                        slides.push({ slide, isNew: false });
+                                    }
                                 }
-                            } else {
+                            } else if (slide.Uid.length > 3) {
                                 slides.push({ slide, isNew: true });
                             }
                         }
