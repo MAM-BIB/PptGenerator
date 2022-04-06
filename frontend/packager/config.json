@@ -11,5 +11,6 @@
     "backupPath": "./backup",
     "presentationMasters": [],
     "ignoreHiddenSlides": true,
-    "showTutorial": true
+    "showTutorial": true,
+    "imgZoom": 70
 }
