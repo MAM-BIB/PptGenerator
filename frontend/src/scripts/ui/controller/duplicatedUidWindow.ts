@@ -160,7 +160,7 @@ function createDivSlideName(slide: SlideWithPath, isInputChecked: boolean): HTML
  * @param slide The slide that has a duplicated UID.
  * @returns The Image in which the img will be.
  */
-function createImgToSlide(slide: PathWithSlides) {
+function createImgToSlide(slide: SlideWithPath) {
     const presentationPaths = getConfig()
         .presentationMasters.flatMap((master) => master.paths)
         .map((elem) => path.normalize(elem))
