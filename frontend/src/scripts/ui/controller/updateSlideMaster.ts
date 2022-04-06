@@ -2,7 +2,6 @@ import { ipcRenderer } from "electron";
 
 import initTitlebar from "../components/titlebar";
 import { SlideWithPath, SlideWithPathAndImg } from "../../interfaces/container";
-import call from "../../helper/systemcall";
 
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
