@@ -1,7 +1,6 @@
 import { app, BrowserWindow, Menu } from "electron";
 import path from "path";
 
-import { getConfig } from "./helper/config";
 import openPopup from "./helper/openPopup";
 import isRunning, { killPpt, sleep } from "./helper/processManager";
 import reload from "./helper/reload";
@@ -46,14 +45,14 @@ export default function initMenu(mainWindow: BrowserWindow) {
                         accelerator: "CmdOrCtrl+I",
                         async click(item, focusedWindow) {
                             if (isRunning("POWERPNT")) {
-                                const awnser = await openPopup({
+                                const answer = await openPopup({
                                     text: "We detected that PowerPoint is open. Please close the process",
                                     heading: "Warning",
                                     primaryButton: "Kill PowerPoint",
                                     secondaryButton: "Cancel",
                                     answer: true,
                                 });
-                                if (awnser) {
+                                if (answer) {
                                     killPpt();
                                     while (isRunning("POWERPNT")) {
                                         // eslint-disable-next-line no-await-in-loop
@@ -64,12 +63,6 @@ export default function initMenu(mainWindow: BrowserWindow) {
                             } else {
                                 scanPresentations(focusedWindow);
                             }
-                        },
-                    },
-                    {
-                        label: "getConfig",
-                        click() {
-                            getConfig();
                         },
                     },
                     {
@@ -110,7 +103,7 @@ export default function initMenu(mainWindow: BrowserWindow) {
 
 /**
  * This functions opens the options
- * @param parent Browserwindow or null for no window
+ * @param parent BrowserWindow or null for no window
  */
 export function openOption(parent: BrowserWindow | null) {
     const optionWindow = new BrowserWindow({

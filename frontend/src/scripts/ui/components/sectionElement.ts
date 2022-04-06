@@ -30,7 +30,7 @@ export default class SectionElement {
 
     /**
      * This constructor creates a SectionElement
-     * @param section The Section from wich the element will be created
+     * @param section The Section from which the element will be created
      */
     constructor(section: Section, imgPath?: string) {
         this.element = document.createElement("div") as HTMLDivElement;

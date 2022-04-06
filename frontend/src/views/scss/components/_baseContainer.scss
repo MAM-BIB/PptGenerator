@@ -204,6 +204,31 @@
                     padding: 0 $size-2;
                 }
             }
+
+            .selection-slide{
+                img{
+                    width: 75%;
+                }
+                
+                label{
+                    display: block;
+                }
+    
+                input{
+                    display: none;
+                }
+    
+                input:checked + label{
+                    background-color: $accent--color;
+                }
+            }
+            
+
+            .uid-section-element{
+                h3{
+                    margin: $size-3 0 0 0;
+                }
+            }
         }
 
         .option-add-btn {

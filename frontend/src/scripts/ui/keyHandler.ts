@@ -43,7 +43,7 @@ export function addZoomListener() {
     setImgSize();
     document.addEventListener("wheel", (event) => {
         if (ctrlPressed) {
-            zoom = Math.min(Math.max(zoom + event.deltaY * 0.1, 0), 100);
+            zoom = Math.min(Math.max(zoom + event.deltaY * -0.1, 0), 100);
             setImgSize();
             config.imgZoom = zoom;
             setConfig(config);

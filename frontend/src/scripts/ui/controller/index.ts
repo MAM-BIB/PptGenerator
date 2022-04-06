@@ -68,6 +68,11 @@ ipcRenderer.on("startLoading", () => {
     startLoading();
 });
 
+// used to stop the loading animation.
+ipcRenderer.on("stopLoading", () => {
+    stopLoading();
+});
+
 /**
  * Function to only show the Presentation date from the selected language.
  */
@@ -118,7 +123,7 @@ function loadSections() {
     }
     for (let index = 0; index < presentations.length; index++) {
         const presentation = presentations[index];
-        if (selectedPresentationMaster?.paths.some((p) => path.normalize(p) === path.normalize(presentation.Path))) {
+        if (selectedPresentationMaster?.paths.some((p) => path.resolve(p) === path.resolve(presentation.Path))) {
             sectionContainer.appendChild(createPresentationName(presentation));
             for (const section of presentation.Sections) {
                 const sectionElement = new SectionElement(section, index.toString());
