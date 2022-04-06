@@ -13,8 +13,6 @@ const selectedNewSlidesInputs: HTMLInputElement[] = [];
 const selectedUpdateSlides: SlideWithPath[] = [];
 const selectedNewSlides: SlideWithPath[] = [];
 
-// TODO: Marc do the rest.
-
 // Initialization of the custom titlebar.
 initTitlebar({
     resizable: true,
@@ -154,7 +152,7 @@ function createSection(uidWithSlides: SlideWithPathAndImg[], uid: string): HTMLD
     for (const slide of uidWithSlides) {
         if (slide === uidWithSlides[0]) {
             section.appendChild(createStatusTitle("Original:"));
-            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, true, slide));
+            section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, true, slide, false));
             section.appendChild(createStatusTitle("Versions:"));
         } else {
             section.appendChild(createSelectionSlideElement(uid, slide.imgPath, uid + counter, false, slide));
@@ -196,6 +194,7 @@ function createSelectionSlideElement(
     id: string,
     select: boolean,
     slideWithPath: SlideWithPath,
+    pushToArr = true,
 ): HTMLDivElement {
     const div = document.createElement("div");
     div.classList.add("selection-slide");
@@ -205,8 +204,12 @@ function createSelectionSlideElement(
     radioInput.name = uid;
     radioInput.id = id;
     radioInput.checked = select;
-    selectedUpdateSlidesInputs.push(radioInput);
-    selectedUpdateSlides.push(slideWithPath);
+
+    if (pushToArr) {
+        selectedUpdateSlidesInputs.push(radioInput);
+        selectedUpdateSlides.push(slideWithPath);
+    }
+
     div.appendChild(radioInput);
 
     const slideLabel = document.createElement("label");
