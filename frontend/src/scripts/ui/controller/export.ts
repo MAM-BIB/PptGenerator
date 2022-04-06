@@ -118,28 +118,13 @@ exportBtn.addEventListener("click", async () => {
         createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
     }
 
-    // creates pdf if checked
-    if (createPdfToggleBtn.checked) {
-        const pdfPath = pathInput.value;
-        if (!fsBase.existsSync(pdfPath)) {
-            openPopup({ text: "The selected pdf directory does not exist!", heading: "Error" });
-            stopLoading();
-            return;
-        }
-    }
-
     // creates the pptx-file
     await exportToPptx(path.join(outPath, `${name}.pptx`));
 
     // creates pdf if checked
     if (createPdfToggleBtn.checked) {
-        const pdfPath = pathInput.value;
-        if (!fsBase.existsSync(pdfPath)) {
-            openPopup({ text: "The selected pdf directory does not exist!", heading: "Error" });
-            stopLoading();
-        }
         try {
-            await createPdf(path.join(outPath, `${name}.pptx`), path.join(outPath, `${name}.pdf`));
+            await createPdf(path.resolve(outPath, `${name}.pptx`), path.resolve(outPath, `${name}.pdf`));
         } catch (error) {
             await openPopup({ text: `Error while creating a pdf:\n ${error}`, heading: "Error", answer: true });
         }
