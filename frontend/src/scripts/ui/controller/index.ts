@@ -13,7 +13,6 @@ import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
 import isRunning, { killPpt } from "../../helper/processManager";
 import { addZoomListener } from "../keyHandler";
-import { PresentationMaster } from "../../interfaces/config";
 
 const fs = fsBase.promises;
 
