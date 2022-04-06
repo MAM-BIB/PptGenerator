@@ -1,7 +1,9 @@
 import { ipcRenderer } from "electron";
 
 import initTitlebar from "../components/titlebar";
-import { SlideWithPath, SlideWithPathAndImg } from "../../interfaces/container";
+import { ScanData, SlidesMap, SlidesMapMap, SlideWithPath, SlideWithPathAndImg } from "../../interfaces/container";
+import call from "../../helper/systemcall";
+import { getConfig } from "../../helper/config";
 
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
@@ -11,8 +13,7 @@ const selectedNewSlidesInputs: HTMLInputElement[] = [];
 const selectedUpdateSlides: SlideWithPath[] = [];
 const selectedNewSlides: SlideWithPath[] = [];
 
-let updateUids: { [uid: string]: SlideWithPathAndImg[] };
-let newSlides: SlideWithPathAndImg[];
+// TODO: Marc do the rest.
 
 // Initialization of the custom titlebar.
 initTitlebar({
@@ -24,10 +25,74 @@ initTitlebar({
 /**
  * This will be called when the window opens
  */
-ipcRenderer.on("data", (event, data) => {
-    updateUids = data.updateUids;
-    newSlides = data.newSlides;
-    loadContent();
+ipcRenderer.on("data", (event, { updateUids, newSlides }: ScanData) => {
+    loadContent(updateUids, newSlides);
+
+    /**
+     * Add the event to the update button
+     */
+    updateButton?.addEventListener("click", async () => {
+        // -mode create -inPath "test.pptx" -outPath "test1.pptx" -slidePos "5,5,5" -replace "0,1,40"
+        const updateSlides: SlidesMapMap = {};
+        const slidesNew: SlideWithPath[] = [];
+
+        for (let index = 0; index < selectedUpdateSlidesInputs.length; index++) {
+            const radioButton = selectedUpdateSlidesInputs[index];
+            if (radioButton.checked) {
+                const slideWithPath = selectedUpdateSlides[index];
+
+                // Get the path of the masterPresentation
+                const outPath = updateUids[slideWithPath.slide.Uid][0].path;
+
+                if (!updateSlides[slideWithPath.path]) {
+                    // save a HashMap of the selected slides sorted by the path of masterPresentation
+                    const obj: SlidesMap = {};
+                    obj[outPath] = [slideWithPath.slide];
+                    updateSlides[slideWithPath.path] = obj;
+                } else if (!updateSlides[slideWithPath.path][outPath]) {
+                    // Creates new Array with slide
+                    updateSlides[slideWithPath.path][outPath] = [slideWithPath.slide];
+                } else {
+                    // Pushes slide in Array
+                    updateSlides[slideWithPath.path][outPath].push(slideWithPath.slide);
+                }
+            }
+        }
+
+        // saves all selected slides that are new
+        for (let index = 0; index < selectedNewSlidesInputs.length; index++) {
+            const checkbox = selectedNewSlidesInputs[index];
+            if (checkbox.checked) {
+                slidesNew.push(selectedNewSlides[index]);
+            }
+        }
+
+        // prepare to call the program
+        for (const inPath in updateSlides) {
+            if (Object.prototype.hasOwnProperty.call(updateSlides, inPath)) {
+                const slidesMap = updateSlides[inPath];
+                for (const outPath in slidesMap) {
+                    if (Object.prototype.hasOwnProperty.call(slidesMap, outPath)) {
+                        const slides = slidesMap[outPath];
+                        const replace = slides.map((slide) => updateUids[slide.Uid][0].slide.Position);
+                        // eslint-disable-next-line no-await-in-loop
+                        await call(getConfig().coreApplication, [
+                            "-mode",
+                            "create",
+                            "-inPath",
+                            inPath,
+                            "-outPath",
+                            outPath,
+                            "-slidePos",
+                            slides.map((slide) => slide.Position).join(","),
+                            "-replace",
+                            replace.join(","),
+                        ]);
+                    }
+                }
+            }
+        }
+    });
 });
 
 /**
@@ -38,34 +103,11 @@ cancelButton?.addEventListener("click", () => {
 });
 
 /**
- * Add the event to the update button
- */
-updateButton?.addEventListener("click", () => {
-    // -mode create -inPath "test.pptx" -outPath "test1.pptx" -slidePos "5,5,5" -replace "0,1,40"
-    const updateSlides: SlideWithPath[] = [];
-    const slidesNew: SlideWithPath[] = [];
-
-    for (let index = 0; index < selectedUpdateSlidesInputs.length; index++) {
-        const radioButton = selectedUpdateSlidesInputs[index];
-        if (radioButton.checked) {
-            updateSlides.push(selectedUpdateSlides[index]);
-        }
-    }
-    for (let index = 0; index < selectedNewSlidesInputs.length; index++) {
-        const checkbox = selectedNewSlidesInputs[index];
-        if (checkbox.checked) {
-            slidesNew.push(selectedNewSlides[index]);
-        }
-    }
-    // TODO: Marc pls help! HashMap
-});
-
-/**
  * This function loads creates the content for the window.
  * @param updateUids A HashMap with UIDs as key and slides as values that can be updated
  * @param newSlides A Collection of Slides with Path and ImgsPath that are not known to the PresentationMasters
  */
-function loadContent() {
+function loadContent(updateUids: { [uid: string]: SlideWithPathAndImg[] }, newSlides: SlideWithPathAndImg[]) {
     // goes through the HashMap and saves all the new slides in an Array.
     for (const uid in updateUids) {
         if (Object.prototype.hasOwnProperty.call(updateUids, uid)) {

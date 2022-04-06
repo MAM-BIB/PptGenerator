@@ -30,3 +30,11 @@ export interface ScanData {
     newSlides: SlideWithPathAndImg[];
     updateUids: { [uid: string]: SlideWithPathAndImg[] };
 }
+
+export interface SlidesMapMap {
+    [inPath: string]: SlidesMap;
+}
+
+export interface SlidesMap {
+    [outPath: string]: Slide[];
+}
