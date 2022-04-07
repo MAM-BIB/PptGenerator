@@ -97,6 +97,7 @@ export default async function scanPresentations(
         }
         await fs.writeFile(getConfig().metaJsonPath, JSON.stringify(newMeta, null, "\t"));
     }
+    return true;
 }
 
 /**

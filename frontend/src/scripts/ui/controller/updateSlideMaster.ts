@@ -6,18 +6,26 @@ import { ScanData, SlidesMap, SlidesMapMap, SlideWithPath, SlideWithPathAndImg }
 import call from "../../helper/systemcall";
 import { getConfig } from "../../helper/config";
 import { Presentation } from "../../interfaces/presentation";
+import { startLoading, stopLoading } from "../components/loading";
+import isRunning, { killPpt, sleep } from "../../helper/processManager";
+import openPopup from "../../helper/openPopup";
 
 const selectionContainer = document.getElementById("uid-section");
 const cancelButton = document.getElementById("cancel-btn");
 const historyToggleBtn = document.getElementById("add-to-history-toggle-btn") as HTMLInputElement;
 const updateButton = document.getElementById("update-btn");
-const selectedUpdateSlidesInputs: HTMLInputElement[] = [];
+const historyToggleSection = document.getElementById("history-toggle-section");
+
+let selectedUpdateSlidesInputs: HTMLInputElement[] = [];
 const selectedNewSlidesInputs: HTMLInputElement[] = [];
 const selectedUpdateSlides: SlideWithPath[] = [];
 const selectedNewSlides: SlideWithPath[] = [];
 
 const metaJson = fs.readFileSync(getConfig().metaJsonPath, { encoding: "utf-8" });
 const meta = JSON.parse(metaJson) as Presentation[];
+
+let scanBeforeClosing = false;
+const metaSelect = createMetaSelect();
 
 // Initialization of the custom titlebar.
 initTitlebar({
@@ -30,86 +38,186 @@ initTitlebar({
  * This will be called when the window opens
  */
 ipcRenderer.on("data", (event, { updateUids, newSlides }: ScanData) => {
-    loadContent(updateUids, newSlides);
+    loadContent(updateUids);
+    if (selectedUpdateSlidesInputs.length === 0) {
+        rebuildWindowForNewSlides(newSlides);
+    }
 
     /**
      * Add the event to the update button
      */
     updateButton?.addEventListener("click", async () => {
-        // -mode create -inPath "test.pptx" -outPath "test1.pptx" -slidePos "5,5,5" -replace "0,1,40"
-        const updateSlides: SlidesMapMap = {};
-        const slidesNew: SlideWithPath[] = [];
+        if (selectedUpdateSlidesInputs.length > 0) {
+            startLoading();
+            await handleUpdateSlides(updateUids);
+            rebuildWindowForNewSlides(newSlides);
+            stopLoading();
+        } else {
+            startLoading();
+            await handleNewSlides();
 
-        for (let index = 0; index < selectedUpdateSlidesInputs.length; index++) {
-            const radioButton = selectedUpdateSlidesInputs[index];
-            if (radioButton.checked) {
-                const slideWithPath = selectedUpdateSlides[index];
-
-                // Get the path of the masterPresentation
-                const outPath = updateUids[slideWithPath.slide.Uid][0].path;
-
-                if (!updateSlides[slideWithPath.path]) {
-                    // save a HashMap of the selected slides sorted by the path of masterPresentation
-                    const obj: SlidesMap = {};
-                    obj[outPath] = [slideWithPath.slide];
-                    updateSlides[slideWithPath.path] = obj;
-                } else if (!updateSlides[slideWithPath.path][outPath]) {
-                    // Creates new Array with slide
-                    updateSlides[slideWithPath.path][outPath] = [slideWithPath.slide];
-                } else {
-                    // Pushes slide in Array
-                    updateSlides[slideWithPath.path][outPath].push(slideWithPath.slide);
-                }
-            } else if (historyToggleBtn.checked) {
-                addHashToHistory(selectedUpdateSlides[index]);
-            }
-        }
-
-        // saves all selected slides that are new
-        for (let index = 0; index < selectedNewSlidesInputs.length; index++) {
-            const checkbox = selectedNewSlidesInputs[index];
-            if (checkbox.checked) {
-                slidesNew.push(selectedNewSlides[index]);
-            }
-        }
-
-        if (historyToggleBtn.checked) {
-            fs.writeFileSync(getConfig().metaJsonPath, JSON.stringify(meta, null, "\t"));
-        }
-
-        // prepare to call the program
-        for (const inPath in updateSlides) {
-            if (Object.prototype.hasOwnProperty.call(updateSlides, inPath)) {
-                const slidesMap = updateSlides[inPath];
-                for (const outPath in slidesMap) {
-                    if (Object.prototype.hasOwnProperty.call(slidesMap, outPath)) {
-                        const slides = slidesMap[outPath];
-                        const replace = slides.map((slide) => updateUids[slide.Uid][0].slide.Position);
-                        // eslint-disable-next-line no-await-in-loop
-                        await call(getConfig().coreApplication, [
-                            "-mode",
-                            "create",
-                            "-inPath",
-                            inPath,
-                            "-outPath",
-                            outPath,
-                            "-slidePos",
-                            slides.map((slide) => slide.Position).join(","),
-                            "-replace",
-                            replace.join(","),
-                        ]);
-                    }
-                }
-            }
+            scanAndClose();
         }
     });
 });
 
 /**
+ * Try to scan and then close the window
+ */
+async function scanAndClose() {
+    startLoading();
+    if (isRunning("POWERPNT")) {
+        const answer = await openPopup({
+            text: "We detected that PowerPoint is open. Please close the process",
+            heading: "Warning",
+            primaryButton: "Kill PowerPoint",
+            secondaryButton: "Cancel",
+            answer: true,
+        });
+        if (answer) {
+            killPpt();
+            while (isRunning("POWERPNT")) {
+                // eslint-disable-next-line no-await-in-loop
+                await sleep(1000);
+            }
+            await ipcRenderer.invoke("ScanWindowAndClose");
+        }
+    } else {
+        await ipcRenderer.invoke("ScanWindowAndClose");
+    }
+}
+
+/**
+ * Get all selected new slides and add them to the slide master
+ */
+async function handleNewSlides() {
+    const slidesNew: { [path: string]: SlideWithPath[] } = {};
+
+    // saves all selected slides that are new
+    for (let index = 0; index < selectedNewSlidesInputs.length; index++) {
+        const checkbox = selectedNewSlidesInputs[index];
+        if (checkbox.checked) {
+            if (slidesNew[selectedNewSlides[index].path]) {
+                slidesNew[selectedNewSlides[index].path].push(selectedNewSlides[index]);
+            } else {
+                slidesNew[selectedNewSlides[index].path] = [selectedNewSlides[index]];
+            }
+        }
+    }
+
+    const outPath = metaSelect.value;
+    // prepare to call the program
+    for (const inPath in slidesNew) {
+        if (Object.prototype.hasOwnProperty.call(slidesNew, inPath)) {
+            scanBeforeClosing = true;
+            const slides = slidesNew[inPath];
+
+            // eslint-disable-next-line no-await-in-loop
+            await call(getConfig().coreApplication, [
+                "-mode",
+                "create",
+                "-inPath",
+                inPath,
+                "-outPath",
+                outPath,
+                "-slidePos",
+                slides.map((slide) => slide.slide.Position).join(","),
+            ]);
+        }
+    }
+}
+
+/**
+ * Get all selected changed slides and update the slide master
+ * @param updateUids the changed slides that were detected
+ */
+async function handleUpdateSlides(updateUids: { [uid: string]: SlideWithPathAndImg[] }) {
+    const updateSlides: SlidesMapMap = {};
+
+    for (let index = 0; index < selectedUpdateSlidesInputs.length; index++) {
+        const radioButton = selectedUpdateSlidesInputs[index];
+        if (radioButton.checked) {
+            const slideWithPath = selectedUpdateSlides[index];
+
+            // Get the path of the masterPresentation
+            const outPath = updateUids[slideWithPath.slide.Uid][0].path;
+
+            if (!updateSlides[slideWithPath.path]) {
+                // save a HashMap of the selected slides sorted by the path of masterPresentation
+                const obj: SlidesMap = {};
+                obj[outPath] = [slideWithPath.slide];
+                updateSlides[slideWithPath.path] = obj;
+            } else if (!updateSlides[slideWithPath.path][outPath]) {
+                // Creates new Array with slide
+                updateSlides[slideWithPath.path][outPath] = [slideWithPath.slide];
+            } else {
+                // Pushes slide in Array
+                updateSlides[slideWithPath.path][outPath].push(slideWithPath.slide);
+            }
+        } else if (historyToggleBtn.checked) {
+            addHashToHistory(selectedUpdateSlides[index]);
+        }
+    }
+
+    if (historyToggleBtn.checked) {
+        fs.writeFileSync(getConfig().metaJsonPath, JSON.stringify(meta, null, "\t"));
+    }
+
+    // prepare to call the program
+    for (const inPath in updateSlides) {
+        if (Object.prototype.hasOwnProperty.call(updateSlides, inPath)) {
+            const slidesMap = updateSlides[inPath];
+            for (const outPath in slidesMap) {
+                if (Object.prototype.hasOwnProperty.call(slidesMap, outPath)) {
+                    scanBeforeClosing = true;
+                    const slides = slidesMap[outPath];
+                    const replace = slides.map((slide) => updateUids[slide.Uid][0].slide.Position);
+                    // eslint-disable-next-line no-await-in-loop
+                    await call(getConfig().coreApplication, [
+                        "-mode",
+                        "create",
+                        "-inPath",
+                        inPath,
+                        "-outPath",
+                        outPath,
+                        "-slidePos",
+                        slides.map((slide) => slide.Position).join(","),
+                        "-replace",
+                        replace.join(","),
+                    ]);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Transform the window to show the new slides
+ * @param newSlides the new html elements
+ */
+function rebuildWindowForNewSlides(newSlides: SlideWithPathAndImg[]) {
+    if (selectionContainer) selectionContainer.innerHTML = "";
+    if (historyToggleSection) historyToggleSection.innerHTML = "";
+    if (updateButton) updateButton.textContent = "Add Slides";
+    if (cancelButton) {
+        cancelButton.addEventListener("click", () => {
+            scanAndClose();
+        });
+    }
+    historyToggleSection?.appendChild(metaSelect);
+    selectedUpdateSlidesInputs = [];
+    loadNewSlides(newSlides);
+}
+
+/**
  * Add the event to the cancel button
  */
 cancelButton?.addEventListener("click", () => {
-    ipcRenderer.invoke("closeFocusedWindow");
+    if (scanBeforeClosing) {
+        ipcRenderer.invoke("ScanWindowAndClose");
+    } else {
+        ipcRenderer.invoke("closeFocusedWindow");
+    }
 });
 
 /**
@@ -117,7 +225,7 @@ cancelButton?.addEventListener("click", () => {
  * @param updateUids A HashMap with UIDs as key and slides as values that can be updated
  * @param newSlides A Collection of Slides with Path and ImgsPath that are not known to the PresentationMasters
  */
-function loadContent(updateUids: { [uid: string]: SlideWithPathAndImg[] }, newSlides: SlideWithPathAndImg[]) {
+function loadContent(updateUids: { [uid: string]: SlideWithPathAndImg[] }) {
     // goes through the HashMap and saves all the new slides in an Array.
     for (const uid in updateUids) {
         if (Object.prototype.hasOwnProperty.call(updateUids, uid)) {
@@ -126,7 +234,13 @@ function loadContent(updateUids: { [uid: string]: SlideWithPathAndImg[] }, newSl
             selectionContainer?.appendChild(createSection(uidWithSlides, uid));
         }
     }
-    // checks is there are unknown slides and adds them to window.
+}
+
+/**
+ * Checks if there are unknown slides and adds them to window.
+ * @param newSlides
+ */
+function loadNewSlides(newSlides: SlideWithPathAndImg[]) {
     if (newSlides.length > 0) {
         selectionContainer?.appendChild(createNewSlideSection(newSlides));
     }
@@ -304,4 +418,21 @@ function addHashToHistory(slideWithPath: SlideWithPath) {
     } else if (targetSlide) {
         targetSlide.History = [slideWithPath.slide.Hash];
     }
+}
+
+/**
+ * Create a select filled with all paths of meta
+ * @returns a select filled with all paths of meta
+ */
+function createMetaSelect(): HTMLSelectElement {
+    const select = document.createElement("select");
+    select.style.minWidth = "0";
+
+    for (const presentation of meta) {
+        const option = document.createElement("option");
+        option.textContent = presentation.Path;
+        select.append(option);
+    }
+
+    return select;
 }

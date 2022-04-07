@@ -233,6 +233,13 @@ export default function initIpcHandlers() {
         const focusWindow = BrowserWindow.fromWebContents(event.sender);
         scanPresentations(focusWindow);
     });
+
+    // Scans presentations on the window
+    ipcMain.handle("ScanWindowAndClose", (event) => {
+        const focusWindow = BrowserWindow.fromWebContents(event.sender);
+        scanPresentations(focusWindow?.getParentWindow() ?? null);
+        focusWindow?.close();
+    });
 }
 
 /**
