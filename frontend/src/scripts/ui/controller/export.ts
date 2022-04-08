@@ -13,6 +13,7 @@ import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 import call from "../../helper/systemcall";
 import createPreset from "../components/createPreset";
+import { SlidesWithPath, SlideWithPath } from "../../interfaces/container";
 
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -25,6 +26,7 @@ const createPdfToggleBtn = document.getElementById("create-pdf-toggle-btn") as H
 
 let placeholders: Placeholder[];
 let presentations: Presentation[];
+let selectedSlideWithPath: SlideWithPath[];
 
 // Initialization of the custom titlebar.
 initTitlebar({
@@ -38,11 +40,13 @@ initTitlebar({
  */
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
+    selectedSlideWithPath = data.selectedSlideWithPath;
     if (data.placeholders) {
         placeholders = data.placeholders;
     } else {
         placeholders = [];
     }
+    console.log("selectedSlideWithPath", selectedSlideWithPath);
 });
 
 pathInput.value = getConfig().defaultExportPath;
@@ -131,7 +135,7 @@ exportBtn.addEventListener("click", async () => {
     }
 
     // closes the window after completion
-    ipcRenderer.invoke("closeFocusedWindow");
+    // ipcRenderer.invoke("closeFocusedWindow");
 });
 
 /**
@@ -151,6 +155,21 @@ interface Positions {
  */
 async function exportToPptx(outPath: string) {
     const positions: Positions = {};
+
+    const selectedSlidesWithPath: SlidesWithPath[] = [];
+
+    for (const slideWithPath of selectedSlideWithPath) {
+        const pPath = selectedSlidesWithPath[selectedSlidesWithPath.length - 1]?.path;
+        console.log("path", path.resolve(pPath ?? "C"));
+        console.log("slideWithPath.path", path.resolve(slideWithPath.path));
+        if (pPath && path.resolve(pPath) === path.resolve(slideWithPath.path)) {
+            selectedSlidesWithPath[selectedSlidesWithPath.length].slides.push(slideWithPath.slide);
+        } else {
+            selectedSlidesWithPath.push({ path: slideWithPath.path, slides: [slideWithPath.slide] });
+        }
+    }
+
+    console.log("selectedSlidesWithPath", selectedSlidesWithPath);
 
     // prepares the date for the creation.
     for (const presentation of presentations) {
