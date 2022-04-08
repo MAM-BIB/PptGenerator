@@ -86,7 +86,10 @@ saveBtn.addEventListener("click", () => {
                     config.presentationMasters[masterIndex].paths.splice(pathIndex, 1);
                     pathIndex--;
                 } else if (!fs.existsSync(pathString)) {
-                    openPopup({ text: `"${pathString}" does not exist!`, heading: "Error" });
+                    openPopup({
+                        text: `"${pathString}" does not exist in ${config.presentationMasters[masterIndex].lang}!`,
+                        heading: "Error",
+                    });
                     selectLanguage.dispatchEvent(new Event("change"));
                     return;
                 }
@@ -121,32 +124,40 @@ cancelBtn.addEventListener("click", async () => {
  * Adds event to the default export input
  */
 defaultExport.addEventListener("change", () => {
-    config.defaultExportPath = defaultExport.value;
-    saveBtn.disabled = false;
+    if (pathExists(defaultExport.value)) {
+        config.defaultExportPath = defaultExport.value;
+        saveBtn.disabled = false;
+    }
 });
 
 /**
  * Adds event to the meta json input
  */
 metaJson.addEventListener("change", () => {
-    config.metaJsonPath = metaJson.value;
-    saveBtn.disabled = false;
+    if (pathExists(metaJson.value)) {
+        config.metaJsonPath = metaJson.value;
+        saveBtn.disabled = false;
+    }
 });
 
 /**
  * Adds event to the meta pics input
  */
 metaPics.addEventListener("change", () => {
-    config.metaPicsPath = metaPics.value;
-    saveBtn.disabled = false;
+    if (pathExists(metaPics.value)) {
+        config.metaPicsPath = metaPics.value;
+        saveBtn.disabled = false;
+    }
 });
 
 /**
  * Adds event to the backup input
  */
 backPath.addEventListener("change", () => {
-    config.backupPath = backPath.value;
-    saveBtn.disabled = false;
+    if (pathExists(backPath.value)) {
+        config.backupPath = backPath.value;
+        saveBtn.disabled = false;
+    }
 });
 
 /**
@@ -190,6 +201,22 @@ function fillInput() {
     metaPics.value = config.metaPicsPath;
     backPath.value = config.backupPath;
     hiddenSlide.checked = !config.ignoreHiddenSlides;
+}
+
+/**
+ * This function checks if the input is an existing path
+ * @param inputPath inputPath is the Input Value of the paths
+ * @returns a boolean
+ */
+function pathExists(inputPath: string) {
+    if (!fs.existsSync(inputPath)) {
+        openPopup({
+            text: `"${inputPath}" does not exist!`,
+            heading: "Error",
+        });
+        return false;
+    }
+    return true;
 }
 
 /**
