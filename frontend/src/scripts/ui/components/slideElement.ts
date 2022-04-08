@@ -1,7 +1,7 @@
 import path from "path";
 import { getConfig } from "../../helper/config";
 import { Slide } from "../../interfaces/presentation";
-import checkForImg from "../controller/imageLoader";
+import checkForImg from "../../helper/imageLoader";
 
 /**
  * This class is used to display and add functionality to the slides inside the sections.

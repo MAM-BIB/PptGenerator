@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import initTitlebar from "../components/titlebar";
-import checkForImg from "./imageLoader";
+import checkForImg from "../../helper/imageLoader";
 
 const imageDiv = document.getElementById("image") as HTMLDivElement;
 
