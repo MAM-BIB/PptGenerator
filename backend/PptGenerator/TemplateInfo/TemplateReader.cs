@@ -59,7 +59,10 @@ namespace PptGenerator.TemplateInfo {
                     var sectionLst = selectElementByTag(ext, "sectionLst");
                     if (sectionLst == null) continue;
 
+                    Console.WriteLine("-------------------------------");
+                    Section beforeFirstSection = new Section("");
                     int lastPosition = -1;
+                    int firstPosition = int.MaxValue;
                     foreach (var sectionElem in sectionLst) {
                         if (sectionElem is DocumentFormat.OpenXml.Office2010.PowerPoint.Section of2010Section) {
                             foundSections = true;
@@ -68,17 +71,19 @@ namespace PptGenerator.TemplateInfo {
 
                             bool serachForUnlinkedSLides = true;
                             foreach (DocumentFormat.OpenXml.Office2010.PowerPoint.SectionSlideIdListEntry item in of2010Section.SectionSlideIdList) {
-                                
+
                                 // Search for all slides in this section and  add all slides before this section to the section befor this one
                                 uint position = 0;
                                 foreach (SlideId slideId in presentation.SlideIdList) {
                                     // Skip all slides that are already in a section
-                                    if(position <= lastPosition) {
+                                    if (position <= lastPosition) {
                                         position++;
                                         continue;
-                                    } 
+                                        Console.WriteLine("continue");
+                                    }
 
                                     if (slideId.Id == item.Id) {
+                                        Console.WriteLine("found in sec");
                                         // Add slide to current section
                                         serachForUnlinkedSLides = false;
                                         SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
@@ -86,16 +91,19 @@ namespace PptGenerator.TemplateInfo {
 
                                         section.Slides.Add(slide);
                                         lastPosition = (int)position;
+                                        if (lastPosition < firstPosition) firstPosition = lastPosition;
                                     } else if (serachForUnlinkedSLides) {
+                                        Console.WriteLine("serachForUnlinkedSLides");
                                         // If this slide is not jet in a section add it to the section before the current one
-                                        if(sections.Count >= 2) {
-                                            SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
-                                            Slide slide = getSlideFromPart(position, slideId, slidePart);
-
+                                        SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
+                                        Slide slide = getSlideFromPart(position, slideId, slidePart);
+                                        if (sections.Count >= 2) {
                                             sections[sections.Count - 2].Slides.Add(slide);
                                             lastPosition = (int)position;
+                                            if (lastPosition < firstPosition) firstPosition = lastPosition;
                                         }
                                     } else {
+                                        Console.WriteLine("break");
                                         // Found a slide that is not in the sectionlist
                                         // break to check if its in the next section. If it is, it will be added then
                                         break;
@@ -108,7 +116,7 @@ namespace PptGenerator.TemplateInfo {
                     // Find last section with slides
                     int lastSectionIndex = 0;
                     for (int i = sections.Count - 1; i > 0; i--) {
-                        if(sections[i].Slides.Count > 0) {
+                        if (sections[i].Slides.Count > 0) {
                             lastSectionIndex = i;
                             break;
                         }
@@ -117,11 +125,17 @@ namespace PptGenerator.TemplateInfo {
                     // Add the rest of the slides to the last section with slides
                     uint pos = 0;
                     foreach (SlideId slideId in presentation.SlideIdList) {
+                        if (pos < firstPosition) {
+                            SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
+                            Slide slide = getSlideFromPart(pos, slideId, slidePart);
+
+                            sections[0].Slides.Insert((int)pos, slide);
+                        }
                         if (pos <= lastPosition) {
                             // Skip all slides that are already in a section
                             pos++;
                             continue;
-                        } else if(sections.Count > 0) {
+                        } else if (sections.Count > 0) {
                             // Add the slide to the las section with slides
                             SlidePart slidePart = presentationPart.GetPartById(slideId.RelationshipId) as SlidePart;
                             Slide slide = getSlideFromPart(pos, slideId, slidePart);

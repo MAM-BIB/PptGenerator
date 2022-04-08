@@ -34,7 +34,6 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("focusout", () => {
     shiftPressed = false;
     ctrlPressed = false;
-    setConfig(getConfig());
 });
 
 document.addEventListener("keyup", (event) => {
