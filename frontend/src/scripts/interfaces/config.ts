@@ -7,6 +7,9 @@ export interface Config {
     metaJsonPath: string;
     metaPicsPath: string;
     coreApplication: string;
+    picsApplication: string;
+    specificPicsApplication: string;
+    pdfApplication: string;
     presetPath: string;
     presentationMasters: PresentationMaster[];
     ignoreHiddenSlides: boolean;
@@ -14,4 +17,5 @@ export interface Config {
     defaultExportPath: string;
     backupPath: string;
     showTutorial: boolean;
+    imgZoom: number;
 }

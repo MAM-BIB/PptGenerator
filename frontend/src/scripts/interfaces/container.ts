@@ -1,12 +1,18 @@
 import { Slide } from "./presentation";
 
-export interface PathWithSlides {
+export interface SlideWithPath {
     slide: Slide;
     path: string;
 }
 
+export interface SlideWithPathAndImg {
+    slide: Slide;
+    path: string;
+    imgPath: string;
+}
+
 export interface UidsWithSlides {
-    [uid: string]: PathWithSlides[];
+    [uid: string]: SlideWithPath[];
 }
 
 export interface SlidesWithPath {
@@ -18,4 +24,17 @@ export interface DuplicatedUids {
     uid?: UidsWithSlides;
     existingUids?: string[];
     answer?: boolean | string;
+}
+
+export interface ScanData {
+    newSlides: SlideWithPathAndImg[];
+    updateUids: { [uid: string]: SlideWithPathAndImg[] };
+}
+
+export interface SlidesMapMap {
+    [inPath: string]: SlidesMap;
+}
+
+export interface SlidesMap {
+    [outPath: string]: Slide[];
 }

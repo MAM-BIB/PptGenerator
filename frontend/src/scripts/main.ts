@@ -22,7 +22,7 @@ app.on("ready", () => {
         },
     });
 
-    // Initializes the meanu of the main window
+    // Initializes the menu of the main window
     initMenu(window);
 
     // Loads the index.html as window structure

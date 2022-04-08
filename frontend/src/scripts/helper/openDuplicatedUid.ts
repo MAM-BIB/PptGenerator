@@ -28,7 +28,7 @@ const defaultWindowOptions = {
 export default async function duplicatedUidWindow(options: DuplicatedUids) {
     const windowOptions = { ...defaultWindowOptions };
     if (ipcRenderer) {
-        return ipcRenderer.invoke("openWindow", "DuplicatedUidWindow.html", windowOptions, options);
+        return ipcRenderer.invoke("openWindow", "duplicatedUid.html", windowOptions, options);
     }
-    return openWindow(BrowserWindow.getFocusedWindow(), "DuplicatedUidWindow.html", windowOptions, options);
+    return openWindow(BrowserWindow.getFocusedWindow(), "duplicatedUid.html", windowOptions, options);
 }

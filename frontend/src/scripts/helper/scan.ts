@@ -1,5 +1,6 @@
 import path from "path";
 import fsBase from "fs";
+import { exec } from "child_process";
 
 import { getConfig } from "./config";
 import openPopup from "./openPopup";
@@ -7,7 +8,7 @@ import { Presentation, Slide } from "../interfaces/presentation";
 import { UidsWithSlides, SlidesWithPath } from "../interfaces/container";
 import call from "./systemcall";
 import reload from "./reload";
-import duplicatedUidWindow from "./openDuplicatedUidWindow";
+import duplicatedUidWindow from "./openDuplicatedUid";
 
 const fs = fsBase.promises;
 
@@ -15,9 +16,19 @@ const fs = fsBase.promises;
  * This function scans all .pptx files that are set in the settings.
  * @param focusedWindow The window where the loading animation will be displayed.
  */
-export default async function scanPresentations(focusedWindow: Electron.BrowserWindow | null | undefined) {
+export default async function scanPresentations(
+    focusedWindow: Electron.BrowserWindow | null | undefined,
+    oldMeta?: Presentation[],
+) {
     // start the loading animation.
     focusedWindow?.webContents.send("startLoading");
+
+    let meta;
+    if (!oldMeta) {
+        const metaJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+        meta = JSON.parse(metaJson) as Presentation[];
+    }
+
     // call the core application to scan the .pptx files.
     try {
         await call(getConfig().coreApplication, [
@@ -37,14 +48,112 @@ export default async function scanPresentations(focusedWindow: Electron.BrowserW
             answer: true,
         });
     }
+
+    // Generate images for the slides
+    generateSlideImages();
+
     // Reload the window to display the Data of the Presentations.
     reload(focusedWindow);
 
     // Check the UIds of the presentation for errors and scan again if the program changed uids.
     const scanAgain = !(await checkUids());
     if (scanAgain) {
-        scanPresentations(focusedWindow);
+        scanPresentations(focusedWindow, meta);
+    } else if (meta) {
+        const metaJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+        const newMeta = JSON.parse(metaJson) as Presentation[];
+
+        let presentationIndex = -1;
+        for (const presentation of newMeta) {
+            for (let index = 0; index < meta.length; index++) {
+                const element = meta[index];
+                if (path.resolve(element.Path) === path.resolve(presentation.Path)) {
+                    presentationIndex = index;
+                    break;
+                }
+            }
+            if (presentationIndex >= 0) {
+                const slideMap: { [uid: string]: Slide } = {};
+                for (const slide of meta[presentationIndex].Sections.flatMap((section) => section.Slides)) {
+                    slideMap[slide.Uid] = slide;
+                }
+                for (const section of presentation.Sections) {
+                    for (const slide of section.Slides) {
+                        if (slideMap[slide.Uid]) {
+                            if (slideMap[slide.Uid].Hash !== slide.Hash) {
+                                slide.History = [slideMap[slide.Uid].Hash];
+                            }
+                            if (slideMap[slide.Uid].History) {
+                                if (!slide.History) {
+                                    slide.History = slideMap[slide.Uid].History;
+                                } else {
+                                    slide.History.push(...(slideMap[slide.Uid].History as string[]));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        await fs.writeFile(getConfig().metaJsonPath, JSON.stringify(newMeta, null, "\t"));
     }
+    return true;
+}
+
+/**
+ * Generate images for the slides
+ */
+async function generateSlideImages() {
+    try {
+        const presentationsJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });
+        const presentations = JSON.parse(presentationsJson) as Presentation[];
+
+        for (let index = 0; index < presentations.length; index++) {
+            const presentation = presentations[index];
+            // eslint-disable-next-line no-await-in-loop
+            await generatePics(presentation, index.toString());
+        }
+    } catch (error) {
+        await openPopup({ text: `Could not create images!\n ${error}`, heading: "Error", answer: true });
+    }
+}
+
+/**
+ * Generates pics for a presentation in the meta pic folder
+ * @param presentation The presentation
+ * @param folder The destination folder in the meta pics folder
+ */
+async function generatePics(presentation: Presentation, folder: string): Promise<void> {
+    const nrOfSlides = presentation.Sections.reduce((sum, sec) => sum + sec.Slides.length, 0);
+    if (nrOfSlides > 0) {
+        const destPath = path.join(getConfig().metaPicsPath, folder);
+
+        if (fsBase.existsSync(destPath)) {
+            await fs.rm(destPath, { recursive: true });
+        }
+
+        await fs.mkdir(destPath);
+
+        const appPath = path.resolve(getConfig().picsApplication).replaceAll(" ", "` ");
+        return new Promise<void>((resolve, reject) => {
+            exec(
+                `${appPath} "${path.resolve(presentation.Path)}" ${nrOfSlides.toString()} "${path.resolve(destPath)}"`,
+                { shell: "powershell.exe" },
+                (error) => {
+                    if (error) reject(error.message);
+                },
+            ).on("exit", (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject("Program exited with unknown errors");
+                }
+            });
+        });
+    }
+    return new Promise<void>((resolve) => {
+        resolve();
+    });
 }
 
 /**

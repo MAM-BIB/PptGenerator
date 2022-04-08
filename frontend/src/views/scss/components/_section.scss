@@ -41,6 +41,12 @@
         text-overflow: ellipsis;
         cursor: pointer;
 
+        img {
+            width: calc(var(--zoom) - $size-1);
+            margin: $size-1;
+            display: var(--hide);
+        }
+
         &.selected {
             background: var(--btn--background);
             color: var(--btn--font);

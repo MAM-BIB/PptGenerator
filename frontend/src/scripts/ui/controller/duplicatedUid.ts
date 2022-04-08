@@ -4,17 +4,18 @@ import fsBase from "fs";
 import call from "../../helper/systemcall";
 
 import { Slide } from "../../interfaces/presentation";
-import { DuplicatedUids, PathWithSlides } from "../../interfaces/container";
+import { DuplicatedUids, SlideWithPath } from "../../interfaces/container";
 import initTitlebar from "../components/titlebar";
 import { getConfig } from "../../helper/config";
 import { startLoading } from "../components/loading";
 import openPopup from "../../helper/openPopup";
+import checkForImg from "../../helper/imageLoader";
 
 const duplicatedUidSection = document.getElementById("duplicated-uid-section") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 const changeUidsBtn = document.getElementById("change-uids-btn") as HTMLButtonElement;
 
-const inputsWithMatchingSlides: { input: HTMLInputElement; slide: PathWithSlides }[] = [];
+const inputsWithMatchingSlides: { input: HTMLInputElement; slide: SlideWithPath }[] = [];
 
 let duplicatedUids: DuplicatedUids;
 const fs = fsBase.promises;
@@ -61,7 +62,7 @@ changeUidsBtn.addEventListener("click", async () => {
  * @param uid The uid from a slide.
  * @param slides The path from a presentation and all slides from that path.
  */
-function createMainDiv(uid: string, slides: PathWithSlides[]) {
+function createMainDiv(uid: string, slides: SlideWithPath[]) {
     const uidMainDiv = document.createElement("div");
     uidMainDiv.className = "main-div";
 
@@ -116,7 +117,7 @@ function createHeader(uid: string, duplicatedUidTitleContainer: HTMLDivElement) 
  * @param slide The slide that has a duplicated UID.
  * @returns The div in which the PresentationName will be in.
  */
-function createDivPresentationName(slide: PathWithSlides, isInputChecked: boolean): HTMLDivElement {
+function createDivPresentationName(slide: SlideWithPath, isInputChecked: boolean): HTMLDivElement {
     const presentationDiv = document.createElement("div");
     presentationDiv.className = "presentation-name";
 
@@ -135,26 +136,87 @@ function createDivPresentationName(slide: PathWithSlides, isInputChecked: boolea
  * @param slide The slide that has a duplicated UID.
  * @returns The div in which the SlideName will be in.
  */
-function createDivSlideName(slide: PathWithSlides, isInputChecked: boolean): HTMLDivElement {
+function createDivSlideName(slide: SlideWithPath, isInputChecked: boolean): HTMLDivElement {
     const slideDiv = document.createElement("div");
     slideDiv.className = "slide-name-with-checkbox";
 
+    const lblWithImgDiv = document.createElement("div");
+    lblWithImgDiv.className = "lbl-with-img";
     const slideName = document.createElement("label");
     slideName.className = "slide-name";
     slideName.textContent = `Slide ${[slide.slide.Position + 1]} : ${[slide.slide.Title || "No Title"]}`;
 
-    slideDiv.appendChild(slideName);
+    lblWithImgDiv.appendChild(slideName);
 
+    lblWithImgDiv.appendChild(createImgToSlide(slide));
+
+    slideDiv.appendChild(lblWithImgDiv);
     slideDiv.appendChild(createCheckbox(slide, isInputChecked));
-
     return slideDiv;
+}
+
+/**
+ * This function creates the Image of the slide.
+ * @param slide The slide that has a duplicated UID.
+ * @returns The Image in which the img will be.
+ */
+function createImgToSlide(slide: SlideWithPath) {
+    const presentationPaths = getConfig()
+        .presentationMasters.flatMap((master) => master.paths)
+        .map((elem) => path.normalize(elem))
+        .filter((elem, index, array) => array.indexOf(elem) === index);
+
+    const imgFolder = presentationPaths.indexOf(slide.path);
+    const imgPath = path.resolve(getConfig().metaPicsPath, imgFolder.toString(), `${slide.slide.Position + 1}.jpg`);
+
+    const img = document.createElement("img");
+    img.alt = "";
+    img.style.display = "none";
+    img.loading = "lazy";
+    img.addEventListener("error", () => {
+        checkForImg(img, imgPath, true);
+    });
+    img.addEventListener("load", () => {
+        img.style.display = "";
+    });
+    checkForImg(img, imgPath);
+    onImgClick(img, imgPath);
+    return img;
+}
+
+/**
+ * This function opens a new window and passes the path
+ * @param img The Image of the Slide
+ * @param imgPath The Path from the Image
+ */
+function onImgClick(img: HTMLImageElement, imgPath: string) {
+    img.addEventListener("click", async () => {
+        await ipcRenderer.invoke(
+            "openWindow",
+            "openImg.html",
+            {
+                width: 500,
+                height: 300,
+                minWidth: 500,
+                minHeight: 300,
+                frame: false,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+                autoHideMenuBar: true,
+                modal: false,
+            },
+            imgPath,
+        );
+    });
 }
 
 /**
  * This function creates a checkbox to select a slide.
  * @returns The div in which the checkbox will be in
  */
-function createCheckbox(slide: PathWithSlides, checked: boolean): HTMLDivElement {
+function createCheckbox(slide: SlideWithPath, checked: boolean): HTMLDivElement {
     const sectionToggleBtnDiv = document.createElement("div");
     sectionToggleBtnDiv.className = "section toggle-button";
 

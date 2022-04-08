@@ -20,7 +20,7 @@ export default class SectionElement {
     public element: HTMLDivElement;
     public section: Section;
     public slides: SlideElement[];
-    public selectedSlides: SlideElement[];
+    public selectedSlides: SelectedSlideElement[];
 
     public lastSelectedIndex = -1;
     public isSelected = false;
@@ -30,16 +30,16 @@ export default class SectionElement {
 
     /**
      * This constructor creates a SectionElement
-     * @param section The Section from wich the element will be created
+     * @param section The Section from which the element will be created
      */
-    constructor(section: Section) {
+    constructor(section: Section, imgPath?: string) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.selectedElement = document.createElement("div") as HTMLDivElement;
         this.section = section;
         this.slides = [];
         this.selectedSlides = [];
-        this.createSection(this.element, SectionType.normal);
-        this.createSection(this.selectedElement, SectionType.selected);
+        this.createSection(this.element, SectionType.normal, imgPath);
+        this.createSection(this.selectedElement, SectionType.selected, imgPath);
         this.selectedElementHeader = this.selectedElement.getElementsByClassName("headerText")[0] as HTMLHeadingElement;
 
         this.selectedElement.hidden = true;
@@ -51,7 +51,7 @@ export default class SectionElement {
      * @param element The HtmlElement that will be used to contain all the information.
      * @param sectionType The State of the Section.
      */
-    private createSection(element: HTMLDivElement, sectionType: SectionType = SectionType.normal) {
+    private createSection(element: HTMLDivElement, sectionType: SectionType = SectionType.normal, imgPath?: string) {
         const header = document.createElement("div");
         const headerText = document.createElement("h2");
 
@@ -83,7 +83,7 @@ export default class SectionElement {
 
                 let newSlide;
                 if (sectionType === SectionType.normal) {
-                    newSlide = new SlideElement(slide);
+                    newSlide = new SlideElement(slide, imgPath);
 
                     newSlide.element.addEventListener("selected", (event) => {
                         this.multiSelect(true, event);
@@ -95,7 +95,7 @@ export default class SectionElement {
                     });
                     this.slides.push(newSlide);
                 } else {
-                    newSlide = new SelectedSlideElement(slide, this.slides[index]);
+                    newSlide = new SelectedSlideElement(slide, this.slides[index], imgPath);
                     this.selectedSlides.push(newSlide);
                 }
                 element.appendChild(newSlide.element);

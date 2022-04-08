@@ -1,4 +1,7 @@
+import path from "path";
+import { getConfig } from "../../helper/config";
 import { Slide } from "../../interfaces/presentation";
+import checkForImg from "../../helper/imageLoader";
 
 /**
  * This class is used to display and add functionality to the slides inside the sections.
@@ -7,11 +10,15 @@ export default class SlideElement {
     public slide: Slide;
     public element: HTMLDivElement;
 
-    constructor(slide: Slide) {
+    constructor(slide: Slide, imgPath?: string) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.slide = slide;
         this.slide.IsSelected = false;
-        this.createSlide();
+        if (imgPath) {
+            this.createSlide(path.join(getConfig().metaPicsPath, imgPath, `${slide.Position + 1}.jpg`));
+        } else {
+            this.createSlide();
+        }
     }
 
     /**
@@ -60,19 +67,50 @@ export default class SlideElement {
 
     /**
      * This function creates a Slide that will be displayed in the GUI and has all functionalities
+     * @param imgSrc The ImgSrc is the Source of the Image
      */
-    private createSlide() {
+    private createSlide(imgSrc?: string) {
         this.element.classList.add("slide");
         if (this.slide.IsHidden) this.element.classList.add("hidden-slide");
         this.element.textContent = `${this.slide.Title === "" ? "No Title" : this.slide.Title}`;
         this.element.title = `slide:
             title: ${this.slide.Title},
-            UID: ${this.slide.Uid},
-            pos: ${this.slide.Position},
-            rlid: ${this.slide.RelationshipId},
-            isHidden: ${this.slide.IsHidden}`;
+            uid: ${this.slide.Uid},
+            position: ${this.slide.Position},
+            isHidden: ${this.slide.IsHidden},
+            hash: ${this.slide.Hash.substring(0, 19)}...`;
 
         this.addClickListener();
+
+        if (imgSrc) {
+            const img = document.createElement("img");
+            img.alt = "";
+            img.style.display = "none";
+            img.loading = "lazy";
+            img.addEventListener("error", () => {
+                checkForImg(img, imgSrc, true);
+            });
+            img.addEventListener("load", () => {
+                img.style.display = "";
+            });
+            checkForImg(img, imgSrc);
+            this.element.append(img);
+        }
+
+        // function checkForImg(img: HTMLImageElement, src: string, wait = false) {
+        //     if (wait || !fs.existsSync(src)) {
+        //         // eslint-disable-next-line no-promise-executor-return
+        //         new Promise((r) => setTimeout(r, 2000)).then(() => {
+        //             checkForImg(img, src);
+        //         });
+        //     } else {
+        //         // eslint-disable-next-line no-promise-executor-return
+        //         new Promise((r) => setTimeout(r, 1000)).then(() => {
+        //             // eslint-disable-next-line no-param-reassign
+        //             img.src = path.resolve(src);
+        //         });
+        //     }
+        // }
     }
 
     /**

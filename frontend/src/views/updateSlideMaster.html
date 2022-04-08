@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./css/main.css" />
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div class="base-container">
+            <div class="main-section">
+                <h1 class="headline">Update SlideMaster</h1>
+                <div class="master-container">
+                    <div class="spacer"></div>
+                    <div class="section select">
+                        <div class="section master" id="uid-section">
+                            <!--The content will be loaded dynamically-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <div
+                    class="section toggle-button"
+                    style="flex: 1; display: flex; flex-direction: row-reverse; align-items: center; min-width: 0"
+                    id="history-toggle-section"
+                >
+                    <label for="add-to-history-toggle-btn" class="ignore-lbl">
+                        Add other to history
+                        <span
+                            class="info-img"
+                            title="Add the hash of all slides that are not selected to the hash history. They will then be ignored the next time you scan for updated slides"
+                        ></span>
+                    </label>
+                    <div class="checkbox-toggle-btn" style="flex-grow: 0.1">
+                        <label class="switch">
+                            <input type="checkbox" id="add-to-history-toggle-btn" />
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                <button class="save-btn" id="update-btn">Update Slides</button>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require("../ui/controller/updateSlideMaster.js");
+    </script>
+</html>

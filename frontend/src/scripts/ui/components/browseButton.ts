@@ -35,7 +35,7 @@ export function addBrowseHandler(button: HTMLButtonElement) {
                 input.dispatchEvent(new Event("change"));
             }
         } catch (error) {
-            // Error
+            // Don't handle error
         }
     });
 }

@@ -12,6 +12,7 @@ import openPopup from "../../helper/openPopup";
 import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
 import isRunning, { killPpt } from "../../helper/processManager";
+import { addZoomListener } from "../keyHandler";
 
 const fs = fsBase.promises;
 
@@ -35,6 +36,8 @@ fillPresentationMasterSelect();
 read();
 // Shows the help window.
 showTutorial();
+// Change Images size on zoom.
+addZoomListener();
 
 /**
  * This function will show you the tutorial automatically if you start the program for the first time
@@ -63,6 +66,11 @@ async function showTutorial() {
 // used to start the loading animation.
 ipcRenderer.on("startLoading", () => {
     startLoading();
+});
+
+// used to stop the loading animation.
+ipcRenderer.on("stopLoading", () => {
+    stopLoading();
 });
 
 /**
@@ -106,25 +114,51 @@ function loadSections() {
         (elem) => elem.lang === presentationMasterLang,
     );
 
-    sectionContainer.innerHTML = "";
-    selectedSectionContainer.innerHTML = "";
-    sectionElements = [];
-
-    if (!selectedPresentationMaster) {
+    if (selectedPresentationMaster) {
+        if (!sectionElements) {
+            sectionElements = [];
+            loadMaster();
+        }
+        for (const child of sectionContainer.children) {
+            (child as HTMLElement).hidden = !child.classList.contains(`lang-${presentationMasterLang}`);
+        }
+    } else {
         openPopup({ heading: "Error", text: "Could not find the selected master presentation!" });
     }
-    for (const presentation of presentations) {
-        if (selectedPresentationMaster?.paths.some((p) => path.normalize(p) === path.normalize(presentation.Path))) {
-            sectionContainer.appendChild(createPresentationName(presentation));
-            for (const section of presentation.Sections) {
-                const sectionElement = new SectionElement(section);
-                sectionContainer.appendChild(sectionElement.element);
-                selectedSectionContainer.appendChild(sectionElement.selectedElement);
-                sectionElement.element.addEventListener("selectionChanged", () => {
-                    handleSelectionChange();
-                });
-                sectionElements.push(sectionElement);
+}
+
+function loadMaster() {
+    for (let index = 0; index < presentations.length; index++) {
+        const presentation = presentations[index];
+        const languages: string[] = [];
+
+        for (const presentationMaster of getConfig().presentationMasters) {
+            if (presentationMaster.paths.some((p) => path.resolve(p) === path.resolve(presentation.Path))) {
+                languages.push(presentationMaster.lang);
             }
+        }
+
+        const title = createPresentationName(presentation);
+        for (const lang of languages) {
+            title.classList.add(`lang-${lang}`);
+        }
+        sectionContainer.appendChild(title);
+
+        for (const section of presentation.Sections) {
+            const sectionElement = new SectionElement(section, index.toString());
+
+            const mainElement = sectionElement.element;
+
+            for (const lang of languages) {
+                mainElement.classList.add(`lang-${lang}`);
+            }
+            sectionContainer.appendChild(sectionElement.element);
+
+            selectedSectionContainer.appendChild(sectionElement.selectedElement);
+            sectionElement.element.addEventListener("selectionChanged", () => {
+                handleSelectionChange();
+            });
+            sectionElements.push(sectionElement);
         }
     }
 }

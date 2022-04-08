@@ -17,4 +17,5 @@ export interface Slide {
     IsSelected: boolean;
     Placeholders: string[];
     Hash: string;
+    History?: string[];
 }

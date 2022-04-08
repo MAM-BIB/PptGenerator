@@ -6,6 +6,24 @@
         display: flex;
         align-items: center;
     }
+
+    .lbl-with-img{
+        display: flex;
+        flex-direction: column;
+        img {
+            width: calc(50% - $size-1);
+            margin: $size-1;
+            display: var(--hide);
+        }
+    }
+
+    .section{
+        .checkbox-toggle-btn{
+            display: flex;
+            align-items: center;
+        }
+    }
+    
 }
 
 .main-div {

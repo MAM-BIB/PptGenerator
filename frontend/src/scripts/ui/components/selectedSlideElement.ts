@@ -5,8 +5,8 @@ import { Slide } from "../../interfaces/presentation";
  * This class is used to display and add functionality to the selected slides.
  */
 export default class SelectedSlideElement extends SlideElement {
-    constructor(slide: Slide, slideElement: SlideElement) {
-        super(slide);
+    constructor(slide: Slide, slideElement: SlideElement, imgSrc?: string) {
+        super(slide, imgSrc);
         slideElement.element.addEventListener("selected", () => {
             this.element.style.display = "";
         });
