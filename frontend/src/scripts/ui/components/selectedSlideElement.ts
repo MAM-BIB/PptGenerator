@@ -6,7 +6,7 @@ import { SlideWithPath } from "../../interfaces/container";
  * This class is used to display and add functionality to the selected slides.
  */
 export default class SelectedSlideElement extends SlideElement {
-    private slideWithPath: SlideWithPath;
+    public slideWithPath: SlideWithPath;
 
     constructor(
         slide: Slide,
@@ -17,16 +17,32 @@ export default class SelectedSlideElement extends SlideElement {
     ) {
         super(slide, imgSrc);
         this.slideWithPath = { slide, path: presentationPath };
+        this.element.draggable = true;
+        this.element.classList.add("draggable");
+        this.element.addEventListener("dragstart", (event) => {
+            event.dataTransfer?.setData("text", this.element.style.order);
+        });
+        this.element.addEventListener("dragover", (event) => {
+            event.preventDefault();
+        });
+        this.element.addEventListener("drop", (event) => {
+            event.preventDefault();
+            const incomingIndex = parseInt(event.dataTransfer?.getData("text") ?? "", 10);
+            if (incomingIndex && incomingIndex >= 0 && incomingIndex < selectedSlideWithPath.length) {
+                const ownIndex = selectedSlideWithPath.indexOf(this.slideWithPath);
+                selectedSlideWithPath.splice(ownIndex, 0, selectedSlideWithPath.splice(incomingIndex, 1)[0]);
+
+                this.element.parentElement?.dispatchEvent(new Event("orderChanged"));
+            }
+        });
 
         slideElement.element.addEventListener("selected", () => {
             selectedSlideWithPath.push(this.slideWithPath);
-            this.element.style.order = selectedSlideWithPath.length.toString();
+            this.element.style.order = (selectedSlideWithPath.length - 1).toString();
             this.element.style.display = "";
-            console.log("this.element", this.element);
         });
         slideElement.element.addEventListener("deselected", () => {
             const index = selectedSlideWithPath.indexOf(this.slideWithPath);
-            console.log("index", index);
             if (index > -1) {
                 selectedSlideWithPath.splice(index, 1);
             }

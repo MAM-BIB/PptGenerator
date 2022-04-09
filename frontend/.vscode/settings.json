@@ -1,5 +1,15 @@
 {
     "prettier.trailingComma": "all",
     "prettier.printWidth": 120,
-    "cSpell.words": ["btns", "dirents", "linebreak", "plusplus", "POWERPNT", "systemcall", "Titlebar", "uids"]
+    "cSpell.words": [
+        "btns",
+        "dirents",
+        "draggable",
+        "linebreak",
+        "plusplus",
+        "POWERPNT",
+        "systemcall",
+        "Titlebar",
+        "uids"
+    ]
 }

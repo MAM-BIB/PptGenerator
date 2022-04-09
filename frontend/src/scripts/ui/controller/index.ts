@@ -130,6 +130,22 @@ function loadSections() {
     }
 }
 
+selectedSectionContainer.addEventListener("orderChanged", () => {
+    for (const sectionElement of sectionElements) {
+        for (const selectedSlide of sectionElement.selectedSlides) {
+            const index = selectedSlideWithPath.indexOf(selectedSlide.slideWithPath);
+            if (index > -1) {
+                selectedSlide.element.style.order = index.toString();
+            } else {
+                selectedSlide.element.style.order = "";
+            }
+        }
+    }
+});
+
+/**
+ * Load the presentation masters and crate the section and slide elements
+ */
 function loadMaster() {
     for (let index = 0; index < presentations.length; index++) {
         const presentation = presentations[index];
