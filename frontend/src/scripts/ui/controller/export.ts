@@ -118,7 +118,7 @@ exportBtn.addEventListener("click", async () => {
             return;
         }
 
-        createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
+        createPreset(path.join(presetPath, `${name}.json`), presentations, selectedSlideWithPath, placeholders);
     }
 
     // creates the pptx-file

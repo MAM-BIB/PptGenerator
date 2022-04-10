@@ -1,4 +1,5 @@
 import fsBase from "fs";
+import { SlideWithPath } from "../../interfaces/container";
 
 import { Presentation } from "../../interfaces/presentation";
 import { Placeholder, Preset, PresetSection } from "../../interfaces/preset";
@@ -15,6 +16,7 @@ const fs = fsBase.promises;
 export default async function createPreset(
     savePath: string,
     presetPresentations: Presentation[],
+    selectedSlideWithPath: SlideWithPath[],
     presetPlaceholders: Placeholder[],
 ) {
     const preset: Preset = {
@@ -32,7 +34,8 @@ export default async function createPreset(
             };
             for (const slide of section.Slides) {
                 if (slide.IsSelected) {
-                    presetSection.includedSlides.push(slide.Uid);
+                    const position = selectedSlideWithPath.findIndex((slideWithPath) => slideWithPath.slide === slide);
+                    presetSection.includedSlides.push({ uid: slide.Uid, position });
                 } else {
                     presetSection.ignoredSlides.push(slide.Uid);
                 }

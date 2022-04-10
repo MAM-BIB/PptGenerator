@@ -6,7 +6,7 @@ export interface Preset {
 
 export interface PresetSection {
     name: string;
-    includedSlides: string[];
+    includedSlides: { uid: string; position: number }[];
     ignoredSlides: string[];
 }
 

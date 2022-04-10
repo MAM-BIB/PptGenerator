@@ -44,15 +44,22 @@ export default class LoadFile {
             const unknown = await this.loadPresetFromMeta(outPath);
             if (unknown) {
                 let text = "";
-                for (const section of unknown.presentations.flatMap((pres) => pres.Sections)) {
-                    if (section.Slides.length > 0) text += `\n${formatSlide(section.Slides)}\n`;
+                if (unknown.newSlides.length === 1) {
+                    text += `There is a slide with an unknown uids:\n\n${formatSlide(unknown.newSlides)}\n`;
+                } else if (unknown.newSlides.length > 1) {
+                    text += `There are ${unknown.newSlides.length} slides with unknown uids:\n\n${formatSlide(
+                        unknown.newSlides,
+                    )}\n`;
                 }
-                text += `\nThere are ${unknown.hashChangedList.length ?? 0} slides with different content:`;
-                text += `\n${formatSlide(unknown.hashChangedList)}\n`;
-                openPopup(
-                    { text: `There are slides with uids, that are not known!\n${text}`, heading: "Warning" },
-                    false,
-                );
+                if (unknown.hashChangedList.length === 1) {
+                    text += `\nThere is a slide with different content:\n${formatSlide(unknown.hashChangedList)}\n`;
+                } else if (unknown.hashChangedList.length > 1) {
+                    text += `\nThere are ${
+                        unknown.hashChangedList.length
+                    } slides with different content:\n${formatSlide(unknown.hashChangedList)}\n`;
+                }
+
+                openPopup({ text, heading: "Warning" }, false);
             }
         }
     }
@@ -72,19 +79,20 @@ export default class LoadFile {
             }
         }
 
+        // flatmap all included slides
+        const includedSlides = this.loadedPreset.sections
+            .flatMap((section) => section.includedSlides)
+            .sort((a, b) => a.position - b.position);
+
         // go through every section
-        for (const section of this.loadedPreset.sections) {
-            // go through every included slide
-            for (const slideUID of section.includedSlides) {
-                for (const sectionElement of this.sectionElements) {
-                    for (const slideElement of sectionElement.slides) {
-                        if (slideUID === slideElement.slide.Uid) {
-                            slideElement.select();
-                        }
-                    }
+        for (const includedSlide of includedSlides) {
+            for (const slideELement of this.sectionElements.flatMap((elem) => elem.slides)) {
+                if (includedSlide.uid === slideELement.slide.Uid) {
+                    slideELement.select();
                 }
             }
         }
+
         // saves the placeholders in the preset.
         if (this.loadedPreset.placeholders.length > 0) {
             this.placeholders = this.loadedPreset.placeholders;
@@ -99,46 +107,37 @@ export default class LoadFile {
      */
     public async loadPresetFromMeta(
         jsonPath: string,
-    ): Promise<{ jsonPath: string; presentations: Presentation[]; hashChangedList: Slide[] } | undefined> {
+    ): Promise<{ jsonPath: string; newSlides: Slide[]; hashChangedList: Slide[] } | undefined> {
         const PresMetaJson = await fs.readFile(jsonPath, { encoding: "utf-8" });
-        let presentations = JSON.parse(PresMetaJson) as Presentation[];
+        const presentations = JSON.parse(PresMetaJson) as Presentation[];
+
         const allSelectedSlides = presentations.flatMap((pres) => pres.Sections).flatMap((section) => section.Slides);
         const hashChangedList: Slide[] = [];
+        const newSlides: Slide[] = [];
 
-        for (const slideELement of this.sectionElements.flatMap((elem) => elem.slides)) {
-            if (
-                allSelectedSlides.some((slide) => {
-                    if (slide.Uid === slideELement.slide.Uid) {
-                        if (slide.Hash !== slideELement.slide.Hash) {
-                            hashChangedList.push(slide);
+        for (const selectedSlide of allSelectedSlides) {
+            let isInMaster = false;
+            for (const slideELement of this.sectionElements.flatMap((elem) => elem.slides)) {
+                if (selectedSlide.Uid === slideELement.slide.Uid) {
+                    isInMaster = true;
+                    if (selectedSlide.Hash !== slideELement.slide.Hash) {
+                        if (!slideELement.slide.History || !slideELement.slide.History.includes(selectedSlide.Hash)) {
+                            hashChangedList.push(selectedSlide);
                         }
-                        // eslint-disable-next-line no-param-reassign
-                        slide.IsSelected = true;
-                        return true;
                     }
-                    return false;
-                })
-            ) {
-                slideELement.select();
-            } else {
-                slideELement.deselect();
+                    slideELement.select();
+                }
+            }
+            isInMaster = true;
+            if (!isInMaster) {
+                newSlides.push(selectedSlide);
             }
         }
 
-        presentations = presentations.filter((presentation) => {
-            // eslint-disable-next-line no-param-reassign
-            presentation.Sections = presentation.Sections.filter((section) => {
-                // eslint-disable-next-line no-param-reassign
-                section.Slides = section.Slides.filter((slide) => !slide.IsSelected);
-                return section.Slides.length === 0;
-            });
-            return presentation.Sections.length === 0;
-        });
-
-        if (allSelectedSlides.some((slide) => !slide.IsSelected) || hashChangedList.length) {
+        if (newSlides.length || hashChangedList.length) {
             return {
                 jsonPath,
-                presentations,
+                newSlides,
                 hashChangedList,
             };
         }
