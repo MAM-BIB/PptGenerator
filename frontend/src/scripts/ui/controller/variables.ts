@@ -4,12 +4,14 @@ import { Presentation } from "../../interfaces/presentation";
 import { Placeholder } from "../../interfaces/preset";
 import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
+import { SlideWithPath } from "../../interfaces/container";
 
 const variablesContainer = document.getElementById("variablesContainer") as HTMLDivElement;
 const setBtn = document.getElementById("set-btn") as HTMLDivElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
 
 let presentations: Presentation[];
+let selectedSlideWithPath: SlideWithPath[];
 let placeholders: Placeholder[];
 let firstInput = true;
 
@@ -29,17 +31,16 @@ ipcRenderer.on(
         event,
         data: {
             presentations: Presentation[];
+            selectedSlideWithPath: SlideWithPath[];
             placeholders: Placeholder[];
         },
     ) => {
         presentations = data.presentations;
+        selectedSlideWithPath = data.selectedSlideWithPath;
         placeholders = [];
 
         for (const placeholder of new Set<string>(
-            presentations
-                .flatMap((presentation) => presentation.Sections)
-                .flatMap((section) => section.Slides)
-                .flatMap((slide) => slide.Placeholders),
+            selectedSlideWithPath.flatMap((slideWithPath) => slideWithPath.slide.Placeholders),
         )) {
             const value = data.placeholders.find((p) => p.name === placeholder)?.value ?? "";
             variablesContainer.appendChild(createPlaceholderInput(placeholder, placeholders.length, value));
@@ -76,6 +77,7 @@ setBtn.addEventListener("click", async () => {
             },
             {
                 presentations,
+                selectedSlideWithPath,
                 placeholders,
             },
         );

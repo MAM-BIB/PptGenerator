@@ -84,8 +84,13 @@
         }
     }
 
+    .slide.draggable {
+        cursor: grab;
+    }
+
     &.open .slide {
         display: block;
+        flex-shrink: 0;
     }
 
     &.open {

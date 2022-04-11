@@ -13,6 +13,7 @@ import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
 import isRunning, { killPpt } from "../../helper/processManager";
 import { addZoomListener } from "../keyHandler";
+import { SlideWithPath } from "../../interfaces/container";
 
 const fs = fsBase.promises;
 
@@ -27,6 +28,8 @@ let placeholders: Placeholder[] = [];
 
 let presentationMasterLang: string;
 let sectionElements: SectionElement[];
+
+const selectedSlideWithPath: SlideWithPath[] = [];
 
 // Initialization of the custom titlebar.
 initTitlebar();
@@ -127,6 +130,22 @@ function loadSections() {
     }
 }
 
+selectedSectionContainer.addEventListener("orderChanged", () => {
+    for (const sectionElement of sectionElements) {
+        for (const selectedSlide of sectionElement.selectedSlides) {
+            const index = selectedSlideWithPath.indexOf(selectedSlide.slideWithPath);
+            if (index > -1) {
+                selectedSlide.element.style.order = index.toString();
+            } else {
+                selectedSlide.element.style.order = "";
+            }
+        }
+    }
+});
+
+/**
+ * Load the presentation masters and crate the section and slide elements
+ */
 function loadMaster() {
     for (let index = 0; index < presentations.length; index++) {
         const presentation = presentations[index];
@@ -145,7 +164,12 @@ function loadMaster() {
         sectionContainer.appendChild(title);
 
         for (const section of presentation.Sections) {
-            const sectionElement = new SectionElement(section, index.toString());
+            const sectionElement = new SectionElement(
+                section,
+                presentation.Path,
+                selectedSlideWithPath,
+                index.toString(),
+            );
 
             const mainElement = sectionElement.element;
 
@@ -154,7 +178,10 @@ function loadMaster() {
             }
             sectionContainer.appendChild(sectionElement.element);
 
-            selectedSectionContainer.appendChild(sectionElement.selectedElement);
+            while (sectionElement.selectedElement.firstChild) {
+                selectedSectionContainer.appendChild(sectionElement.selectedElement.firstChild);
+            }
+
             sectionElement.element.addEventListener("selectionChanged", () => {
                 handleSelectionChange();
             });
@@ -206,6 +233,7 @@ exportBtn.addEventListener("click", async () => {
             },
             {
                 presentations,
+                selectedSlideWithPath,
                 placeholders,
             },
         );
@@ -229,6 +257,7 @@ exportBtn.addEventListener("click", async () => {
             },
             {
                 presentations,
+                selectedSlideWithPath,
                 placeholders,
             },
         );

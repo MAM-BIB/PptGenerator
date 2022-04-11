@@ -13,6 +13,7 @@ import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 import call from "../../helper/systemcall";
 import createPreset from "../components/createPreset";
+import { SlidesWithPath, SlideWithPath } from "../../interfaces/container";
 
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const cancelBtn = document.getElementById("cancel-btn") as HTMLButtonElement;
@@ -25,6 +26,7 @@ const createPdfToggleBtn = document.getElementById("create-pdf-toggle-btn") as H
 
 let placeholders: Placeholder[];
 let presentations: Presentation[];
+let selectedSlideWithPath: SlideWithPath[];
 
 // Initialization of the custom titlebar.
 initTitlebar({
@@ -38,6 +40,7 @@ initTitlebar({
  */
 ipcRenderer.on("data", (event, data) => {
     presentations = data.presentations;
+    selectedSlideWithPath = data.selectedSlideWithPath;
     if (data.placeholders) {
         placeholders = data.placeholders;
     } else {
@@ -115,7 +118,7 @@ exportBtn.addEventListener("click", async () => {
             return;
         }
 
-        createPreset(path.join(presetPath, `${name}.json`), presentations, placeholders);
+        createPreset(path.join(presetPath, `${name}.json`), presentations, selectedSlideWithPath, placeholders);
     }
 
     // creates the pptx-file
@@ -141,49 +144,71 @@ cancelBtn.addEventListener("click", () => {
     ipcRenderer.invoke("closeFocusedWindow");
 });
 
-interface Positions {
-    [path: string]: number[];
-}
-
 /**
  *
  * @param outPath The Path where the pptx file will be saved
  */
 async function exportToPptx(outPath: string) {
-    const positions: Positions = {};
+    const selectedSlidesWithPath: SlidesWithPath[] = [];
 
-    // prepares the date for the creation.
-    for (const presentation of presentations) {
-        for (const section of presentation.Sections) {
-            for (const slide of section.Slides) {
-                if (slide.IsSelected) {
-                    if (!positions[presentation.Path]) {
-                        positions[presentation.Path] = [];
-                    }
-                    positions[presentation.Path].push(slide.Position);
-                }
-            }
+    for (const slideWithPath of selectedSlideWithPath) {
+        const pPath = selectedSlidesWithPath[selectedSlidesWithPath.length - 1]?.path;
+        if (pPath && path.resolve(pPath) === path.resolve(slideWithPath.path)) {
+            selectedSlidesWithPath[selectedSlidesWithPath.length - 1].slides.push(slideWithPath.slide);
+        } else {
+            selectedSlidesWithPath.push({ path: slideWithPath.path, slides: [slideWithPath.slide] });
         }
     }
 
     let firstPresentation = true;
-    let nr = Object.keys(positions).length;
-
-    for (const inPath in positions) {
-        if (Object.prototype.hasOwnProperty.call(positions, inPath)) {
-            nr--;
-
-            // calls wait for the new presentation to be created.
-            await copyPresentation(
-                inPath,
-                outPath,
-                positions[inPath].join(","),
-                firstPresentation ? getConfig().basePath : null,
-                nr === 0,
-            );
-            firstPresentation = false;
-        }
+    let nr = selectedSlidesWithPath.length;
+    for (const slideWithPath of selectedSlidesWithPath) {
+        nr--;
+        // calls wait for the new presentation to be created.
+        await copyPresentation(
+            slideWithPath.path,
+            outPath,
+            slideWithPath.slides.map((slide) => slide.Position).join(","),
+            firstPresentation ? getConfig().basePath : null,
+            nr === 0,
+        );
+        firstPresentation = false;
     }
+
+    // selectedSlidesWithPath;
+
+    // // prepares the date for the creation.
+    // for (const presentation of presentations) {
+    //     for (const section of presentation.Sections) {
+    //         for (const slide of section.Slides) {
+    //             if (slide.IsSelected) {
+    //                 if (!positions[presentation.Path]) {
+    //                     positions[presentation.Path] = [];
+    //                 }
+    //                 positions[presentation.Path].push(slide.Position);
+    //             }
+    //         }
+    //     }
+    // }
+
+    // let firstPresentation = true;
+    // let nr = Object.keys(positions).length;
+
+    // for (const inPath in positions) {
+    //     if (Object.prototype.hasOwnProperty.call(positions, inPath)) {
+    //         nr--;
+
+    //         // calls wait for the new presentation to be created.
+    //         await copyPresentation(
+    //             inPath,
+    //             outPath,
+    //             positions[inPath].join(","),
+    //             firstPresentation ? getConfig().basePath : null,
+    //             nr === 0,
+    //         );
+    //         firstPresentation = false;
+    //     }
+    // }
 }
 
 /**
@@ -217,6 +242,7 @@ async function copyPresentation(
             basePath ?? "",
             deleteFirstSlide ? "-deleteFirstSlide" : "",
             "-placeholders",
+            // eslint-disable-next-line @typescript-eslint/quotes
             ...placeholders.map((elem) => `${elem.name},${elem.value}`),
         ]);
     } catch (error) {

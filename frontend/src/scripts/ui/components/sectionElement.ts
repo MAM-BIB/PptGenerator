@@ -4,6 +4,7 @@ import SlideElement from "./slideElement";
 import SelectedSlideElement from "./selectedSlideElement";
 import { getConfig } from "../../helper/config";
 import isShiftPressed from "../keyHandler";
+import { SlideWithPath } from "../../interfaces/container";
 
 /**
  * This enum saves the possible states of a SectionElement
@@ -32,15 +33,21 @@ export default class SectionElement {
      * This constructor creates a SectionElement
      * @param section The Section from which the element will be created
      */
-    constructor(section: Section, imgPath?: string) {
+    constructor(section: Section, presentationPath: string, selectedSlideWithPath: SlideWithPath[], imgPath?: string) {
         this.element = document.createElement("div") as HTMLDivElement;
         this.selectedElement = document.createElement("div") as HTMLDivElement;
         this.section = section;
         this.slides = [];
         this.selectedSlides = [];
-        this.createSection(this.element, SectionType.normal, imgPath);
-        this.createSection(this.selectedElement, SectionType.selected, imgPath);
-        this.selectedElementHeader = this.selectedElement.getElementsByClassName("headerText")[0] as HTMLHeadingElement;
+        this.createSection(this.element, presentationPath, selectedSlideWithPath, SectionType.normal, imgPath);
+        this.createSection(
+            this.selectedElement,
+            presentationPath,
+            selectedSlideWithPath,
+            SectionType.selected,
+            imgPath,
+        );
+        this.selectedElementHeader = this.element.getElementsByClassName("headerText")[0] as HTMLHeadingElement;
 
         this.selectedElement.hidden = true;
     }
@@ -51,7 +58,13 @@ export default class SectionElement {
      * @param element The HtmlElement that will be used to contain all the information.
      * @param sectionType The State of the Section.
      */
-    private createSection(element: HTMLDivElement, sectionType: SectionType = SectionType.normal, imgPath?: string) {
+    private createSection(
+        element: HTMLDivElement,
+        presentationPath: string,
+        selectedSlideWithPath: SlideWithPath[],
+        sectionType: SectionType = SectionType.normal,
+        imgPath?: string,
+    ) {
         const header = document.createElement("div");
         const headerText = document.createElement("h2");
 
@@ -61,22 +74,26 @@ export default class SectionElement {
 
         const nrOfSlides = this.section.Slides.length;
 
-        headerText.textContent = `${this.section.Name} (${nrOfSlides})`;
+        headerText.textContent = `${this.section.Name} (0/${nrOfSlides})`;
 
         header.appendChild(headerText);
         element.appendChild(header);
+        if (sectionType === SectionType.selected) {
+            header.style.display = "none";
+        }
 
         if (nrOfSlides !== 0) {
-            const buttonContainer = document.createElement("div");
-            buttonContainer.classList.add("sectionButtons");
-
-            buttonContainer.appendChild(this.createCollapseBtn(element));
-
             if (sectionType === SectionType.normal) {
-                buttonContainer.appendChild(this.createSelectBtn());
-            }
+                const buttonContainer = document.createElement("div");
+                buttonContainer.classList.add("sectionButtons");
 
-            header.appendChild(buttonContainer);
+                buttonContainer.appendChild(this.createCollapseBtn(element));
+
+                buttonContainer.appendChild(this.createSelectBtn());
+                header.appendChild(buttonContainer);
+            } else {
+                element.classList.add("open");
+            }
 
             for (let index = 0; index < this.section.Slides.length; index++) {
                 const slide = this.section.Slides[index];
@@ -95,7 +112,13 @@ export default class SectionElement {
                     });
                     this.slides.push(newSlide);
                 } else {
-                    newSlide = new SelectedSlideElement(slide, this.slides[index], imgPath);
+                    newSlide = new SelectedSlideElement(
+                        slide,
+                        presentationPath,
+                        selectedSlideWithPath,
+                        this.slides[index],
+                        imgPath,
+                    );
                     this.selectedSlides.push(newSlide);
                 }
                 element.appendChild(newSlide.element);
@@ -138,9 +161,8 @@ export default class SectionElement {
     private handleSelectionChange() {
         const nr = this.slides.filter((elem) => elem.slide.IsSelected).length;
 
+        this.selectedElementHeader.textContent = `${this.section.Name} (${nr}/${this.section.Slides.length})`;
         if (nr > 0) {
-            this.selectedElementHeader.textContent = `${this.section.Name} (${nr}/${this.section.Slides.length})`;
-
             if (!this.isSelected) {
                 this.isSelected = true;
                 this.element.classList.add("selected");
