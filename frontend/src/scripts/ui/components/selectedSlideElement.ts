@@ -28,7 +28,8 @@ export default class SelectedSlideElement extends SlideElement {
         this.element.addEventListener("drop", (event) => {
             event.preventDefault();
             const incomingIndex = parseInt(event.dataTransfer?.getData("text") ?? "", 10);
-            if (incomingIndex && incomingIndex >= 0 && incomingIndex < selectedSlideWithPath.length) {
+
+            if (!Number.isNaN(incomingIndex) && incomingIndex >= 0 && incomingIndex < selectedSlideWithPath.length) {
                 const ownIndex = selectedSlideWithPath.indexOf(this.slideWithPath);
                 selectedSlideWithPath.splice(ownIndex, 0, selectedSlideWithPath.splice(incomingIndex, 1)[0]);
 
