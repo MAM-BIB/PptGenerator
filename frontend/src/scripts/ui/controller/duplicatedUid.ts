@@ -52,12 +52,11 @@ cancelBtn.addEventListener("click", async () => {
  * Adds the eventListener for the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
-    let isChecked = true;
+    let isChecked = false;
     for (const inputWithMatchingSlide of inputsWithMatchingSlides) {
         if (inputWithMatchingSlide.input.checked) {
             isChecked = true;
-        } else {
-            isChecked = false;
+            break;
         }
     }
     if (isChecked) {
@@ -67,7 +66,7 @@ changeUidsBtn.addEventListener("click", async () => {
     } else {
         // informs that no slide Uid changes
         openPopup({
-            text: "Please select at least one slide per UID",
+            text: "Please select at least one slide!",
             heading: "Error",
             answer: true,
         });
