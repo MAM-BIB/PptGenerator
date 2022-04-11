@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { SlideWithPath } from "../src/scripts/interfaces/container";
 
 import { Presentation, Section, Slide } from "../src/scripts/interfaces/presentation";
 import { Placeholder } from "../src/scripts/interfaces/preset";
@@ -89,6 +90,10 @@ const placeholder1: Placeholder = {
     value: "name",
 };
 
+const selectedSlidesWithPath: SlideWithPath[] = [
+    { slide: slide1, path: "C:/TestPath/test1.pptx" },
+    { slide: slide3, path: "C:/TestPath/test1.pptx" },
+];
 const presentations: Presentation[] = [presentation1];
 const placeholders1: Placeholder[] = [placeholder1];
 const placeholders2: Placeholder[] = [];
@@ -102,25 +107,43 @@ afterAll(() => {
 });
 
 test("create a preset.json file", async () => {
-    await createPreset(presetPath, presentations, placeholders1);
+    await createPreset(presetPath, presentations, selectedSlidesWithPath, placeholders1);
     expect(fs.existsSync(presetPath)).toBe(true);
 });
 
 test("create preset.json without placeholders", async () => {
-    await createPreset(presetPath, presentations, placeholders2);
+    await createPreset(presetPath, presentations, selectedSlidesWithPath, placeholders2);
     const preset = await JSON.parse(fs.readFileSync(presetPath, { encoding: "utf-8" }));
     expect(preset).toEqual({
         path: presetPath,
         placeholders: [],
         sections: [
-            { ignoredSlides: ["4321Test2"], includedSlides: ["4321Test1"], name: "TestSection1" },
-            { ignoredSlides: ["4321Test4"], includedSlides: ["4321Test3"], name: "TestSection2" },
+            {
+                ignoredSlides: ["4321Test2"],
+                includedSlides: [
+                    {
+                        position: 0,
+                        uid: "4321Test1",
+                    },
+                ],
+                name: "TestSection1",
+            },
+            {
+                ignoredSlides: ["4321Test4"],
+                includedSlides: [
+                    {
+                        position: 1,
+                        uid: "4321Test3",
+                    },
+                ],
+                name: "TestSection2",
+            },
         ],
     });
 });
 
 test("create preset.json with placeholders", async () => {
-    await createPreset(presetPath, presentations, placeholders1);
+    await createPreset(presetPath, presentations, selectedSlidesWithPath, placeholders1);
     const preset = await JSON.parse(fs.readFileSync(presetPath, { encoding: "utf-8" }));
     expect(preset).toEqual({
         path: presetPath,
@@ -128,12 +151,22 @@ test("create preset.json with placeholders", async () => {
         sections: [
             {
                 ignoredSlides: ["4321Test2"],
-                includedSlides: ["4321Test1"],
+                includedSlides: [
+                    {
+                        position: 0,
+                        uid: "4321Test1",
+                    },
+                ],
                 name: "TestSection1",
             },
             {
                 ignoredSlides: ["4321Test4"],
-                includedSlides: ["4321Test3"],
+                includedSlides: [
+                    {
+                        position: 1,
+                        uid: "4321Test3",
+                    },
+                ],
                 name: "TestSection2",
             },
         ],
