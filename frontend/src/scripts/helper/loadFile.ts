@@ -126,9 +126,9 @@ export default class LoadFile {
                         }
                     }
                     slideELement.select();
+                    break;
                 }
             }
-            isInMaster = true;
             if (!isInMaster) {
                 newSlides.push(selectedSlide);
             }
