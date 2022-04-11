@@ -37,6 +37,7 @@ addAllBrowseHandler();
 // Fills select with saved languages.
 fillSelect();
 
+showLangInput();
 /**
  * Adds event for delete language button.
  */
@@ -201,6 +202,16 @@ function fillInput() {
     metaPics.value = config.metaPicsPath;
     backPath.value = config.backupPath;
     hiddenSlide.checked = !config.ignoreHiddenSlides;
+}
+
+/**
+ * This function show the language input and focus
+ */
+function showLangInput() {
+    if (selectLanguage.length <= 1) {
+        languageInput.classList.add("show");
+        languageInput.focus();
+    }
 }
 
 /**
