@@ -201,7 +201,9 @@ namespace PptGenerator.TemplateInfo {
                 }
                 if (uid == "") {
                     string[] uidArr = notesSlidePart.NotesSlide.InnerText.Split("UID:");
-                    uid = (uidArr.Length > 1) ? uidArr[1].Substring(0, 22) : "";
+                    if(uidArr.Length > 1 && uidArr[1].Length > 1) {
+                        uid = uidArr[1].Substring(0, 22);
+                    }
                 }
             }
 
