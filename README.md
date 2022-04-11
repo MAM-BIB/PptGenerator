@@ -87,13 +87,17 @@ Since the UIDs are required and every slide from your collections needs to a uni
         "metaJsonPath": "",
         "metaPicsPath": "",
         "coreApplication": "",
+        "picsApplication": "../../backend/powershell/pics.ps1",
+        "specificPicsApplication": "../../backend/powershell/specificPics.ps1",
+        "pdfApplication": "../../backend/powershell/pdf.ps1",
         "presetPath": "",
         "basePath": "",
         "defaultExportPath": "",
         "backupPath": "",
         "presentationMasters": [],
         "ignoreHiddenSlides": true,
-        "showTutorial": true
+        "showTutorial": true,
+        "imgZoom": 70
     }
     ```
 
@@ -164,4 +168,15 @@ After you created this file, you have the ability to load this json, so the prog
 <br />
 
 ### Loading a Pptx File  
-When you didn't create a preset you have the ability to load a pptx file directly. When doing this the program will select all slides in that are in the pptx file based on the UID. When there are slides with UIDs that are not in your collections, the program will give you a warning with the slides. 
+When you didn't create a preset you have the ability to load a pptx file directly. When doing this the program will select all slides in that are in the pptx file
+based on the UID. When there are slides with UIDs that are not in your collections, the program will give you a warning with the slides. 
+
+
+<br />
+
+### Scanning a Folder
+When you click Scan a folder under Menu>File>Scan Folder you are able to select a folder. This folder wil be scanned for *.pptx files recursive.
+When there a slides with UIDs that are contained in the slide masters and have different content, you will se a the orignal slide (from the slideMaster) and all version
+that were found. You can only select one slide under this UID and update the slide master.  
+If there are slides with UIDs that are not in the slide Masters, you will be abel to select a slide master and select the slides to add to the master.  
+Slides with no UID will be ignored. 
