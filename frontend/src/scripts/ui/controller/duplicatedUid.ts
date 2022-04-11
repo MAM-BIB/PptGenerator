@@ -52,9 +52,26 @@ cancelBtn.addEventListener("click", async () => {
  * Adds the eventListener for the change uid button
  */
 changeUidsBtn.addEventListener("click", async () => {
-    startLoading();
-    await replaceDuplicated();
-    ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", true);
+    let isChecked = true;
+    for (const inputWithMatchingSlide of inputsWithMatchingSlides) {
+        if (inputWithMatchingSlide.input.checked) {
+            isChecked = true;
+        } else {
+            isChecked = false;
+        }
+    }
+    if (isChecked) {
+        startLoading();
+        await replaceDuplicated();
+        ipcRenderer.invoke((duplicatedUids?.answer as string) ?? "closeFocusedWindow", true);
+    } else {
+        // informs that no slide Uid changes
+        openPopup({
+            text: "Please select at least one slide per UID",
+            heading: "Error",
+            answer: true,
+        });
+    }
 });
 
 /**
