@@ -5,8 +5,11 @@ import LoadFile from "../src/scripts/helper/loadFile";
 import SectionElement from "../src/scripts/ui/components/sectionElement";
 import { Slide, Section, Presentation } from "../src/scripts/interfaces/presentation";
 import { Preset, PresetSection, Placeholder } from "../src/scripts/interfaces/preset";
+import { SlideWithPath } from "../src/scripts/interfaces/container";
 const meta2Path = "./tests/files/meta2.json";
 const tmpPath = "./tests/files/tmp";
+
+const selectedSlidesWithPath: SlideWithPath[] = [];
 
 const slide1: Slide = {
     Title: "Test1",
@@ -37,7 +40,12 @@ const section4: Section = {
 
 const presetSection1: PresetSection = {
     name: "TestName1",
-    includedSlides: ["4321Test1"],
+    includedSlides: [
+        {
+            position: 0,
+            uid: "4321Test1",
+        },
+    ],
     ignoredSlides: ["4321Test2"],
 };
 
@@ -58,7 +66,7 @@ const preset2: Preset = {
     placeholders: [],
 };
 
-const sectionElement1 = new SectionElement(section4);
+const sectionElement1 = new SectionElement(section4, "", selectedSlidesWithPath);
 
 const slide3: Slide = {
     RelationshipId: "rId2",
@@ -113,9 +121,9 @@ const presentation: Presentation = {
     Sections: [section1, section2, section3],
 };
 
-const sectionElement2 = new SectionElement(section1);
-const sectionElement3 = new SectionElement(section2);
-const sectionElement4 = new SectionElement(section3);
+const sectionElement2 = new SectionElement(section1, "", selectedSlidesWithPath);
+const sectionElement3 = new SectionElement(section2, "", selectedSlidesWithPath);
+const sectionElement4 = new SectionElement(section3, "", selectedSlidesWithPath);
 
 const sectionElements2 = [sectionElement2, sectionElement3, sectionElement4];
 
@@ -180,17 +188,18 @@ test("no unknown uid in file-loading", async () => {
     const file = new LoadFile(sectionElements);
 
     const unknown = await file.loadPresetFromMeta(path.join(tmpPath, "meta2.json"));
-    expect(unknown?.presentations).toEqual([]);
+
+    expect(unknown?.newSlides).toEqual([]);
     expect(unknown?.jsonPath).toEqual("tests\\files\\tmp\\meta2.json");
+
     expect(unknown?.hashChangedList).toEqual([
         {
-            Hash: "BB70457FDEAB880AFD5B570580DC9ACCF5DB371579DFFE81EB9BC42CF0AA0637",
+            Hash: "510A8C0280DE089ACF3AF35E4D70C7D787D3CABF1EC88CE65F0C0046A9126190",
             IsHidden: false,
-            IsSelected: true,
-            Placeholders: ["Name"],
-            Position: 0,
-            RelationshipId: "rId2",
-            Title: "TestSlide 1.5",
+            Placeholders: [],
+            Position: 1,
+            RelationshipId: "rId3",
+            Title: "TestSlide 2.5",
             Uid: "Test1234Test1234Test42",
         },
     ]);
