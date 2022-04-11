@@ -80,7 +80,7 @@ namespace PptGenerator.CommandLine {
 
                 Console.WriteLine("");
                 Console.WriteLine("-replace <slidePos,slidePos,...>");
-                Console.WriteLine("  In create mode: Slides will not be appended, but replaced");
+                Console.WriteLine("  In create mode: Slides will not be appended, but replace the slide at the given position.");
 
 
                 Console.WriteLine("");
@@ -102,6 +102,7 @@ namespace PptGenerator.CommandLine {
                 Console.WriteLine("optional  : -placeholders <name,value> (<name,value>? ...)");
                 Console.WriteLine("optional  : -ignoreTheme");
                 Console.WriteLine("optional  : -deleteFirstSlide");
+                Console.WriteLine("optional  : -replace <slidePos,slidePos,...>");
 
                 Console.WriteLine("");
                 Console.WriteLine("ADDUID    :");
