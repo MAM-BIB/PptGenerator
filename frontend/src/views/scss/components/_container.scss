@@ -40,6 +40,22 @@
                 overflow-x: hidden;
                 padding: $size-2 0 $size-2 $size-4;
 
+                #no-content-warning{
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    h3{
+                        margin: $size-5 0;
+                    }
+                    
+                     p{
+                        margin: $size-4 0;
+                    }
+                }
+
                 &.left {
                     .presNameContainer {
                         padding: $size-3 0 $size-1 0;

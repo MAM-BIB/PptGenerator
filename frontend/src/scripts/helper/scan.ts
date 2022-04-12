@@ -23,6 +23,20 @@ export default async function scanPresentations(
     // start the loading animation.
     focusedWindow?.webContents.send("startLoading");
 
+    if (getConfig().presentationMasters.flatMap((master) => master.paths).length === 0) {
+        await openPopup({
+            text:
+                "You have to add at least on presentation master." +
+                "\nFor more information see 'Help' > 'Open Info' > 'First Setup'",
+            heading: "Error",
+            answer: true,
+        });
+
+        focusedWindow?.webContents.send("stopLoading");
+
+        return false;
+    }
+
     let meta;
     if (!oldMeta) {
         const metaJson = await fs.readFile(getConfig().metaJsonPath, { encoding: "utf-8" });

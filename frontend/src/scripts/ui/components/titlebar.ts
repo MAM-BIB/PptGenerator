@@ -296,7 +296,7 @@ function createHelpMenu(mainHelpLi: HTMLElement) {
 
     const helpLi = document.createElement("li");
     const infoBtn = document.createElement("button");
-    infoBtn.innerText = "Open info";
+    infoBtn.innerText = "Open Info";
     infoBtn.addEventListener("click", async () => {
         await ipcRenderer.invoke("openWindow", "help.html", {
             width: 900,

@@ -22,6 +22,7 @@ const selectedSectionContainer = document.querySelector(".presentation-slide-con
 const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
 const presentationMasterSelect = document.getElementById("presentation-master-select") as HTMLSelectElement;
 const loadFileBtn = document.getElementById("load-preset-btn") as HTMLButtonElement;
+const noContentWarning = document.getElementById("no-content-warning");
 
 let presentations: Presentation[];
 let placeholders: Placeholder[] = [];
@@ -81,7 +82,11 @@ ipcRenderer.on("stopLoading", () => {
  */
 function fillPresentationMasterSelect() {
     presentationMasterSelect.innerHTML = "";
-    for (const lang of getConfig().presentationMasters.map((elem) => elem.lang)) {
+    const languages = getConfig().presentationMasters.map((elem) => elem.lang);
+    if (languages.length === 0) {
+        presentationMasterSelect.hidden = true;
+    }
+    for (const lang of languages) {
         const optionElem = document.createElement("option");
         optionElem.textContent = lang;
         presentationMasterSelect.append(optionElem);
@@ -111,7 +116,9 @@ async function read() {
  * This function will load all sections to display them in th GUI.
  */
 function loadSections() {
-    if (getConfig().presentationMasters.length === 0) return;
+    if (getConfig().presentationMasters.length === 0) {
+        return;
+    }
 
     const selectedPresentationMaster = getConfig().presentationMasters.find(
         (elem) => elem.lang === presentationMasterLang,
@@ -123,7 +130,15 @@ function loadSections() {
             loadMaster();
         }
         for (const child of sectionContainer.children) {
-            (child as HTMLElement).hidden = !child.classList.contains(`lang-${presentationMasterLang}`);
+            let showWarning = true;
+            if (child.classList.contains(`lang-${presentationMasterLang}`)) {
+                (child as HTMLElement).hidden = false;
+                showWarning = false;
+            } else {
+                (child as HTMLElement).hidden = true;
+            }
+
+            if (noContentWarning) noContentWarning.style.display = showWarning ? "" : "none";
         }
     } else {
         openPopup({ heading: "Error", text: "Could not find the selected master presentation!" });
