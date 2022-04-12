@@ -7,3 +7,4 @@ src/views/css
 *.map
 tests/files/tmp
 tests/files/~$*.pptx
+docs

@@ -10,6 +10,7 @@
         "POWERPNT",
         "systemcall",
         "Titlebar",
+        "typedoc",
         "uids"
     ]
 }
