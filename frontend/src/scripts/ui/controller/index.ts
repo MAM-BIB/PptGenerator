@@ -11,7 +11,7 @@ import initTitlebar from "../components/titlebar";
 import openPopup from "../../helper/openPopup";
 import { startLoading, stopLoading } from "../components/loading";
 import LoadFile from "../../helper/loadFile";
-import isRunning, { killPpt } from "../../helper/processManager";
+import isRunning, { killPpt, sleep } from "../../helper/processManager";
 import { addZoomListener } from "../keyHandler";
 import { SlideWithPath } from "../../interfaces/container";
 
@@ -42,6 +42,32 @@ read();
 showTutorial();
 // Change Images size on zoom.
 addZoomListener();
+
+document.getElementById("scan-btn")?.addEventListener("click", async () => {
+    if (isRunning("POWERPNT")) {
+        const answer = await openPopup({
+            text: "We detected that PowerPoint is open. Please close the process",
+            heading: "Warning",
+            primaryButton: "Kill PowerPoint",
+            secondaryButton: "Cancel",
+            answer: true,
+        });
+        if (answer) {
+            killPpt();
+            while (isRunning("POWERPNT")) {
+                // eslint-disable-next-line no-await-in-loop
+                await sleep(1000);
+            }
+            ipcRenderer.invoke("ScanWindow");
+        }
+    } else {
+        ipcRenderer.invoke("ScanWindow");
+    }
+});
+
+document.getElementById("options-btn")?.addEventListener("click", () => {
+    ipcRenderer.invoke("openOptionWindow");
+});
 
 /**
  * This function will show you the tutorial automatically if you start the program for the first time

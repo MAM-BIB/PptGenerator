@@ -217,7 +217,7 @@ function createFileMenu(mainFileLi: HTMLElement) {
     const scanFolderBtn = document.createElement("button");
     scanFolderBtn.appendChild(createHotkey(""));
 
-    scanFolderBtn.innerText = "Scan folder";
+    scanFolderBtn.innerText = "Scan Folder";
     scanFolderBtn.addEventListener("click", async () => {
         if (isRunning("POWERPNT")) {
             const answer = await openPopup({
