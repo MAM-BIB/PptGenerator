@@ -317,7 +317,7 @@ loadFileBtn.addEventListener("click", async () => {
             const fileType = path.extname(path.basename(filePath.filePaths[0]));
             const pathOfFile = filePath.filePaths[0];
 
-            // check if the selected file id .json or .pptx
+            // check if the selected file is .json or .pptx
             if (fileType === ".json" || fileType === ".pptx") {
                 const file: LoadFile = new LoadFile(sectionElements);
                 await file.load(pathOfFile, fileType);

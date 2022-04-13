@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
 import fs from "fs";
+import path from "path";
 
 import { getConfig, setConfig } from "../../helper/config";
 import openPopup from "../../helper/openPopup";
@@ -136,8 +137,16 @@ defaultExport.addEventListener("change", () => {
  */
 metaJson.addEventListener("change", () => {
     if (pathExists(metaJson.value)) {
-        config.metaJsonPath = metaJson.value;
-        saveBtn.disabled = false;
+        const fileType = path.extname(metaJson.value);
+
+        // check if the selected file is .json
+        if (fileType === ".json") {
+            config.metaJsonPath = metaJson.value;
+            saveBtn.disabled = false;
+        } else {
+            // warns if selected file has wrong type
+            openPopup({ text: "File needs to be a .json", heading: "Error" });
+        }
     }
 });
 
@@ -245,8 +254,15 @@ function newPresentation(masterIndex: number, pathIndex: number) {
     newInput.type = "text";
     newInput.value = config.presentationMasters[masterIndex].paths[pathIndex];
     newInput.addEventListener("change", () => {
-        config.presentationMasters[masterIndex].paths[pathIndex] = newInput.value;
-        saveBtn.disabled = false;
+        const fileType = path.extname(newInput.value);
+        // check if the selected file is .pptx
+        if (fileType === ".pptx") {
+            config.presentationMasters[masterIndex].paths[pathIndex] = newInput.value;
+            saveBtn.disabled = false;
+        } else {
+            // warns if selected file has wrong type
+            openPopup({ text: "File needs to be a .pptx", heading: "Error" });
+        }
     });
 
     const newDeleteBtn = document.createElement("button");
