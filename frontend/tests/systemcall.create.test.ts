@@ -29,15 +29,6 @@ test("call core with no arguments", async () => {
     }
 });
 
-test("call core with no arguments", async () => {
-    expect.assertions(1);
-    try {
-        await call(getConfig().coreApplication, ["-mode", "create"]);
-    } catch (e) {
-        expect(e).toMatch("'-outPath' is not given. Invoke the program with the argument '-outPath <path>'");
-    }
-});
-
 test("call create with no slidePos", async () => {
     expect.assertions(1);
 
