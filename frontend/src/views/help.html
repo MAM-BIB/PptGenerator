@@ -27,6 +27,9 @@
                             <a href="#load"><button>Load File</button></a>
                         </li>
                         <li>
+                            <a href="#update"><button>Update</button></a>
+                        </li>
+                        <li>
                             <a href="#options"><button>Options</button></a>
                         </li>
                     </ul>
@@ -46,8 +49,9 @@
                             <br />
                             <p class="tab-1"><b>UID</b></p>
                             <p class="tab-2">
-                                This a string of 22 random urlSafe ASCII-characters in the notes of a slide.
+                                This a string of at least 5 random urlSafe ASCII-characters in the notes of a slide.
                             </p>
+                            <p class="tab-2">The Uids that are created from this tool, will be 22 character long.</p>
                             <br />
                             <p class="tab-1"><b>Hidden Slides</b></p>
                             <p class="tab-2">Those are slides wich are set to hidden in PowerPoint.</p>
@@ -61,11 +65,14 @@
                                 When the program reads/write files on a cloud it could lead to some problems.
                             </p>
                             <br />
-                            <p class="tab-1">The PresentationMasters need to have UIDs in the notes.</p>
+                            <p class="tab-1">The slides in PresentationMasters need to have UIDs in the notes.</p>
                             <br />
                             <p class="tab-2">A UID contains 22 random urlSafe ASCII-characters.</p>
                             <br />
-                            <p class="tab-2">When the scan finds a slide without a UID the program will warn you.</p>
+                            <p class="tab-2">
+                                When the scan finds a slide without a UID or one that is to short the program will warn
+                                you.
+                            </p>
                             <p class="tab-2">
                                 It will open a window where you see all the slides with a incorrect UID.
                             </p>
@@ -75,7 +82,7 @@
                             <p class="tab-2">The slides with incorrect uids will receive newly generated UIDs.</p>
                             <br />
                             <p class="tab-2">
-                                All UIDs need to be unique. The program will warn you if there are multiple ones.
+                                All UIDs need to be unique. The program will warn you if there are duplicated ones.
                             </p>
                             <p class="tab-2">It will open a window where you see all the slides with the same UID.</p>
                             <p class="tab-2">
@@ -92,7 +99,7 @@
                             <h2 id="setup">First Setup</h2>
                             <br />
                             <p class="tab-1">Open the option in Menu > Option > Open Options or with "Ctrl/Cmd + O".</p>
-                            <p class="tab-1">Add a new language. Eg "en".</p>
+                            <p class="tab-1">Add a new language. Eg. "en".</p>
 
                             <img class="tab-1 tut-img" src="./pics/help_1.png" alt="Add Button" />
 
@@ -219,31 +226,64 @@
                             <br />
                             <br />
 
+                            <h2 id="update">Update</h2>
+                            <br />
+                            <p class="tab-1">
+                                If you want to update your slides in the PresentationMaster you need to do the
+                                following.
+                            </p>
+                            <br />
+                            <p class="tab-1">
+                                Put all Presentation that you want to be scanned for updates in a folder.
+                            </p>
+                            <p class="tab-1">Then you need to scan a folder under Menu>File>Scan Folder.</p>
+                            <p class="tab-1">Select the folder where your presentations are saved.</p>
+                            <br />
+                            <p class="tab-1">
+                                When the program found slides that can be updated it will open a new Window.
+                            </p>
+                            <p class="tab-1">There you will se the original and all the different versions it found.</p>
+                            <p class="tab-1">
+                                You can select one of the version and this slide will be updated in the
+                                presentationMaster.
+                            </p>
+                            <p class="tab-1">
+                                When the program found slides that can be updated it will open a new Window.
+                            </p>
+                            <br />
+                            <p class="tab-1">When the Programm found new slides it will also open a window.</p>
+                            <p class="tab-1">There you can select all the slides that you want to be added.</p>
+                            <p class="tab-1">You need to select a presentation where the slides will be added.</p>
+                            <br />
+                            <br />
+                            <br />
+
                             <h2 id="options">Options</h2>
                             <br />
 
                             <img class="tab-1 tut-img" src="./pics/help_11.png" alt="Single line options" />
                             <br />
 
-                            <p class="tab-1">Default export location</p>
+                            <p class="tab-1">Default export Location</p>
                             <p class="tab-2">
                                 Here you can set the default location where your created presentations will be saved.
                             </p>
                             <br />
-                            <p class="tab-1">Default export location</p>
-                            <p class="tab-2">
-                                Here you can set the default location where your created presentations will be saved.
-                            </p>
-                            <br />
-                            <p class="tab-1">Meta-Json location</p>
+                            <p class="tab-1">Meta-Json Location</p>
                             <p class="tab-2">In this json all the necessary information from a scan will be saved.</p>
                             <p class="tab-2">You can change where this file will be created and saved.</p>
                             <br />
-                            <p class="tab-1">Meta-pics location</p>
+                            <p class="tab-1">Meta-pics Location</p>
                             <p class="tab-2">
                                 The pictures that will be created from the slides will be saved in this folder.
                             </p>
                             <p class="tab-2">You can change where the pictures will be created and saved.</p>
+                            <br />
+                            <p class="tab-1">Backup Location</p>
+                            <p class="tab-2">
+                                Here you can set the location where Backups will be saved that will be created by the
+                                program.
+                            </p>
                             <br />
                             <p class="tab-1">IncludeHiddenSlides</p>
                             <p class="tab-2">
@@ -257,14 +297,14 @@
                             <br />
 
                             <p class="tab-2">
-                                You can select for wich language you want to edit the presentationMasters or add a new
+                                You can select for wich language you want to edit the presentation Masters or add a new
                                 language.
                             </p>
                             <p class="tab-2">
                                 The presentationMasters of the selected language will be displayed in the container
                                 below language.
                             </p>
-                            <p class="tab-2">You can select a pptx-File as a presentationMaser.</p>
+                            <p class="tab-2">You can select a pptx-File as a PresentationMaster.</p>
                             <br />
                             <br />
                             <br />
