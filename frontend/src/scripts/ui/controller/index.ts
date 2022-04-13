@@ -155,17 +155,16 @@ function loadSections() {
             sectionElements = [];
             loadMaster();
         }
+        let showWarning = true;
         for (const child of sectionContainer.children) {
-            let showWarning = true;
             if (child.classList.contains(`lang-${presentationMasterLang}`)) {
                 (child as HTMLElement).hidden = false;
                 showWarning = false;
             } else {
                 (child as HTMLElement).hidden = true;
             }
-
-            if (noContentWarning) noContentWarning.style.display = showWarning ? "" : "none";
         }
+        if (noContentWarning) noContentWarning.style.display = showWarning ? "" : "none";
     } else {
         openPopup({ heading: "Error", text: "Could not find the selected master presentation!" });
     }
