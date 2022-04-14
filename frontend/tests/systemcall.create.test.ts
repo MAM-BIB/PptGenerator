@@ -19,8 +19,7 @@ beforeEach(() => {
     clearTmpFolder();
 });
 
-// Incorrect calls
-test("call core with no arguments", async () => {
+test("call core with arguments", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-mode", "create"]);

@@ -36,7 +36,7 @@ test("call core help", async () => {
     await call(getConfig().coreApplication, ["-help"]);
 });
 
-test("call core with no only mode", async () => {
+test("call core with only mode", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-mode"]);
@@ -45,7 +45,7 @@ test("call core with no only mode", async () => {
     }
 });
 
-test("call core with no only mode scan", async () => {
+test("call core with only mode and  scan", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-mode", "scan"]);
@@ -54,7 +54,7 @@ test("call core with no only mode scan", async () => {
     }
 });
 
-test("call core with no only outPath", async () => {
+test("call core with only outPath", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-outPath"]);
@@ -63,7 +63,7 @@ test("call core with no only outPath", async () => {
     }
 });
 
-test("call core with no only outPath test", async () => {
+test("call core with only outPath test", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-outPath", "test"]);
@@ -74,7 +74,7 @@ test("call core with no only outPath test", async () => {
     }
 });
 
-test("call core with no outPath and only inPath", async () => {
+test("call core with outPath, test and inPath", async () => {
     expect.assertions(1);
     try {
         await call(getConfig().coreApplication, ["-outPath", "test", "-inPath"]);
