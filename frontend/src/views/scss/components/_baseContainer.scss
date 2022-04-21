@@ -205,27 +205,26 @@
                 }
             }
 
-            .selection-slide{
-                img{
+            .selection-slide {
+                img {
                     width: 75%;
                 }
-                
-                label{
+
+                label {
                     display: block;
                 }
-    
-                input{
+
+                input {
                     display: none;
                 }
-    
-                input:checked + label{
+
+                input:checked + label {
                     background-color: $accent--color;
                 }
             }
-            
 
-            .uid-section-element{
-                h3{
+            .uid-section-element {
+                h3 {
                     margin: $size-3 0 0 0;
                 }
             }
@@ -253,6 +252,7 @@
 
 .scroll {
     overflow-y: scroll;
+    scroll-behavior: smooth;
 
     .section {
         min-height: unset !important;
