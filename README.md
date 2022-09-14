@@ -47,7 +47,7 @@ Since the UIDs are required and every slide from your collections needs a unique
 ### Built With  
 
 * [Electron](https://www.electronjs.org/)
-* [Open XML SDK](https://docs.microsoft.com/de-de/office/open-xml/open-xml-sdk)
+* [Open XML SDK](https://docs.microsoft.com/en-us/office/open-xml/open-xml-sdk)
 
 <br />
 
