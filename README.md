@@ -66,7 +66,7 @@ Since the UIDs are required and every slide from your collections needs a unique
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/username/project-name.git
+   git clone https://github.com/MAM-BIB/PptGenerator.git
    ```
 
 <br />
