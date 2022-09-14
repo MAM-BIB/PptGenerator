@@ -36,7 +36,7 @@ Features:
 
 __IMPORTANT__  
 All slides need to have a `UID`  
-A UID is written in the notes a presentation and looks like this:  
+A UID is written in the notes of a presentation and looks like this:  
 ```sh
   UID:LTCyabi1keUKQEvQd7aKnQ
   ```
